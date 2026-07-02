@@ -1,0 +1,165 @@
+{
+  "name": "programbench_devset_10",
+  "created": "2026-07-01",
+  "purpose": "Development and manual case-study set for the greenfield executable-test upper-bound experiment.",
+  "selection_policy": {
+    "benchmark_language_distribution": {
+      "rs": "107/201 = 53.2%",
+      "go": "46/201 = 22.9%",
+      "c": "33/201 = 16.4%",
+      "cpp": "12/201 = 6.0%",
+      "other": "3/201 = 1.5%"
+    },
+    "selected_language_distribution": {
+      "rs": "5/10 = 50%",
+      "go": "3/10 = 30%",
+      "c": "2/10 = 20%"
+    },
+    "notes": [
+      "The selected set intentionally approximates the original Rust-heavy language distribution.",
+      "Go is slightly overrepresented because yj, dsq, and jplot already have baseline/scaffold trajectories and are useful continuity cases.",
+      "C++ is omitted from the default set because the only easy C++ task found is json-tui, which has high TUI risk; it is kept as an alternate."
+    ]
+  },
+  "tasks": [
+    {
+      "instance_id": "sirwart__ripsecrets.34c9e03",
+      "repository": "sirwart/ripsecrets",
+      "language": "rs",
+      "difficulty": "easy",
+      "active_tests": 611,
+      "active_branches": 10,
+      "role": "Rust/security scanner case",
+      "why": "CLI behavior is concrete, hidden tests cover secret patterns, file traversal, errors, and output modes; we already have useful prior trajectory data.",
+      "risk": "Many pattern/edge-case tests; sanitizer must avoid leaking original pattern tables if present outside eval tests."
+    },
+    {
+      "instance_id": "wfxr__csview.8ac4de0",
+      "repository": "wfxr/csview",
+      "language": "rs",
+      "difficulty": "easy",
+      "active_tests": 335,
+      "active_branches": 7,
+      "role": "Rust/CSV formatting case",
+      "why": "Small-to-medium test suite with visible CLI/table-formatting behavior, good for manual inspection.",
+      "risk": "Formatting tests may be brittle; exact alignment and style handling can dominate failures."
+    },
+    {
+      "instance_id": "wfxr__code-minimap.0ddeea5",
+      "repository": "wfxr/code-minimap",
+      "language": "rs",
+      "difficulty": "easy",
+      "active_tests": 313,
+      "active_branches": 8,
+      "role": "Rust/text rendering case",
+      "why": "Manageable test count; focuses on CLI options, scaling, and deterministic text output.",
+      "risk": "Rendering behavior may require careful golden-output handling."
+    },
+    {
+      "instance_id": "clog-tool__clog-cli.7066cba",
+      "repository": "clog-tool/clog-cli",
+      "language": "rs",
+      "difficulty": "easy",
+      "active_tests": 575,
+      "active_branches": 10,
+      "role": "Rust/changelog CLI case",
+      "why": "Human-understandable command behavior around help, output, and conventional commits.",
+      "risk": "May depend on realistic git/repository fixtures; sanitizer needs to preserve fixture layout."
+    },
+    {
+      "instance_id": "drew-alleman__datasurgeon.d257cee",
+      "repository": "Drew-Alleman/DataSurgeon",
+      "language": "rs",
+      "difficulty": "easy",
+      "active_tests": 502,
+      "active_branches": 8,
+      "role": "Rust/data extraction case",
+      "why": "Good CLI extraction/output-modifier task with enough tests to expose spec gaps.",
+      "risk": "Regex/extraction edge cases may be broad; exact output conventions need inspection."
+    },
+    {
+      "instance_id": "sclevine__yj.8016400",
+      "repository": "sclevine/yj",
+      "language": "go",
+      "difficulty": "easy",
+      "active_tests": 767,
+      "active_branches": 9,
+      "role": "Go/data-format converter continuity case",
+      "why": "Already used in baseline/scaffold experiments; tests cover flags, errors, edge cases, ordering, and format conversion.",
+      "risk": "Official branch tar contains original Go source; sanitized bundle must include eval tests and testdata only."
+    },
+    {
+      "instance_id": "multiprocessio__dsq.c3ae0ba",
+      "repository": "multiprocessio/dsq",
+      "language": "go",
+      "difficulty": "easy",
+      "active_tests": 542,
+      "active_branches": 10,
+      "role": "Go/query engine continuity case",
+      "why": "Strong previous oracle-spec signal; tests cover SQL behavior, input formats, stdin/file behavior, and error modes.",
+      "risk": "A full implementation is broad; executable tests may strongly guide behavior but still leave implementation complexity."
+    },
+    {
+      "instance_id": "rs__jplot.2a54bcc",
+      "repository": "rs/jplot",
+      "language": "go",
+      "difficulty": "easy",
+      "active_tests": 583,
+      "active_branches": 8,
+      "role": "Go/terminal plotting continuity case",
+      "why": "Already included in prior experiments; tests cover CLI, spec parsing, stdin, terminal dimensions, and JSON processing.",
+      "risk": "Terminal rendering and timeout/interval behavior can make evaluation slow or flaky on Mac."
+    },
+    {
+      "instance_id": "cmatsuoka__figlet.202a0a8",
+      "repository": "cmatsuoka/figlet",
+      "language": "c",
+      "difficulty": "easy",
+      "active_tests": 872,
+      "active_branches": 12,
+      "role": "C/text-art continuity case",
+      "why": "Classic CLI with documentation-rich behavior; tests cover layout, errors, encoding, info, and font loading.",
+      "risk": "Font-loading and encoding behavior may require many fixture files and exact formatting."
+    },
+    {
+      "instance_id": "cslarsen__jp2a.61d205f",
+      "repository": "cslarsen/jp2a",
+      "language": "c",
+      "difficulty": "easy",
+      "active_tests": 631,
+      "active_branches": 11,
+      "role": "C/image-to-ASCII case",
+      "why": "Good C CLI case with input/output, errors, and image fixtures; more human-inspectable than TUI-like C tasks.",
+      "risk": "Image dependencies and golden output comparisons may be harder to satisfy in a greenfield implementation."
+    }
+  ],
+  "alternates": [
+    {
+      "instance_id": "arthursonzogni__json-tui.17a22b6",
+      "repository": "ArthurSonzogni/json-tui",
+      "language": "cpp",
+      "difficulty": "easy",
+      "active_tests": 755,
+      "active_branches": 15,
+      "reason": "Use if we need one C++ task for distribution fidelity; default-excluded due TUI risk."
+    },
+    {
+      "instance_id": "eliukblau__pixterm.1a93fd5",
+      "repository": "eliukblau/pixterm",
+      "language": "go",
+      "difficulty": "easy",
+      "active_tests": 430,
+      "active_branches": 6,
+      "reason": "Good Go alternate if jplot is too slow/flaky."
+    },
+    {
+      "instance_id": "rbakbashev__elfcat.52f8cc7",
+      "repository": "rbakbashev/elfcat",
+      "language": "rs",
+      "difficulty": "easy",
+      "active_tests": 564,
+      "active_branches": 13,
+      "reason": "Good Rust alternate, but ELF-format behavior may be less immediately inspectable."
+    }
+  ]
+}

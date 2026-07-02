@@ -1,0 +1,24 @@
+agent:
+  step_limit: 30
+  cost_limit: 0.30
+  wall_time_limit_seconds: 3600
+model:
+  cost_tracking: ignore_errors
+environment:
+  timeout: 180
+  container_timeout: "2h"
+  pull_timeout: 600
+  run_args:
+    - "--rm"
+    - "--network"
+    - "none"
+    - "--cpus"
+    - "2"
+    - "--memory"
+    - "8g"
+    - "--memory-swap"
+    - "8g"
+    - "--user"
+    - "agent"
+    - "--cap-drop"
+    - "SYS_PTRACE"

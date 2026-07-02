@@ -1,0 +1,589 @@
+{
+  "tasks": [
+    "sclevine__yj.8016400",
+    "multiprocessio__dsq.c3ae0ba",
+    "rs__jplot.2a54bcc",
+    "cmatsuoka__figlet.202a0a8",
+    "sirwart__ripsecrets.34c9e03"
+  ],
+  "output_roots": [
+    "reports/programbench_upper_bound_runs_arch_plan",
+    "reports/programbench_upper_bound_runs_jplot_timeout_plan",
+    "reports/programbench_upper_bound_runs_more_tasks"
+  ],
+  "roots": [
+    {
+      "root": "reports/programbench_upper_bound_runs_arch_plan",
+      "rows": [
+        {
+          "root": "reports/programbench_upper_bound_runs_arch_plan",
+          "task": "sclevine__yj.8016400",
+          "variant": "baseline",
+          "status": "Submitted",
+          "eval": {
+            "eval_exists": true,
+            "score": 31.55,
+            "passed": 242,
+            "total": 767,
+            "error_code": null,
+            "failure_categories": {
+              "flags/help/usage": 321,
+              "stdin/file/io": 255,
+              "stdout/stderr/exit": 408,
+              "format/query/parsing": 473,
+              "edge/order/unicode": 243,
+              "other": 1,
+              "runtime/build": 43
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 60,
+            "commands": 29,
+            "api_calls": 29,
+            "cost": 0.26343495,
+            "route": "go->shell->go",
+            "metrics": {
+              "reference_runs": 14,
+              "help_docs": 9,
+              "invalid_error_probes": 25,
+              "stdin_probes": 60,
+              "file_probes": 7,
+              "dependency_attempts": 3,
+              "compile_calls": 8,
+              "implementation_edits": 12
+            },
+            "first_reference_command": 2,
+            "first_implementation_command": 14,
+            "notes": [
+              "tried unavailable external dependencies"
+            ]
+          }
+        },
+        {
+          "root": "reports/programbench_upper_bound_runs_arch_plan",
+          "task": "sclevine__yj.8016400",
+          "variant": "oracle_spec",
+          "status": "LimitsExceeded",
+          "eval": {
+            "eval_exists": true,
+            "score": 52.8,
+            "passed": 405,
+            "total": 767,
+            "error_code": null,
+            "failure_categories": {
+              "stdin/file/io": 188,
+              "stdout/stderr/exit": 236,
+              "format/query/parsing": 343,
+              "flags/help/usage": 197,
+              "edge/order/unicode": 164,
+              "runtime/build": 25
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 59,
+            "commands": 28,
+            "api_calls": 28,
+            "cost": 0.8286202500000002,
+            "route": "go",
+            "metrics": {
+              "reference_runs": 20,
+              "help_docs": 6,
+              "invalid_error_probes": 158,
+              "stdin_probes": 181,
+              "file_probes": 29,
+              "dependency_attempts": 0,
+              "compile_calls": 9,
+              "implementation_edits": 9
+            },
+            "first_reference_command": 2,
+            "first_implementation_command": 11,
+            "notes": []
+          }
+        },
+        {
+          "root": "reports/programbench_upper_bound_runs_arch_plan",
+          "task": "multiprocessio__dsq.c3ae0ba",
+          "variant": "baseline",
+          "status": "Submitted?",
+          "eval": {
+            "eval_exists": true,
+            "score": 0.0,
+            "passed": 0,
+            "total": 542,
+            "error_code": "compile_failed",
+            "failure_categories": {
+              "runtime/build": 543,
+              "stdin/file/io": 160,
+              "format/query/parsing": 304,
+              "flags/help/usage": 106,
+              "edge/order/unicode": 92,
+              "stdout/stderr/exit": 9
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 51,
+            "commands": 24,
+            "api_calls": 24,
+            "cost": 0.31768845,
+            "route": "python->go->python",
+            "metrics": {
+              "reference_runs": 7,
+              "help_docs": 7,
+              "invalid_error_probes": 38,
+              "stdin_probes": 74,
+              "file_probes": 61,
+              "dependency_attempts": 15,
+              "compile_calls": 27,
+              "implementation_edits": 11
+            },
+            "first_reference_command": 4,
+            "first_implementation_command": 6,
+            "notes": [
+              "tried unavailable external dependencies",
+              "implementation started very early"
+            ]
+          }
+        },
+        {
+          "root": "reports/programbench_upper_bound_runs_arch_plan",
+          "task": "multiprocessio__dsq.c3ae0ba",
+          "variant": "oracle_spec",
+          "status": "Submitted",
+          "eval": {
+            "eval_exists": true,
+            "score": 62.18,
+            "passed": 337,
+            "total": 542,
+            "error_code": null,
+            "failure_categories": {
+              "flags/help/usage": 44,
+              "stdin/file/io": 94,
+              "stdout/stderr/exit": 146,
+              "format/query/parsing": 161,
+              "edge/order/unicode": 60,
+              "runtime/build": 5,
+              "other": 5
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 90,
+            "commands": 44,
+            "api_calls": 44,
+            "cost": 0.4935876,
+            "route": "python",
+            "metrics": {
+              "reference_runs": 34,
+              "help_docs": 7,
+              "invalid_error_probes": 30,
+              "stdin_probes": 23,
+              "file_probes": 72,
+              "dependency_attempts": 2,
+              "compile_calls": 3,
+              "implementation_edits": 11
+            },
+            "first_reference_command": 3,
+            "first_implementation_command": 6,
+            "notes": [
+              "tried unavailable external dependencies"
+            ]
+          }
+        },
+        {
+          "root": "reports/programbench_upper_bound_runs_arch_plan",
+          "task": "rs__jplot.2a54bcc",
+          "variant": "baseline",
+          "status": "Submitted?",
+          "eval": {
+            "eval_exists": false,
+            "score": null,
+            "passed": 0,
+            "total": 0,
+            "error_code": "missing_eval_json",
+            "failure_categories": {
+              "missing_eval_json": 1
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 58,
+            "commands": 28,
+            "api_calls": 28,
+            "cost": 0.26145705,
+            "route": "go->shell->go->shell",
+            "metrics": {
+              "reference_runs": 7,
+              "help_docs": 10,
+              "invalid_error_probes": 11,
+              "stdin_probes": 21,
+              "file_probes": 18,
+              "dependency_attempts": 2,
+              "compile_calls": 11,
+              "implementation_edits": 9
+            },
+            "first_reference_command": 4,
+            "first_implementation_command": 11,
+            "notes": [
+              "tried unavailable external dependencies"
+            ]
+          }
+        },
+        {
+          "root": "reports/programbench_upper_bound_runs_arch_plan",
+          "task": "rs__jplot.2a54bcc",
+          "variant": "oracle_spec",
+          "status": "Submitted",
+          "eval": {
+            "eval_exists": true,
+            "score": 19.9,
+            "passed": 116,
+            "total": 583,
+            "error_code": null,
+            "failure_categories": {
+              "stdin/file/io": 310,
+              "stdout/stderr/exit": 427,
+              "format/query/parsing": 205,
+              "edge/order/unicode": 121,
+              "flags/help/usage": 164,
+              "runtime/build": 31,
+              "other": 8
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 100,
+            "commands": 49,
+            "api_calls": 49,
+            "cost": 0.74684355,
+            "route": "python->shell->python->shell",
+            "metrics": {
+              "reference_runs": 28,
+              "help_docs": 20,
+              "invalid_error_probes": 187,
+              "stdin_probes": 40,
+              "file_probes": 22,
+              "dependency_attempts": 0,
+              "compile_calls": 3,
+              "implementation_edits": 11
+            },
+            "first_reference_command": 3,
+            "first_implementation_command": 18,
+            "notes": []
+          }
+        }
+      ],
+      "pairs": [
+        {
+          "task": "sclevine__yj.8016400",
+          "baseline_score": 31.55,
+          "scaffold_score": 52.8,
+          "delta": 21.25,
+          "baseline_failure_hypothesis": "spent budget on external dependencies",
+          "scaffold_effect_hypothesis": "score improved by 21.25 points; implementation route changed: go->shell->go -> go; reduced external dependency attempts; more reference probing"
+        },
+        {
+          "task": "multiprocessio__dsq.c3ae0ba",
+          "baseline_score": 0.0,
+          "scaffold_score": 62.18,
+          "delta": 62.18,
+          "baseline_failure_hypothesis": "eval error: compile_failed; spent budget on external dependencies",
+          "scaffold_effect_hypothesis": "score improved by 62.18 points; implementation route changed: python->go->python -> python; reduced external dependency attempts; more reference probing; more direct compile/implementation path"
+        },
+        {
+          "task": "rs__jplot.2a54bcc",
+          "baseline_score": null,
+          "scaffold_score": 19.9,
+          "delta": null,
+          "baseline_failure_hypothesis": "eval error: missing_eval_json; spent budget on external dependencies",
+          "scaffold_effect_hypothesis": "implementation route changed: go->shell->go->shell -> python->shell->python->shell; reduced external dependency attempts; more reference probing"
+        }
+      ]
+    },
+    {
+      "root": "reports/programbench_upper_bound_runs_jplot_timeout_plan",
+      "rows": [
+        {
+          "root": "reports/programbench_upper_bound_runs_jplot_timeout_plan",
+          "task": "rs__jplot.2a54bcc",
+          "variant": "baseline",
+          "status": "Submitted?",
+          "eval": {
+            "eval_exists": false,
+            "score": null,
+            "passed": 0,
+            "total": 0,
+            "error_code": "missing_eval_json",
+            "failure_categories": {
+              "missing_eval_json": 1
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 58,
+            "commands": 28,
+            "api_calls": 28,
+            "cost": 0.26145705,
+            "route": "go->shell->go->shell",
+            "metrics": {
+              "reference_runs": 7,
+              "help_docs": 10,
+              "invalid_error_probes": 11,
+              "stdin_probes": 21,
+              "file_probes": 18,
+              "dependency_attempts": 2,
+              "compile_calls": 11,
+              "implementation_edits": 9
+            },
+            "first_reference_command": 4,
+            "first_implementation_command": 11,
+            "notes": [
+              "tried unavailable external dependencies"
+            ]
+          }
+        },
+        {
+          "root": "reports/programbench_upper_bound_runs_jplot_timeout_plan",
+          "task": "rs__jplot.2a54bcc",
+          "variant": "oracle_spec",
+          "status": "Submitted",
+          "eval": {
+            "eval_exists": true,
+            "score": 41.68,
+            "passed": 243,
+            "total": 583,
+            "error_code": null,
+            "failure_categories": {
+              "stdin/file/io": 221,
+              "stdout/stderr/exit": 309,
+              "format/query/parsing": 144,
+              "edge/order/unicode": 102,
+              "flags/help/usage": 68,
+              "runtime/build": 32,
+              "other": 8
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 92,
+            "commands": 45,
+            "api_calls": 45,
+            "cost": 0.4333272,
+            "route": "go",
+            "metrics": {
+              "reference_runs": 24,
+              "help_docs": 17,
+              "invalid_error_probes": 31,
+              "stdin_probes": 54,
+              "file_probes": 24,
+              "dependency_attempts": 0,
+              "compile_calls": 4,
+              "implementation_edits": 5
+            },
+            "first_reference_command": 3,
+            "first_implementation_command": 18,
+            "notes": []
+          }
+        }
+      ],
+      "pairs": [
+        {
+          "task": "rs__jplot.2a54bcc",
+          "baseline_score": null,
+          "scaffold_score": 41.68,
+          "delta": null,
+          "baseline_failure_hypothesis": "eval error: missing_eval_json; spent budget on external dependencies",
+          "scaffold_effect_hypothesis": "implementation route changed: go->shell->go->shell -> go; reduced external dependency attempts; more reference probing"
+        }
+      ]
+    },
+    {
+      "root": "reports/programbench_upper_bound_runs_more_tasks",
+      "rows": [
+        {
+          "root": "reports/programbench_upper_bound_runs_more_tasks",
+          "task": "cmatsuoka__figlet.202a0a8",
+          "variant": "baseline",
+          "status": "Submitted",
+          "eval": {
+            "eval_exists": false,
+            "score": null,
+            "passed": 0,
+            "total": 0,
+            "error_code": "missing_eval_json",
+            "failure_categories": {
+              "missing_eval_json": 1
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 60,
+            "commands": 29,
+            "api_calls": 29,
+            "cost": 0.26903715,
+            "route": "c->shell",
+            "metrics": {
+              "reference_runs": 18,
+              "help_docs": 6,
+              "invalid_error_probes": 1,
+              "stdin_probes": 94,
+              "file_probes": 7,
+              "dependency_attempts": 0,
+              "compile_calls": 5,
+              "implementation_edits": 6
+            },
+            "first_reference_command": 4,
+            "first_implementation_command": 15,
+            "notes": []
+          }
+        },
+        {
+          "root": "reports/programbench_upper_bound_runs_more_tasks",
+          "task": "cmatsuoka__figlet.202a0a8",
+          "variant": "oracle_spec",
+          "status": "Submitted",
+          "eval": {
+            "eval_exists": false,
+            "score": null,
+            "passed": 0,
+            "total": 0,
+            "error_code": "missing_eval_json",
+            "failure_categories": {
+              "missing_eval_json": 1
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 98,
+            "commands": 48,
+            "api_calls": 48,
+            "cost": 0.7051876499999999,
+            "route": "c",
+            "metrics": {
+              "reference_runs": 36,
+              "help_docs": 6,
+              "invalid_error_probes": 7,
+              "stdin_probes": 180,
+              "file_probes": 22,
+              "dependency_attempts": 0,
+              "compile_calls": 6,
+              "implementation_edits": 9
+            },
+            "first_reference_command": 2,
+            "first_implementation_command": 20,
+            "notes": []
+          }
+        },
+        {
+          "root": "reports/programbench_upper_bound_runs_more_tasks",
+          "task": "sirwart__ripsecrets.34c9e03",
+          "variant": "baseline",
+          "status": "Submitted",
+          "eval": {
+            "eval_exists": true,
+            "score": 39.61,
+            "passed": 242,
+            "total": 611,
+            "error_code": null,
+            "failure_categories": {
+              "flags/help/usage": 38,
+              "stdin/file/io": 288,
+              "stdout/stderr/exit": 340,
+              "format/query/parsing": 238,
+              "edge/order/unicode": 66,
+              "runtime/build": 20,
+              "other": 1
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 62,
+            "commands": 30,
+            "api_calls": 30,
+            "cost": 0.30039795,
+            "route": "python->rust->python->shell",
+            "metrics": {
+              "reference_runs": 3,
+              "help_docs": 5,
+              "invalid_error_probes": 10,
+              "stdin_probes": 31,
+              "file_probes": 52,
+              "dependency_attempts": 1,
+              "compile_calls": 5,
+              "implementation_edits": 18
+            },
+            "first_reference_command": 3,
+            "first_implementation_command": 5,
+            "notes": [
+              "limited reference probing",
+              "tried unavailable external dependencies",
+              "implementation started very early"
+            ]
+          }
+        },
+        {
+          "root": "reports/programbench_upper_bound_runs_more_tasks",
+          "task": "sirwart__ripsecrets.34c9e03",
+          "variant": "oracle_spec",
+          "status": "Submitted",
+          "eval": {
+            "eval_exists": true,
+            "score": 72.5,
+            "passed": 443,
+            "total": 611,
+            "error_code": null,
+            "failure_categories": {
+              "flags/help/usage": 21,
+              "stdin/file/io": 127,
+              "stdout/stderr/exit": 158,
+              "format/query/parsing": 82,
+              "edge/order/unicode": 18,
+              "runtime/build": 5
+            }
+          },
+          "trajectory": {
+            "traj_exists": true,
+            "messages": 100,
+            "commands": 49,
+            "api_calls": 49,
+            "cost": 0.4952901,
+            "route": "python",
+            "metrics": {
+              "reference_runs": 35,
+              "help_docs": 12,
+              "invalid_error_probes": 25,
+              "stdin_probes": 41,
+              "file_probes": 72,
+              "dependency_attempts": 0,
+              "compile_calls": 7,
+              "implementation_edits": 9
+            },
+            "first_reference_command": 3,
+            "first_implementation_command": 22,
+            "notes": []
+          }
+        }
+      ],
+      "pairs": [
+        {
+          "task": "cmatsuoka__figlet.202a0a8",
+          "baseline_score": null,
+          "scaffold_score": null,
+          "delta": null,
+          "baseline_failure_hypothesis": "eval error: missing_eval_json",
+          "scaffold_effect_hypothesis": "implementation route changed: c->shell -> c; more reference probing"
+        },
+        {
+          "task": "sirwart__ripsecrets.34c9e03",
+          "baseline_score": 39.61,
+          "scaffold_score": 72.5,
+          "delta": 32.89,
+          "baseline_failure_hypothesis": "spent budget on external dependencies; weak reference executable exploration",
+          "scaffold_effect_hypothesis": "score improved by 32.89 points; implementation route changed: python->rust->python->shell -> python; reduced external dependency attempts; more reference probing"
+        }
+      ]
+    }
+  ]
+}

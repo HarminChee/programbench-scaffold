@@ -1,0 +1,513 @@
+{
+  "setting": "greenfield test-only executable-spec scaffold",
+  "tasks": [
+    {
+      "task": "sirwart__ripsecrets.34c9e03",
+      "lang": "rs",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/ripsecrets_test_only/sirwart__ripsecrets.34c9e03",
+      "status": "LimitsExceeded",
+      "cost": 0.30187319999999995,
+      "api_calls": 21,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/ripsecrets_test_only/sirwart__ripsecrets.34c9e03/sirwart__ripsecrets.34c9e03.eval.json",
+        "passed": 408,
+        "total": 611,
+        "score": 66.77577741407529,
+        "rounded": 67,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_upper_bound_runs_more_tasks/baseline/sirwart__ripsecrets.34c9e03/sirwart__ripsecrets.34c9e03.eval.json",
+        "passed": 242,
+        "total": 611,
+        "score": 39.60720130932897,
+        "rounded": 40,
+        "error_code": null,
+        "warnings": 0
+      },
+      "compact_spec": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_upper_bound_runs_more_tasks/oracle_spec/sirwart__ripsecrets.34c9e03/sirwart__ripsecrets.34c9e03.eval.json",
+        "passed": 443,
+        "total": 611,
+        "score": 72.50409165302783,
+        "rounded": 73,
+        "error_code": null,
+        "warnings": 0
+      },
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 45,
+        "commands": 21,
+        "api_calls": 21,
+        "cost": 0.30187319999999995,
+        "route": "rust->shell->python->shell",
+        "metrics": {
+          "reference_runs": 3,
+          "help_docs": 7,
+          "invalid_error_probes": 10,
+          "stdin_probes": 19,
+          "file_probes": 32,
+          "dependency_attempts": 1,
+          "compile_calls": 4,
+          "implementation_edits": 9
+        },
+        "first_reference_command": 12,
+        "first_implementation_command": 9,
+        "notes": [
+          "limited reference probing",
+          "tried unavailable external dependencies",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "budget/status=LimitsExceeded; external dependency attempts; test scaffold exposed useful behavior"
+    },
+    {
+      "task": "wfxr__csview.8ac4de0",
+      "lang": "rs",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/csview_test_only/wfxr__csview.8ac4de0",
+      "status": "Submitted",
+      "cost": 0.3090315,
+      "api_calls": 29,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/csview_test_only/wfxr__csview.8ac4de0/wfxr__csview.8ac4de0.eval.json",
+        "passed": 258,
+        "total": 335,
+        "score": 77.01492537313432,
+        "rounded": 77,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": null,
+      "compact_spec": null,
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 60,
+        "commands": 29,
+        "api_calls": 29,
+        "cost": 0.3090315,
+        "route": "rust->shell->python->shell->python",
+        "metrics": {
+          "reference_runs": 4,
+          "help_docs": 13,
+          "invalid_error_probes": 18,
+          "stdin_probes": 42,
+          "file_probes": 19,
+          "dependency_attempts": 3,
+          "compile_calls": 2,
+          "implementation_edits": 8
+        },
+        "first_reference_command": 18,
+        "first_implementation_command": 16,
+        "notes": [
+          "limited reference probing",
+          "tried unavailable external dependencies",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "external dependency attempts; test scaffold exposed useful behavior"
+    },
+    {
+      "task": "wfxr__code-minimap.0ddeea5",
+      "lang": "rs",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/code_minimap_test_only/wfxr__code-minimap.0ddeea5",
+      "status": "LimitsExceeded",
+      "cost": 0.31553355,
+      "api_calls": 25,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/code_minimap_test_only/wfxr__code-minimap.0ddeea5/wfxr__code-minimap.0ddeea5.eval.json",
+        "passed": 73,
+        "total": 313,
+        "score": 23.322683706070286,
+        "rounded": 23,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": null,
+      "compact_spec": null,
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 53,
+        "commands": 25,
+        "api_calls": 25,
+        "cost": 0.31553355,
+        "route": "python",
+        "metrics": {
+          "reference_runs": 4,
+          "help_docs": 25,
+          "invalid_error_probes": 34,
+          "stdin_probes": 26,
+          "file_probes": 23,
+          "dependency_attempts": 0,
+          "compile_calls": 3,
+          "implementation_edits": 6
+        },
+        "first_reference_command": 15,
+        "first_implementation_command": 12,
+        "notes": [
+          "limited reference probing",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "budget/status=LimitsExceeded; complex hidden behavior remains uncovered"
+    },
+    {
+      "task": "clog-tool__clog-cli.7066cba",
+      "lang": "rs",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/clog_cli_test_only/clog-tool__clog-cli.7066cba",
+      "status": "LimitsExceeded",
+      "cost": 0.3124104,
+      "api_calls": 22,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/clog_cli_test_only/clog-tool__clog-cli.7066cba/clog-tool__clog-cli.7066cba.eval.json",
+        "passed": 97,
+        "total": 575,
+        "score": 16.869565217391305,
+        "rounded": 17,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": null,
+      "compact_spec": null,
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 47,
+        "commands": 22,
+        "api_calls": 22,
+        "cost": 0.3124104,
+        "route": "rust->shell->rust",
+        "metrics": {
+          "reference_runs": 0,
+          "help_docs": 10,
+          "invalid_error_probes": 25,
+          "stdin_probes": 76,
+          "file_probes": 58,
+          "dependency_attempts": 2,
+          "compile_calls": 2,
+          "implementation_edits": 6
+        },
+        "first_reference_command": null,
+        "first_implementation_command": 13,
+        "notes": [
+          "limited reference probing",
+          "tried unavailable external dependencies",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "budget/status=LimitsExceeded; external dependency attempts; complex hidden behavior remains uncovered"
+    },
+    {
+      "task": "drew-alleman__datasurgeon.d257cee",
+      "lang": "rs",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/datasurgeon_test_only/drew-alleman__datasurgeon.d257cee",
+      "status": "LimitsExceeded",
+      "cost": 0.3029208,
+      "api_calls": 26,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/datasurgeon_test_only/drew-alleman__datasurgeon.d257cee/drew-alleman__datasurgeon.d257cee.eval.json",
+        "passed": 184,
+        "total": 502,
+        "score": 36.65338645418327,
+        "rounded": 37,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": null,
+      "compact_spec": null,
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 55,
+        "commands": 26,
+        "api_calls": 26,
+        "cost": 0.3029208,
+        "route": "python",
+        "metrics": {
+          "reference_runs": 2,
+          "help_docs": 11,
+          "invalid_error_probes": 21,
+          "stdin_probes": 5,
+          "file_probes": 36,
+          "dependency_attempts": 0,
+          "compile_calls": 2,
+          "implementation_edits": 5
+        },
+        "first_reference_command": 17,
+        "first_implementation_command": 14,
+        "notes": [
+          "limited reference probing",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "budget/status=LimitsExceeded; partial CLI/core behavior only"
+    },
+    {
+      "task": "sclevine__yj.8016400",
+      "lang": "go",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/yj_test_only/sclevine__yj.8016400",
+      "status": "LimitsExceeded",
+      "cost": 0.27263835000000003,
+      "api_calls": 30,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/yj_test_only/sclevine__yj.8016400/sclevine__yj.8016400.eval.json",
+        "passed": 246,
+        "total": 767,
+        "score": 32.07301173402868,
+        "rounded": 32,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_upper_bound_runs_arch_plan/baseline/sclevine__yj.8016400/sclevine__yj.8016400.eval.json",
+        "passed": 242,
+        "total": 767,
+        "score": 31.55149934810952,
+        "rounded": 32,
+        "error_code": null,
+        "warnings": 0
+      },
+      "compact_spec": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_upper_bound_runs_arch_plan/oracle_spec/sclevine__yj.8016400/sclevine__yj.8016400.eval.json",
+        "passed": 405,
+        "total": 767,
+        "score": 52.803129074315514,
+        "rounded": 53,
+        "error_code": null,
+        "warnings": 0
+      },
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 62,
+        "commands": 29,
+        "api_calls": 30,
+        "cost": 0.27263835000000003,
+        "route": "go->shell",
+        "metrics": {
+          "reference_runs": 2,
+          "help_docs": 9,
+          "invalid_error_probes": 47,
+          "stdin_probes": 15,
+          "file_probes": 25,
+          "dependency_attempts": 11,
+          "compile_calls": 7,
+          "implementation_edits": 8
+        },
+        "first_reference_command": 28,
+        "first_implementation_command": 14,
+        "notes": [
+          "limited reference probing",
+          "tried unavailable external dependencies",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "budget/status=LimitsExceeded; external dependency attempts; partial CLI/core behavior only"
+    },
+    {
+      "task": "multiprocessio__dsq.c3ae0ba",
+      "lang": "go",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/dsq_test_only/multiprocessio__dsq.c3ae0ba",
+      "status": "Submitted",
+      "cost": 0.23953154999999998,
+      "api_calls": 29,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/dsq_test_only/multiprocessio__dsq.c3ae0ba/multiprocessio__dsq.c3ae0ba.eval.json",
+        "passed": 301,
+        "total": 542,
+        "score": 55.535055350553506,
+        "rounded": 56,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_upper_bound_runs_arch_plan/baseline/multiprocessio__dsq.c3ae0ba/multiprocessio__dsq.c3ae0ba.eval.json",
+        "passed": 0,
+        "total": 542,
+        "score": 0.0,
+        "rounded": 0,
+        "error_code": "compile_failed",
+        "warnings": 0
+      },
+      "compact_spec": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_upper_bound_runs_arch_plan/oracle_spec/multiprocessio__dsq.c3ae0ba/multiprocessio__dsq.c3ae0ba.eval.json",
+        "passed": 337,
+        "total": 542,
+        "score": 62.17712177121771,
+        "rounded": 62,
+        "error_code": null,
+        "warnings": 0
+      },
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 60,
+        "commands": 29,
+        "api_calls": 29,
+        "cost": 0.23953154999999998,
+        "route": "python->shell->python",
+        "metrics": {
+          "reference_runs": 6,
+          "help_docs": 9,
+          "invalid_error_probes": 8,
+          "stdin_probes": 4,
+          "file_probes": 28,
+          "dependency_attempts": 1,
+          "compile_calls": 2,
+          "implementation_edits": 4
+        },
+        "first_reference_command": 17,
+        "first_implementation_command": 14,
+        "notes": [
+          "tried unavailable external dependencies",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "external dependency attempts; test scaffold exposed useful behavior"
+    },
+    {
+      "task": "rs__jplot.2a54bcc",
+      "lang": "go",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/jplot_test_only/rs__jplot.2a54bcc",
+      "status": "Submitted",
+      "cost": 0.29081730000000006,
+      "api_calls": 29,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/jplot_test_only/rs__jplot.2a54bcc/rs__jplot.2a54bcc.eval.json",
+        "passed": 401,
+        "total": 583,
+        "score": 68.78216123499142,
+        "rounded": 69,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": null,
+      "compact_spec": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_upper_bound_runs_arch_plan/oracle_spec/rs__jplot.2a54bcc/rs__jplot.2a54bcc.eval.json",
+        "passed": 116,
+        "total": 583,
+        "score": 19.897084048027445,
+        "rounded": 20,
+        "error_code": null,
+        "warnings": 0
+      },
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 60,
+        "commands": 29,
+        "api_calls": 29,
+        "cost": 0.29081730000000006,
+        "route": "go->shell->go",
+        "metrics": {
+          "reference_runs": 2,
+          "help_docs": 14,
+          "invalid_error_probes": 7,
+          "stdin_probes": 13,
+          "file_probes": 32,
+          "dependency_attempts": 0,
+          "compile_calls": 8,
+          "implementation_edits": 7
+        },
+        "first_reference_command": 16,
+        "first_implementation_command": 13,
+        "notes": [
+          "limited reference probing",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "test scaffold exposed useful behavior"
+    },
+    {
+      "task": "cmatsuoka__figlet.202a0a8",
+      "lang": "c",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/figlet_test_only/cmatsuoka__figlet.202a0a8",
+      "status": "Submitted",
+      "cost": 0.24595289999999995,
+      "api_calls": 29,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/figlet_test_only/cmatsuoka__figlet.202a0a8/cmatsuoka__figlet.202a0a8.eval.json",
+        "passed": 144,
+        "total": 872,
+        "score": 16.51376146788991,
+        "rounded": 17,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": null,
+      "compact_spec": null,
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 60,
+        "commands": 29,
+        "api_calls": 29,
+        "cost": 0.24595289999999995,
+        "route": "c->shell",
+        "metrics": {
+          "reference_runs": 2,
+          "help_docs": 6,
+          "invalid_error_probes": 7,
+          "stdin_probes": 46,
+          "file_probes": 16,
+          "dependency_attempts": 0,
+          "compile_calls": 3,
+          "implementation_edits": 4
+        },
+        "first_reference_command": 18,
+        "first_implementation_command": 15,
+        "notes": [
+          "limited reference probing",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "complex hidden behavior remains uncovered"
+    },
+    {
+      "task": "cslarsen__jp2a.61d205f",
+      "lang": "c",
+      "run_dir": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/jp2a_test_only/cslarsen__jp2a.61d205f",
+      "status": "Submitted",
+      "cost": 0.24949755,
+      "api_calls": 29,
+      "test_only": {
+        "path": "/Users/harmin/Desktop/programbench/reports/programbench_greenfield_test_runs/jp2a_test_only/cslarsen__jp2a.61d205f/cslarsen__jp2a.61d205f.eval.json",
+        "passed": 90,
+        "total": 631,
+        "score": 14.263074484944532,
+        "rounded": 14,
+        "error_code": null,
+        "warnings": 0
+      },
+      "baseline": null,
+      "compact_spec": null,
+      "trajectory": {
+        "traj_exists": true,
+        "messages": 60,
+        "commands": 29,
+        "api_calls": 29,
+        "cost": 0.24949755,
+        "route": "c->shell",
+        "metrics": {
+          "reference_runs": 3,
+          "help_docs": 12,
+          "invalid_error_probes": 6,
+          "stdin_probes": 72,
+          "file_probes": 20,
+          "dependency_attempts": 2,
+          "compile_calls": 1,
+          "implementation_edits": 4
+        },
+        "first_reference_command": 23,
+        "first_implementation_command": 20,
+        "notes": [
+          "limited reference probing",
+          "tried unavailable external dependencies",
+          "implementation started very early"
+        ]
+      },
+      "failure_hypothesis": "external dependency attempts; complex hidden behavior remains uncovered"
+    }
+  ],
+  "aggregate": {
+    "n_tasks": 10,
+    "avg_score": 40.78034024372626,
+    "avg_cost": 0.28402070999999995,
+    "submitted": 5,
+    "limits_exceeded": 5
+  }
+}

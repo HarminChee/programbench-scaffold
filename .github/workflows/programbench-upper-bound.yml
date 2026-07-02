@@ -1,0 +1,120 @@
+name: ProgramBench Upper-Bound Experiment
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_ids:
+        description: "Space-separated ProgramBench task ids"
+        required: true
+        default: "sclevine__yj.8016400"
+      model:
+        description: "LiteLLM model name used by mini-swe-agent"
+        required: true
+        default: "bedrock/arn:aws:bedrock:us-west-2:497589205881:inference-profile/us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+      stage:
+        description: "Which stage to run"
+        required: true
+        type: choice
+        options:
+          - prepare
+          - agent
+          - eval
+          - compare
+          - all
+        default: "all"
+
+jobs:
+  upper-bound:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_REGION: ${{ secrets.AWS_REGION || 'us-west-2' }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION || 'us-west-2' }}
+      CLAUDE_CODE_USE_BEDROCK: "1"
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      TASK_IDS: ${{ inputs.task_ids }}
+      MODEL_NAME: ${{ inputs.model }}
+      STAGE: ${{ inputs.stage }}
+
+    steps:
+      - name: Check out workspace
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        shell: bash
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Ensure ProgramBench source exists
+        shell: bash
+        run: |
+          if [ ! -f external/ProgramBench/pyproject.toml ]; then
+            mkdir -p external
+            git clone https://github.com/facebookresearch/ProgramBench.git external/ProgramBench
+          fi
+
+      - name: Environment smoke
+        shell: bash
+        run: |
+          uname -a
+          docker version
+          docker run --rm --platform linux/amd64 alpine:3.20 uname -m
+          cd external/ProgramBench
+          uv run programbench --help
+          uv run --with mini-swe-agent --with boto3 mini-extra programbench --help
+
+      - name: Prepare oracle specs and blobs
+        if: ${{ inputs.stage == 'prepare' || inputs.stage == 'all' }}
+        shell: bash
+        run: |
+          python3 tools/programbench_run_upper_bound.py \
+            --stage prepare \
+            --tasks $TASK_IDS \
+            --model "$MODEL_NAME" \
+            --runtime-config configs/programbench_ci_smoke.yaml
+
+      - name: Run baseline and oracle-spec agents
+        if: ${{ inputs.stage == 'agent' || inputs.stage == 'all' }}
+        shell: bash
+        run: |
+          python3 tools/programbench_run_upper_bound.py \
+            --stage agent \
+            --tasks $TASK_IDS \
+            --model "$MODEL_NAME" \
+            --runtime-config configs/programbench_ci_smoke.yaml \
+            --yes-run-agent
+
+      - name: Evaluate submissions
+        if: ${{ inputs.stage == 'eval' || inputs.stage == 'all' }}
+        shell: bash
+        run: |
+          python3 tools/programbench_run_upper_bound.py \
+            --stage eval \
+            --tasks $TASK_IDS \
+            --model "$MODEL_NAME" \
+            --runtime-config configs/programbench_ci_smoke.yaml
+
+      - name: Compare upper-bound results
+        if: ${{ always() && (inputs.stage == 'compare' || inputs.stage == 'eval' || inputs.stage == 'all') }}
+        shell: bash
+        run: |
+          python3 tools/programbench_compare_upper_bound.py --tasks $TASK_IDS
+
+      - name: Upload reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: programbench-upper-bound-reports
+          path: |
+            reports/programbench_upper_bound_runs/
+            reports/oracle_specs/
+            reports/programbench_task_selection.md
+            reports/programbench_short_term_execution_plan_2026-06-24.md
+          if-no-files-found: warn

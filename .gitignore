@@ -1,0 +1,29 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+dist/
+build/
+*.egg-info/
+
+# Local upstream checkout and generated benchmark artifacts.
+external/
+reports/test_bundles/
+reports/test_bundles_smoke/
+reports/programbench_greenfield_test_runs/
+reports/programbench_upper_bound_runs*/
+reports/programbench_eval_smoke/
+reports/miniswe_programbench_yj_baseline_smoke/
+reports/programbench_greenfield_dryrun/
+reports/oracle_specs/
+reports/oracle_specs_arch_plan/
+reports/oracle_specs_compact/
+
+# Generated exploratory JSON artifacts.
+reports/programbench_behavior_probe_*.json
+reports/programbench_behavior_summary_*.json
+reports/programbench_*probe_cases*.json
+reports/programbench_task_inspection.json
+
+# Large run payloads should stay local unless explicitly curated.
+*.tar.gz
