@@ -18,6 +18,10 @@ reports/programbench_greenfield_dryrun/
 reports/oracle_specs/
 reports/oracle_specs_arch_plan/
 reports/oracle_specs_compact/
+reports/programbench_original_baseline_10task_2026-07-02/
+reports/programbench_mined_scaffold_pilot_2026-07-02/
+reports/mined_specs_smoke/*.json
+reports/mined_specs_smoke/*.yaml
 
 # Generated exploratory JSON artifacts.
 reports/programbench_behavior_probe_*.json
