@@ -1,0 +1,45 @@
+Sanitized Oracle Tests
+
+The sanitized oracle tests retain the following components:
+
+Retained Content | Description runnable tests | Pytest test files under
+eval/tests/** test harness | eval/run.sh, eval/README.md fixtures /
+input files | testdata/**, fixtures/**, examples/**, samples/**,
+resources/**, assets/** expected behavior | Not stored as standalone
+JSON files; instead preserved through pytest assertions and fixture
+files branch / test directory structure |
+oracle_tests/branches/<branch_id>/...
+
+The sanitization process removes the following:
+
+Removed Content | Description source code contents | Implementation
+source files such as .go, .rs, .c, .h, .cpp, etc. build metadata |
+Build-related files such as Cargo.toml, go.mod, Makefile, Dockerfile,
+build.sh, etc. broad project directories | Directories outside the
+test/fixture allowlist unsafe / non-regular tar entries | Removed to
+prevent unsafe tar path issues final submission leakage |
+submission.tar.gz must not contain oracle_tests, .git, or the original
+executable
+
+Sanitization Statistics
+
+Across all 10 tasks:
+
+Active branches: 91 Official active (non-ignored) test cases: 5,731
+Total test entries across active branches: 7,065 Ignored test entries:
+1,334 Sanitized included files: 4,445 Sanitized excluded files: 4,191
+Copied pytest files: 408 Copied fixture files: 3,838 Copied harness
+files: 159
+
+Task | Official Active Tests | Included Files | Excluded Files | Copied
+Pytest Files | Copied Fixtures ripsecrets | 611 | 338 | 641 | 51 | 270
+csview | 335 | 260 | 256 | 15 | 223 code-minimap | 313 | 225 | 264 | 27
+| 176 clog-cli | 575 | 284 | 260 | 41 | 223 datasurgeon | 502 | 313 |
+249 | 28 | 271 yj | 767 | 580 | 317 | 42 | 523 dsq | 542 | 439 | 363 |
+51 | 371 jplot | 583 | 139 | 309 | 66 | 54 figlet | 872 | 1077 | 1116 |
+48 | 996 jp2a | 631 | 790 | 416 | 39 | 731
+
+Summary of Exclusion Reasons
+
+Outside allowed test paths: 2,003 Not a regular file: 978 Build / source
+metadata: 251 Source-like files: 959
