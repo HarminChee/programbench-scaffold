@@ -208,17 +208,21 @@ def shell_command(
     return run_command(["bash", "-lc", command], cwd=cwd, timeout=timeout, log_path=log_path)
 
 
-def clone_or_update(candidate: dict[str, Any], repo_dir: Path, log_dir: Path, timeout: int) -> dict[str, Any]:
+def clone_or_update(
+    candidate: dict[str, Any],
+    repo_dir: Path,
+    log_dir: Path,
+    timeout: int,
+    *,
+    allow_git_fallback: bool,
+) -> dict[str, Any]:
     if repo_dir.exists():
         shutil.rmtree(repo_dir)
     archive = log_dir / "source_archive.tar.gz"
     archive_url = f"https://codeload.github.com/{candidate['repository']}/tar.gz/{candidate['commit']}"
-    download = (
-        download_github_archive(candidate, archive, timeout=timeout, log_path=log_dir / "download_archive_gh_api.json")
-        if command_available("gh")
-        else {"returncode": 1, "status": "skipped", "reason": "gh not available"}
-    )
-    if download["returncode"] != 0:
+    if command_available("gh"):
+        download = download_github_archive(candidate, archive, timeout=timeout, log_path=log_dir / "download_archive_gh_api.json")
+    else:
         download = download_url(archive_url, archive, timeout=timeout, log_path=log_dir / "download_archive_url.json")
     if download["returncode"] == 0:
         try:
@@ -239,6 +243,16 @@ def clone_or_update(candidate: dict[str, Any], repo_dir: Path, log_dir: Path, ti
                 "extract_error": repr(exc),
                 "head": None,
             }
+
+    if not allow_git_fallback:
+        return {
+            "status": "fail",
+            "method": "github_archive",
+            "archive_url": archive_url,
+            "download": download,
+            "head": None,
+            "reason": "archive download failed and git fallback disabled",
+        }
 
     repo_dir.mkdir(parents=True, exist_ok=True)
     init = run_command(["git", "init"], cwd=repo_dir, timeout=30, log_path=log_dir / "git_init.json")
@@ -397,13 +411,14 @@ def run_candidate(
     build_timeout: int,
     test_timeout: int,
     smoke_timeout: int,
+    allow_git_fallback: bool,
 ) -> dict[str, Any]:
     instance_id = slug_for_repo(candidate["repository"], candidate["commit"])
     repo_dir = work_root / instance_id / "repo"
     log_dir = output_root / instance_id / "logs"
     log_dir.mkdir(parents=True, exist_ok=True)
 
-    clone = clone_or_update(candidate, repo_dir, log_dir, clone_timeout)
+    clone = clone_or_update(candidate, repo_dir, log_dir, clone_timeout, allow_git_fallback=allow_git_fallback)
     docs = docs_manifest(repo_dir) if clone["status"] == "pass" else {"status": "skipped", "paths": []}
 
     build_command = candidate.get("build_command_hint") or ""
@@ -526,6 +541,7 @@ def main() -> int:
     parser.add_argument("--build-timeout", type=int, default=1800)
     parser.add_argument("--test-timeout", type=int, default=1800)
     parser.add_argument("--smoke-timeout", type=int, default=30)
+    parser.add_argument("--allow-git-fallback", action="store_true")
     args = parser.parse_args()
 
     config = read_json(resolve_repo_path(args.config))
@@ -545,6 +561,7 @@ def main() -> int:
             build_timeout=args.build_timeout,
             test_timeout=args.test_timeout,
             smoke_timeout=args.smoke_timeout,
+            allow_git_fallback=args.allow_git_fallback,
         )
         for candidate in config["candidates"]
     ]
