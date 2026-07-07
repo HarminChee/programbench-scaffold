@@ -1,0 +1,86 @@
+name: ProgramBench Gym Dynamic Gates
+
+on:
+  workflow_dispatch:
+    inputs:
+      config:
+        description: "Gym config path"
+        required: true
+        default: "configs/programbench_gym_mvp3.json"
+      output_root:
+        description: "Report/output directory"
+        required: true
+        default: "reports/programbench_gym_dynamic_mvp3"
+      oracle_timeout:
+        description: "Seconds allowed for each oracle-test pass"
+        required: true
+        default: "900"
+      sync_blobs:
+        description: "Download ProgramBench test blobs first"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  dynamic-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
+    steps:
+      - name: Check out workspace
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        shell: bash
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Ensure ProgramBench source exists
+        shell: bash
+        run: |
+          if [ ! -f external/ProgramBench/pyproject.toml ]; then
+            mkdir -p external
+            git clone https://github.com/facebookresearch/ProgramBench.git external/ProgramBench
+          fi
+
+      - name: Linux amd64 Docker smoke
+        shell: bash
+        run: |
+          uname -a
+          docker version
+          docker run --rm --platform linux/amd64 alpine:3.20 uname -m
+          cd external/ProgramBench
+          uv run programbench --help
+
+      - name: Run Gym dynamic gates
+        shell: bash
+        run: |
+          ARGS=(
+            --config "${{ inputs.config }}"
+            --output-root "${{ inputs.output_root }}"
+            --runner docker
+            --prepare-bundles
+            --overwrite
+            --oracle-timeout "${{ inputs.oracle_timeout }}"
+          )
+          if [ "${{ inputs.sync_blobs }}" = "true" ]; then
+            ARGS+=(--sync-blobs)
+          fi
+          python3 tools/programbench_run_gym_dynamic_gates.py "${ARGS[@]}"
+
+      - name: Upload Gym gate reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: programbench-gym-dynamic-gates
+          path: |
+            ${{ inputs.output_root }}/gym_build_summary.json
+            ${{ inputs.output_root }}/gym_dynamic_gate_summary.json
+            ${{ inputs.output_root }}/gym_dynamic_gate_summary.md
+            ${{ inputs.output_root }}/*/quality_report.json
+            ${{ inputs.output_root }}/*/metadata.json
+            ${{ inputs.output_root }}/*/private/dynamic_gate_logs/*.json
+          if-no-files-found: warn

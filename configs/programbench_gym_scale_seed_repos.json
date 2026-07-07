@@ -1,0 +1,21 @@
+{
+  "name": "programbench_gym_scale_seed_repos",
+  "description": "Initial manifest for post-devset GitHub repository scaling. Entries are candidates until the Gym builder validates build, cleanroom, tests, and license gates.",
+  "source_type": "github_repo_candidates",
+  "selection_policy": {
+    "target_count_first_wave": 20,
+    "languages": ["Rust", "Go", "C", "C++"],
+    "preferred_project_shape": "deterministic CLI executable with README/docs and local tests",
+    "required_gates": [
+      "pinned commit",
+      "offline reproducible build",
+      "reference binary smoke pass",
+      "tests pass on reference",
+      "dummy implementation does not pass all tests",
+      "sanitized bundle has no source leakage",
+      "license reviewed"
+    ]
+  },
+  "candidates": []
+}
+

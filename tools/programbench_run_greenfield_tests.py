@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Run ProgramBench with sanitized executable tests injected before coding."""
+"""Run ProgramBench with executable oracle tests injected before coding."""
 
 from __future__ import annotations
 
 import argparse
 import copy
+import datetime as dt
+import hashlib
 import json
 import subprocess
 import time
@@ -14,6 +16,9 @@ from typing import Any
 
 
 _IMAGE_TAG = "task_cleanroom_v6"
+_DOCKER_ADMIN_TIMEOUT_SECONDS = 180
+_SUBMISSION_COPY_TIMEOUT_SECONDS = 300
+_ARCHIVE_VERIFY_TIMEOUT_SECONDS = 120
 
 
 class NullProgressManager:
@@ -35,7 +40,7 @@ def exact_filter(task_id: str) -> str:
     return "^" + task_id.replace(".", r"\.") + "$"
 
 
-def docker_exec_root(env: Any, command: str) -> None:
+def docker_exec_root(env: Any, command: str, *, timeout: int = _DOCKER_ADMIN_TIMEOUT_SECONDS) -> None:
     container_id = getattr(env, "container_id", None)
     executable = getattr(getattr(env, "config", None), "executable", None)
     if not container_id or not executable:
@@ -45,10 +50,11 @@ def docker_exec_root(env: Any, command: str) -> None:
         check=True,
         capture_output=True,
         text=True,
+        timeout=timeout,
     )
 
 
-def docker_cp_into(env: Any, src: Path, dest: str) -> None:
+def docker_cp_into(env: Any, src: Path, dest: str, *, timeout: int = _DOCKER_ADMIN_TIMEOUT_SECONDS) -> None:
     container_id = getattr(env, "container_id", None)
     executable = getattr(getattr(env, "config", None), "executable", None)
     if not container_id or not executable:
@@ -58,12 +64,13 @@ def docker_cp_into(env: Any, src: Path, dest: str) -> None:
         check=True,
         capture_output=True,
         text=True,
+        timeout=timeout,
     )
 
 
 def inject_test_bundle(env: Any, bundle_dir: Path) -> None:
     if not bundle_dir.exists():
-        raise FileNotFoundError(f"Missing sanitized test bundle: {bundle_dir}")
+        raise FileNotFoundError(f"Missing executable oracle-test bundle: {bundle_dir}")
     docker_cp_into(env, bundle_dir, "/workspace/")
     docker_exec_root(
         env,
@@ -99,6 +106,64 @@ def load_config(config_specs: list[Path], *, model: str | None, model_class: str
     return recursive_merge(*configs)
 
 
+def sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def prompt_snapshot(config: dict[str, Any]) -> dict[str, Any]:
+    agent_cfg = config.get("agent", {}) if isinstance(config.get("agent"), dict) else {}
+    system_template = str(agent_cfg.get("system_template", ""))
+    instance_template = str(agent_cfg.get("instance_template", ""))
+    return {
+        "system_template_sha256": sha256_text(system_template),
+        "instance_template_sha256": sha256_text(instance_template),
+        "system_template_chars": len(system_template),
+        "instance_template_chars": len(instance_template),
+        "system_template": system_template,
+        "instance_template": instance_template,
+    }
+
+
+def limit_snapshot(config: dict[str, Any]) -> dict[str, Any]:
+    agent_cfg = config.get("agent", {}) if isinstance(config.get("agent"), dict) else {}
+    env_cfg = config.get("environment", {}) if isinstance(config.get("environment"), dict) else {}
+    return {
+        "step_limit": agent_cfg.get("step_limit"),
+        "cost_limit": agent_cfg.get("cost_limit"),
+        "wall_time_limit_seconds": agent_cfg.get("wall_time_limit_seconds"),
+        "environment_timeout_seconds": env_cfg.get("timeout"),
+        "container_timeout": env_cfg.get("container_timeout"),
+        "docker_run_args": env_cfg.get("run_args"),
+    }
+
+
+def bundle_policy_snapshot(test_bundle_root: Path, task_ids: list[str]) -> dict[str, Any]:
+    tasks: dict[str, Any] = {}
+    modes: set[str] = set()
+    for iid in task_ids:
+        manifest_path = test_bundle_root / iid / "oracle_tests" / "manifest.json"
+        if not manifest_path.exists():
+            tasks[iid] = {"manifest": str(manifest_path), "exists": False}
+            continue
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        modes.add(str(manifest.get("mode", "unknown")))
+        branch_rows = manifest.get("branches") or []
+        tasks[iid] = {
+            "manifest": str(manifest_path),
+            "exists": True,
+            "mode": manifest.get("mode"),
+            "policy": manifest.get("policy"),
+            "branches": len(branch_rows),
+            "included_files": sum(int(row.get("included_count", 0)) for row in branch_rows),
+            "excluded_files": sum(int(row.get("excluded_count", 0)) for row in branch_rows),
+        }
+    return {
+        "name": "oracle-guarded" if modes == {"oracle-guarded"} else ",".join(sorted(modes)) or "unknown",
+        "root": str(test_bundle_root),
+        "tasks": tasks,
+    }
+
+
 def copy_submission(env: Any, dest: Path, *, src: str = "/workspace") -> None:
     container_id = getattr(env, "container_id", None)
     executable = getattr(getattr(env, "config", None), "executable", None)
@@ -112,6 +177,9 @@ def copy_submission(env: Any, dest: Path, *, src: str = "/workspace") -> None:
             "--exclude=./oracle_tests/*",
             "--exclude=./.git",
             "--exclude=./.git/*",
+            "--exclude=./.pytest_cache",
+            "--exclude=./.pytest_cache/*",
+            "--exclude=./executable",
         ]
     )
     env.execute({"command": f"tar {excludes} -czf {container_tar} -C {src} ."})
@@ -120,7 +188,45 @@ def copy_submission(env: Any, dest: Path, *, src: str = "/workspace") -> None:
         check=True,
         capture_output=True,
         text=True,
+        timeout=_SUBMISSION_COPY_TIMEOUT_SECONDS,
     )
+    verify_submission_archive(dest)
+
+
+def verify_submission_archive(path: Path) -> None:
+    result = subprocess.run(
+        ["tar", "-tzf", str(path)],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=_ARCHIVE_VERIFY_TIMEOUT_SECONDS,
+    )
+    forbidden = []
+    for raw_name in result.stdout.splitlines():
+        name = raw_name.removeprefix("./")
+        if name == "oracle_tests" or name.startswith("oracle_tests/"):
+            forbidden.append(raw_name)
+        elif name == ".git" or name.startswith(".git/"):
+            forbidden.append(raw_name)
+        elif name == ".pytest_cache" or name.startswith(".pytest_cache/"):
+            forbidden.append(raw_name)
+        elif name == "executable":
+            forbidden.append(raw_name)
+    if forbidden:
+        shown = ", ".join(forbidden[:8])
+        if len(forbidden) > 8:
+            shown += f", ... ({len(forbidden)} total)"
+        raise RuntimeError(f"submission archive contains forbidden paths: {shown}")
+
+
+def has_completed_submission(submission_path: Path, traj_path: Path) -> bool:
+    if not submission_path.exists() or not traj_path.exists():
+        return False
+    try:
+        payload = json.loads(traj_path.read_text(encoding="utf-8"))
+    except Exception:
+        return False
+    return payload.get("info", {}).get("exit_status") == "Submitted"
 
 
 def process_instance(
@@ -140,8 +246,8 @@ def process_instance(
     instance_dir = output_dir / iid
     submission_path = instance_dir / "submission.tar.gz"
     traj_path = instance_dir / f"{iid}.traj.json"
-    if submission_path.exists() and not redo_existing:
-        print(f"[{iid}] skipping existing submission: {submission_path}", flush=True)
+    if has_completed_submission(submission_path, traj_path) and not redo_existing:
+        print(f"[{iid}] skipping completed submission: {submission_path}", flush=True)
         return
 
     instance_dir.mkdir(parents=True, exist_ok=True)
@@ -164,7 +270,7 @@ def process_instance(
             {"command": 'git config user.name "mini-swe-agent" && git config user.email "mini-swe-agent@proton.me"'}
         )
 
-        print(f"[{iid}] injecting sanitized tests from {injected_bundle}", flush=True)
+        print(f"[{iid}] injecting oracle tests from {injected_bundle}", flush=True)
         inject_test_bundle(env, injected_bundle)
         if hide_reference:
             print(f"[{iid}] hiding original reference executable", flush=True)
@@ -212,6 +318,7 @@ def process_instance(
                 print(f"[{iid}] failed to copy partial submission: {exc}", flush=True)
         if env is not None:
             env.cleanup()
+    return exit_status
 
 
 def main() -> int:
@@ -269,20 +376,37 @@ def main() -> int:
         has_test_branch=True,
     )
 
+    model_cfg = config.get("model", {}) if isinstance(config.get("model"), dict) else {}
+    task_ids = [instance["instance_id"] for instance in instances]
     metadata = {
+        "created_at": dt.datetime.now(dt.UTC).isoformat(),
         "output": str(output_dir),
         "test_bundle_root": str(test_bundle_root),
         "config_specs": [str(path) for path in config_specs],
-        "tasks": [instance["instance_id"] for instance in instances],
+        "model": {
+            "model_name": model_cfg.get("model_name"),
+            "model_class": model_cfg.get("model_class"),
+            "cost_tracking": model_cfg.get("cost_tracking"),
+            "model_kwargs": model_cfg.get("model_kwargs"),
+        },
+        "prompt": prompt_snapshot(config),
+        "limits": limit_snapshot(config),
+        "bundle_policy": bundle_policy_snapshot(test_bundle_root, task_ids),
+        "tasks": task_ids,
         "hide_reference_executable": not args.keep_reference_executable,
+        "status": {
+            iid: {"agent_status": "pending", "cost": None, "eval_score": None}
+            for iid in task_ids
+        },
     }
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "run_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    (output_dir / "run_manifest.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(metadata, indent=2), flush=True)
 
     missing = [iid for iid in metadata["tasks"] if not (test_bundle_root / iid / "oracle_tests").exists()]
     if missing:
-        raise SystemExit(f"Missing sanitized test bundles for: {', '.join(missing)}")
+        raise SystemExit(f"Missing executable oracle-test bundles for: {', '.join(missing)}")
 
     if args.dry_run:
         return 0
@@ -290,7 +414,7 @@ def main() -> int:
         raise SystemExit("Refusing to spend model budget without --yes-run-agent. Use --dry-run to validate setup.")
 
     for instance in instances:
-        process_instance(
+        exit_status = process_instance(
             instance=instance,
             output_dir=output_dir,
             config=config,
@@ -298,6 +422,10 @@ def main() -> int:
             hide_reference=not args.keep_reference_executable,
             redo_existing=args.redo_existing,
         )
+        if exit_status == "AuthenticationError":
+            raise SystemExit(
+                "Stopping after model-provider AuthenticationError; fix the provider route/credentials and rerun remaining tasks."
+            )
     return 0
 
 

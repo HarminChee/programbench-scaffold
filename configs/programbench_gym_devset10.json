@@ -1,0 +1,20 @@
+{
+  "name": "programbench_gym_devset10",
+  "description": "ProgramBench Gym v0 expansion set matching the local 10-task dev set.",
+  "source_type": "programbench_existing",
+  "tasks_root": "external/ProgramBench/src/programbench/data/tasks",
+  "test_bundle_root": "reports/test_bundles_oracle_guarded_2026-07-07",
+  "tasks": [
+    "sirwart__ripsecrets.34c9e03",
+    "wfxr__csview.8ac4de0",
+    "wfxr__code-minimap.0ddeea5",
+    "clog-tool__clog-cli.7066cba",
+    "drew-alleman__datasurgeon.d257cee",
+    "sclevine__yj.8016400",
+    "multiprocessio__dsq.c3ae0ba",
+    "rs__jplot.2a54bcc",
+    "cmatsuoka__figlet.202a0a8",
+    "cslarsen__jp2a.61d205f"
+  ]
+}
+

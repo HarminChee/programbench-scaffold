@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Build sanitized executable-test bundles from ProgramBench test blobs."""
+"""Build executable oracle-test bundles from ProgramBench test blobs.
+
+The canonical upper-bound mode is ``oracle-guarded``: it keeps as much official
+executable-test material as possible while filtering source/build artifacts and
+not exposing source blob paths in the agent-visible manifest. The older
+``sanitized`` and ``full-safe`` names are kept only for backward compatibility
+with earlier pilot runs.
+"""
 
 from __future__ import annotations
 
@@ -11,7 +18,8 @@ import stat
 import tarfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from collections import Counter
+from typing import Any, Literal
 
 
 DEFAULT_TASKS_ROOT = Path("external/ProgramBench/src/programbench/data/tasks")
@@ -27,6 +35,21 @@ ALLOWED_PREFIXES = (
     "samples/",
     "resources/",
     "assets/",
+)
+
+ORACLE_GUARDED_TOP_LEVEL_PREFIXES = (
+    "eval/",
+    "testdata/",
+    "tests/",
+    "fixtures/",
+    "fixture/",
+    "examples/",
+    "samples/",
+    "resources/",
+    "assets/",
+    "data/",
+    "inputs/",
+    "expected/",
 )
 
 DISALLOWED_NAMES = {
@@ -58,6 +81,8 @@ SOURCE_SUFFIXES = {
     ".hs",
     ".sh",
 }
+
+BundleMode = Literal["sanitized", "oracle-guarded", "full-safe"]
 
 
 @dataclass(frozen=True)
@@ -129,7 +154,8 @@ def safe_member_path(name: str) -> Path | None:
     return normalized
 
 
-def decide_member(name: str, is_file: bool) -> Decision:
+def decide_member(name: str, is_file: bool, *, mode: BundleMode) -> Decision:
+    mode = canonical_mode(mode)
     path = safe_member_path(name)
     if path is None:
         return Decision(False, "unsafe path")
@@ -142,18 +168,33 @@ def decide_member(name: str, is_file: bool) -> Decision:
     if base in DISALLOWED_NAMES:
         return Decision(False, "build/source metadata")
 
-    if posix.startswith("eval/tests/"):
-        return Decision(True, "pytest tests")
-    if posix in {"eval/run.sh", "eval/README.md"}:
-        return Decision(True, "eval harness")
+    if mode == "sanitized":
+        if posix.startswith("eval/tests/"):
+            return Decision(True, "pytest tests")
+        if posix in {"eval/run.sh", "eval/README.md"}:
+            return Decision(True, "eval harness")
 
-    if path.suffix in SOURCE_SUFFIXES:
+        if path.suffix in SOURCE_SUFFIXES:
+            return Decision(False, "source-like file")
+
+        if any(posix.startswith(prefix) for prefix in ALLOWED_PREFIXES):
+            return Decision(True, "test fixture")
+
+        return Decision(False, "outside allowed test paths")
+
+    if path.suffix in SOURCE_SUFFIXES and posix != "eval/run.sh":
         return Decision(False, "source-like file")
 
-    if any(posix.startswith(prefix) for prefix in ALLOWED_PREFIXES):
-        return Decision(True, "test fixture")
+    if any(posix.startswith(prefix) for prefix in ORACLE_GUARDED_TOP_LEVEL_PREFIXES):
+        return Decision(True, "source-leak-guarded oracle material")
 
-    return Decision(False, "outside allowed test paths")
+    return Decision(False, "outside recognized oracle-test paths")
+
+
+def canonical_mode(mode: BundleMode) -> BundleMode:
+    if mode == "full-safe":
+        return "oracle-guarded"
+    return mode
 
 
 def extract_member(tar: tarfile.TarFile, member: tarfile.TarInfo, dest_root: Path) -> None:
@@ -261,7 +302,9 @@ def build_bundle(
     out_dir: Path,
     branches: list[str] | None,
     max_branches: int | None,
+    mode: BundleMode,
 ) -> dict[str, Any]:
+    mode = canonical_mode(mode)
     task_dir = tasks_root / instance_id
     if not task_dir.exists():
         raise FileNotFoundError(f"Unknown task: {instance_id}")
@@ -282,12 +325,26 @@ def build_bundle(
 
     manifest: dict[str, Any] = {
         "instance_id": instance_id,
-        "source_blob_dir": str(source_blob_dir),
+        "mode": mode,
         "policy": {
-            "allowed_prefixes": list(ALLOWED_PREFIXES),
+            "description": (
+                "Conservative sanitized executable-test bundle"
+                if mode == "sanitized"
+                else (
+                    "Source-leak-guarded oracle-test bundle: keep as much official executable-test "
+                    "material as possible while filtering source/build artifacts"
+                )
+            ),
+            "allowed_prefixes": list(ALLOWED_PREFIXES if mode == "sanitized" else ORACLE_GUARDED_TOP_LEVEL_PREFIXES),
             "disallowed_names": sorted(DISALLOWED_NAMES),
             "source_suffixes_excluded_outside_fixtures": sorted(SOURCE_SUFFIXES),
         },
+        "branches": [],
+    }
+    private_manifest: dict[str, Any] = {
+        "instance_id": instance_id,
+        "mode": mode,
+        "source_blob_dir": str(source_blob_dir),
         "branches": [],
     }
 
@@ -303,7 +360,7 @@ def build_bundle(
 
         with tarfile.open(tar_path, "r:gz") as tar:
             for member in tar.getmembers():
-                decision = decide_member(member.name, member.isfile())
+                decision = decide_member(member.name, member.isfile(), mode=mode)
                 row = {"path": member.name, "reason": decision.reason}
                 if decision.include:
                     extract_member(tar, member, branch_out)
@@ -311,7 +368,18 @@ def build_bundle(
                 else:
                     excluded.append(row)
 
+        excluded_reasons = Counter(item["reason"] for item in excluded)
+        included_reasons = Counter(item["reason"] for item in included)
         manifest["branches"].append(
+            {
+                "branch_id": branch_id,
+                "included_count": len(included),
+                "excluded_count": len(excluded),
+                "included_reason_counts": dict(sorted(included_reasons.items())),
+                "excluded_reason_counts": dict(sorted(excluded_reasons.items())),
+            }
+        )
+        private_manifest["branches"].append(
             {
                 "branch_id": branch_id,
                 "source_tar": str(tar_path),
@@ -323,14 +391,19 @@ def build_bundle(
         )
 
     write_helper_scripts(bundle_root)
+    title = (
+        "Sanitized ProgramBench Oracle Tests"
+        if mode == "sanitized"
+        else "Source-Leak-Guarded ProgramBench Oracle Tests"
+    )
     (bundle_root / "README.md").write_text(
-        f"""# Sanitized ProgramBench Oracle Tests
+        f"""# {title}
 
 Instance: `{instance_id}`
 
-This directory contains sanitized executable tests built from official
-ProgramBench test blobs. It intentionally excludes upstream implementation
-source files and build metadata.
+This directory contains executable oracle tests built from official ProgramBench
+test blobs. It intentionally excludes upstream implementation source files,
+build metadata, and source-blob paths from the agent-visible manifest.
 
 Run one branch:
 
@@ -351,6 +424,10 @@ If `./executable` does not exist, the helper script will try to run
         encoding="utf-8",
     )
     (bundle_root / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    (out_dir / instance_id / "oracle_tests_private_manifest.json").write_text(
+        json.dumps(private_manifest, indent=2),
+        encoding="utf-8",
+    )
     return manifest
 
 
@@ -362,6 +439,12 @@ def main() -> int:
     parser.add_argument("--out-dir", type=Path, default=Path("reports/test_bundles"))
     parser.add_argument("--branch", action="append", dest="branches", help="Branch id to include; repeatable")
     parser.add_argument("--max-branches", type=int, default=None)
+    parser.add_argument(
+        "--mode",
+        choices=["sanitized", "oracle-guarded", "full-safe"],
+        default="oracle-guarded",
+        help="Use oracle-guarded for new upper-bound runs; full-safe is a legacy alias.",
+    )
     args = parser.parse_args()
 
     manifest = build_bundle(
@@ -371,6 +454,7 @@ def main() -> int:
         out_dir=args.out_dir,
         branches=args.branches,
         max_branches=args.max_branches,
+        mode=args.mode,
     )
     included_total = sum(branch["included_count"] for branch in manifest["branches"])
     excluded_total = sum(branch["excluded_count"] for branch in manifest["branches"])

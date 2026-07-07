@@ -9,6 +9,7 @@ build/
 # Local upstream checkout and generated benchmark artifacts.
 external/
 reports/test_bundles/
+reports/test_bundles_*/
 reports/test_bundles_smoke/
 reports/programbench_greenfield_test_runs/
 reports/programbench_upper_bound_runs*/
@@ -20,6 +21,10 @@ reports/oracle_specs_arch_plan/
 reports/oracle_specs_compact/
 reports/programbench_original_baseline_10task_2026-07-02/
 reports/programbench_mined_scaffold_pilot_2026-07-02/
+reports/programbench_gym_*/
+reports/programbench_gym_scale_seed_repos_*.json
+reports/programbench_gym_scale_seed_repos_*.md
+reports/programbench_opus48_*/
 reports/mined_specs_smoke/*.json
 reports/mined_specs_smoke/*.yaml
 

@@ -1,0 +1,13 @@
+{
+  "name": "programbench_gym_mvp3",
+  "description": "Bootstrap Gym v0 on three ProgramBench-derived instances covering Go, Rust, and C.",
+  "source_type": "programbench_existing",
+  "tasks_root": "external/ProgramBench/src/programbench/data/tasks",
+  "test_bundle_root": "reports/test_bundles_oracle_guarded_2026-07-07",
+  "tasks": [
+    "sclevine__yj.8016400",
+    "sirwart__ripsecrets.34c9e03",
+    "cmatsuoka__figlet.202a0a8"
+  ]
+}
+

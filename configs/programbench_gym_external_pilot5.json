@@ -1,0 +1,101 @@
+{
+  "name": "programbench_gym_external_pilot5",
+  "description": "First candidate-only GitHub repo pilot for ProgramBench Gym scaling. These repos intentionally do not overlap ProgramBench official tasks and are not accepted until dynamic gates pass.",
+  "source_type": "github_repo_candidates",
+  "selection_date": "2026-07-07",
+  "acceptance_policy": {
+    "candidate_only": true,
+    "required_before_training_use": [
+      "clone pinned commit",
+      "inspect README/docs and executable shape",
+      "build reference binary",
+      "create cleanroom workspace",
+      "create Docker image",
+      "collect or generate oracle tests",
+      "tests pass on reference",
+      "dummy implementation does not pass all tests",
+      "offline reproducible build and eval",
+      "source-leak scan passes",
+      "coverage or mutation threshold passes"
+    ]
+  },
+  "candidates": [
+    {
+      "repository": "TomWright/dasel",
+      "clone_url": "https://github.com/TomWright/dasel.git",
+      "html_url": "https://github.com/TomWright/dasel",
+      "commit": "008b0ed9cae7d5d5b0c72e23c84836c5b2f0338b",
+      "default_branch": "master",
+      "language": "Go",
+      "license": "MIT",
+      "build_command_hint": "go build -o executable ./cmd/dasel",
+      "why_pilot": "Deterministic structured-data query and transform CLI across JSON, YAML, TOML, XML, and CSV."
+    },
+    {
+      "repository": "medialab/xan",
+      "clone_url": "https://github.com/medialab/xan.git",
+      "html_url": "https://github.com/medialab/xan",
+      "commit": "9768da5b305429a8a84e7a02d27d40f33a6ad6bf",
+      "default_branch": "master",
+      "language": "Rust",
+      "license": "Unlicense",
+      "build_command_hint": "cargo build --release",
+      "why_pilot": "CSV-focused CLI with broad but still text-oriented behavior and likely testable I/O surfaces."
+    },
+    {
+      "repository": "pamburus/hl",
+      "clone_url": "https://github.com/pamburus/hl.git",
+      "html_url": "https://github.com/pamburus/hl",
+      "commit": "90f60757b71dc5b2ca5cff165a497a334caceddb",
+      "default_branch": "master",
+      "language": "Rust",
+      "license": "MIT",
+      "build_command_hint": "cargo build --release",
+      "why_pilot": "JSON/logfmt log transformation CLI with deterministic stdin/stdout behavior."
+    },
+    {
+      "repository": "davidesantangelo/krep",
+      "clone_url": "https://github.com/davidesantangelo/krep.git",
+      "html_url": "https://github.com/davidesantangelo/krep",
+      "commit": "27e1c1db7f5328d1280d07b5ccc58144c007e31b",
+      "default_branch": "main",
+      "language": "C",
+      "license": "BSD-2-Clause",
+      "build_command_hint": "make",
+      "why_pilot": "Small grep-like text search CLI with clear dummy-fail tests and manageable C build surface."
+    },
+    {
+      "repository": "ARM-software/astc-encoder",
+      "clone_url": "https://github.com/ARM-software/astc-encoder.git",
+      "html_url": "https://github.com/ARM-software/astc-encoder",
+      "commit": "86aa2eb70db4f67090d94bf547ebbde6f529c287",
+      "default_branch": "main",
+      "language": "C++",
+      "license": "Apache-2.0",
+      "build_command_hint": "cmake -S . -B build && cmake --build build",
+      "why_pilot": "C++ command-line compressor with concrete file input/output behavior and useful fixture-based tests."
+    }
+  ],
+  "deferred_or_rejected_examples": [
+    {
+      "repository": "simeji/jid",
+      "reason": "Likely interactive JSON digger; not first-wave deterministic CLI."
+    },
+    {
+      "repository": "mstange/samply",
+      "reason": "Profiler behavior is platform/process dependent."
+    },
+    {
+      "repository": "EFForg/apkeep",
+      "reason": "Download-oriented tool risks network dependency."
+    },
+    {
+      "repository": "alecthomas/kong",
+      "reason": "Mostly a library, not a direct ProgramBench-style CLI target."
+    },
+    {
+      "repository": "jarro2783/cxxopts",
+      "reason": "Mostly a library, not a direct ProgramBench-style CLI target."
+    }
+  ]
+}
