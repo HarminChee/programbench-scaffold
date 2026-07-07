@@ -118,16 +118,29 @@ def shell_command(
 def clone_or_update(candidate: dict[str, Any], repo_dir: Path, log_dir: Path, timeout: int) -> dict[str, Any]:
     if repo_dir.exists():
         shutil.rmtree(repo_dir)
-    clone = run_command(
-        ["git", "clone", "--no-tags", candidate["clone_url"], str(repo_dir)],
-        timeout=timeout,
-        log_path=log_dir / "clone.json",
+    repo_dir.mkdir(parents=True, exist_ok=True)
+    init = run_command(["git", "init"], cwd=repo_dir, timeout=30, log_path=log_dir / "git_init.json")
+    if init["returncode"] != 0:
+        return {"status": "fail", "init": init, "fetch": None, "checkout": None, "head": None}
+    remote = run_command(
+        ["git", "remote", "add", "origin", candidate["clone_url"]],
+        cwd=repo_dir,
+        timeout=30,
+        log_path=log_dir / "git_remote_add.json",
     )
-    if clone["returncode"] != 0:
-        return {"status": "fail", "clone": clone, "checkout": None, "head": None}
+    if remote["returncode"] != 0:
+        return {"status": "fail", "init": init, "remote": remote, "fetch": None, "checkout": None, "head": None}
+    fetch = run_command(
+        ["git", "fetch", "--depth", "1", "--no-tags", "origin", candidate["commit"]],
+        cwd=repo_dir,
+        timeout=timeout,
+        log_path=log_dir / "git_fetch_commit.json",
+    )
+    if fetch["returncode"] != 0:
+        return {"status": "fail", "init": init, "remote": remote, "fetch": fetch, "checkout": None, "head": None}
 
     checkout = run_command(
-        ["git", "checkout", "--detach", candidate["commit"]],
+        ["git", "checkout", "--detach", "FETCH_HEAD"],
         cwd=repo_dir,
         timeout=120,
         log_path=log_dir / "checkout.json",
@@ -140,7 +153,7 @@ def clone_or_update(candidate: dict[str, Any], repo_dir: Path, log_dir: Path, ti
     )
     head_sha = head.get("stdout_tail", "").strip()
     status = "pass" if checkout["returncode"] == 0 and head_sha == candidate["commit"] else "fail"
-    return {"status": status, "clone": clone, "checkout": checkout, "head": head_sha}
+    return {"status": status, "init": init, "remote": remote, "fetch": fetch, "checkout": checkout, "head": head_sha}
 
 
 def docs_manifest(repo_dir: Path) -> dict[str, Any]:

@@ -271,6 +271,8 @@ def docker_or_host_run(
             "linux/amd64",
             "--network",
             "none",
+            "--user",
+            f"{os.getuid()}:{os.getgid()}",
             "-v",
             f"{workspace.resolve()}:/workspace",
             "-w",
@@ -346,7 +348,7 @@ def run_oracle_gate(
     dummy: bool,
     log_dir: Path,
 ) -> dict[str, Any]:
-    with tempfile.TemporaryDirectory(prefix="pb_gym_dynamic_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="pb_gym_dynamic_", ignore_cleanup_errors=True) as tmp:
         workspace = Path(tmp) / "workspace"
         copy_reference_workspace(instance_dir, workspace, dummy=dummy)
         image_ref = metadata["image_tags"]["eval"] if runner == "docker" else ""
