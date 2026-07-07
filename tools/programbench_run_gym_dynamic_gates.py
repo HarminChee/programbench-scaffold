@@ -192,6 +192,45 @@ def write_dummy(path: Path) -> None:
     path.chmod(path.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 
+def normalize_read_permissions(path: Path) -> dict[str, Any]:
+    targets = [path] if path.is_file() else [item for item in path.rglob("*")]
+    failures: list[str] = []
+    for target in targets:
+        try:
+            mode = target.stat().st_mode
+            target.chmod(mode | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+            if target.is_dir() or os.access(target, os.X_OK):
+                target.chmod(target.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        except PermissionError:
+            failures.append(str(target))
+    if not failures:
+        return {"status": "normalized", "method": "python_chmod"}
+
+    sudo = shutil.which("sudo")
+    if sudo is None:
+        return {"status": "failed", "method": "python_chmod", "permission_failures": failures[:20]}
+    chown = subprocess.run(
+        [sudo, "chown", "-R", f"{os.getuid()}:{os.getgid()}", str(path)],
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    chmod = subprocess.run(
+        [sudo, "chmod", "-R", "u+rwX,go+rX", str(path)],
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    return {
+        "status": "normalized" if chown.returncode == 0 and chmod.returncode == 0 else "failed",
+        "method": "sudo_chown_chmod",
+        "chown_returncode": chown.returncode,
+        "chmod_returncode": chmod.returncode,
+        "chown_stderr": chown.stderr.strip(),
+        "chmod_stderr": chmod.stderr.strip(),
+    }
+
+
 def copy_reference_workspace(instance_dir: Path, workspace: Path, *, dummy: bool) -> None:
     oracle_src = instance_dir / "oracle_tests" / "sanitized"
     executable_src = instance_dir / "cleanroom" / "executable"
@@ -206,6 +245,9 @@ def copy_reference_workspace(instance_dir: Path, workspace: Path, *, dummy: bool
     if dummy:
         write_dummy(executable_dest)
     else:
+        permissions = normalize_read_permissions(executable_src)
+        if permissions["status"] != "normalized":
+            raise PermissionError(f"could not normalize reference executable permissions: {permissions}")
         shutil.copy2(executable_src, executable_dest)
         executable_dest.chmod(executable_dest.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 

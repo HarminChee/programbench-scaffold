@@ -239,6 +239,44 @@ def ensure_link_or_copy(src: Path, dest: Path, *, copy: bool) -> str:
     return "copy"
 
 
+def normalize_export_permissions(path: Path) -> dict[str, Any]:
+    """Make Docker-exported files readable by the current runner user."""
+    chmod_failures: list[str] = []
+    for root, dirs, files in os.walk(path):
+        for name in [*dirs, *files]:
+            target = Path(root) / name
+            try:
+                mode = target.stat().st_mode
+                target.chmod(mode | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+                if target.is_dir() or os.access(target, os.X_OK):
+                    target.chmod(target.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+            except PermissionError:
+                chmod_failures.append(str(target))
+    if not chmod_failures:
+        return {"status": "normalized", "method": "python_chmod"}
+
+    sudo = shutil.which("sudo")
+    if sudo is None:
+        return {"status": "failed", "method": "python_chmod", "permission_failures": chmod_failures[:20]}
+
+    uid_gid = f"{os.getuid()}:{os.getgid()}"
+    chown = subprocess.run([sudo, "chown", "-R", uid_gid, str(path)], capture_output=True, text=True, timeout=120)
+    chmod = subprocess.run(
+        [sudo, "chmod", "-R", "u+rwX,go+rX", str(path)],
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    return {
+        "status": "normalized" if chown.returncode == 0 and chmod.returncode == 0 else "failed",
+        "method": "sudo_chown_chmod",
+        "chown_returncode": chown.returncode,
+        "chmod_returncode": chmod.returncode,
+        "chown_stderr": chown.stderr.strip(),
+        "chmod_stderr": chmod.stderr.strip(),
+    }
+
+
 def path_is_allowed_source_like(rel: str) -> bool:
     # Python pytest files under eval/tests are the oracle tests themselves.
     if rel.startswith("eval/tests/") and rel.endswith(".py"):
@@ -487,12 +525,14 @@ def materialize_cleanroom_from_docker(instance_dir: Path, image_ref: str, docker
         )
         if cp.returncode != 0:
             return {"status": "failed", "step": "docker_cp", "stderr": cp.stderr.strip()}
+        permissions = normalize_export_permissions(cleanroom)
         executable = cleanroom / "executable"
         return {
             "status": "materialized",
             "image": image_ref,
             "executable_exists": executable.exists(),
             "executable": "cleanroom/executable",
+            "permissions": permissions,
         }
     finally:
         subprocess.run([docker, "rm", "-f", container_name], capture_output=True, text=True, timeout=60)
