@@ -37,11 +37,12 @@ Generated MVP-3 instances:
 
 Result:
 
-- Static gates passed: 3/3
-- Dynamic gates ready: 0/3
+- Static gates passed locally: 3/3
+- Dynamic gates passed on GitHub Actions: 3/3
 
-Dynamic gates are intentionally skipped on this local Mac run because
-ProgramBench Docker images target Linux x86-64.
+The local Mac run still skips Docker dynamic gates because ProgramBench images
+target Linux x86-64. The same MVP-3 set passed on GitHub Actions run
+`28879090771`.
 
 ## Step 3: 10-Task Dev Set
 
@@ -60,8 +61,19 @@ Generated all 10 local dev-set instances:
 
 Result:
 
-- Static gates passed: 10/10
-- Dynamic gates ready: 0/10
+- Static gates passed locally: 10/10
+- Dynamic gates passed on GitHub Actions: 10/10
+
+The successful dev-set dynamic run is GitHub Actions run `28881210488` at commit
+`d6dee55`. It passed `reference_binary_materialized`, `reference_smoke_runs`,
+`oracle_tests_pass_reference`, `dummy_does_not_pass_all`, and
+`offline_reproducible_eval` for every dev-set instance.
+
+The first dev-set dynamic run, `28879552218`, reached 9/10. The only failing
+instance was `multiprocessio__dsq.c3ae0ba`, where individually plausible oracle
+branches could still fail when combined in `run_all.sh`. The gate runner now
+filters oracle branches by both individual reference pass and combined reference
+pass before accepting an oracle bundle.
 
 ## Step 4: Scale Seed Repos
 
@@ -99,7 +111,13 @@ candidate-only skeletons:
 Result:
 
 - Candidate static gates passed: 5/5
+- Mac-native dry run passed: 1/5
 - Accepted training instances: 0/5
+
+The Mac-native pilot dry run accepted `davidesantangelo/krep` through clone,
+build, smoke, and native tests. The other four pilot repos failed at source
+fetch on the local Mac run and still need the GitHub Actions/Linux gate path for
+formal acceptance.
 
 ## Cleanup
 
@@ -132,6 +150,15 @@ and records:
 - `dummy_does_not_pass_all`
 - `offline_reproducible_eval`
 
+Current dynamic results:
+
+- MVP-3: 3/3 passed on run `28879090771`
+- Devset10: 10/10 passed on run `28881210488`
+
+For `multiprocessio__dsq.c3ae0ba`, the final accepted oracle bundle keeps 8/10
+branches. Two branches were dropped by the reference-pass filter, and the
+combined reference validation then passed.
+
 ## Verification
 
 Passed:
@@ -145,10 +172,13 @@ Passed:
   - `configs/programbench_gym_external_pilot5.json`
 - MVP-3 static rebuild to `/private/tmp/programbench_gym_mvp3_symlink_check_20260707_codex`: 3/3 static gates pass
 - External pilot5 candidate skeleton build: 5/5 candidate static gates pass
+- GitHub Actions MVP-3 dynamic gate run `28879090771`: 3/3 dynamic gates pass
+- GitHub Actions devset10 dynamic gate run `28881210488`: 10/10 dynamic gates pass
+- External pilot5 Mac-native dry run: 1/5 passes clone, build, smoke, and tests
 
 ## Current Limitation
 
-The local run proves the static Gym factory path:
+The local Mac run proves the static Gym factory path:
 
 - metadata loads
 - raw HF test blobs are found
@@ -157,11 +187,18 @@ The local run proves the static Gym factory path:
 - reward scripts are emitted
 - binary-to-test sample schema is emitted
 
-The following paper-grade gates still require a Linux x86-64 Docker host:
+The GitHub Actions Linux run now proves the ProgramBench-seeded dynamic path:
 
 - materialize `cleanroom/executable`
 - smoke-test reference binary
 - run oracle tests on reference
 - run oracle tests on dummy implementation
 - verify no-network reproducibility
+
+Still pending for the next phase:
+
 - add coverage/mutation instrumentation
+- move external GitHub pilot repos from candidate/dry-run status to accepted
+  Gym instances
+- scale the external repo intake beyond pilot5 after clone/build/test gates are
+  stable
