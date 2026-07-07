@@ -10,6 +10,7 @@ and records the results back into each instance's quality report.
 from __future__ import annotations
 
 import argparse
+import ast
 import datetime as dt
 import json
 import os
@@ -369,6 +370,23 @@ def run_oracle_gate(
     return {"status": status, "details": {"runner": runner, "network": "none" if runner == "docker" else "host", **result}}
 
 
+def parse_failed_branch_ids(stdout: str) -> list[str]:
+    for line in reversed(stdout.splitlines()):
+        if "failed branches:" not in line:
+            continue
+        _, payload = line.split("failed branches:", 1)
+        try:
+            parsed = ast.literal_eval(payload.strip())
+        except (SyntaxError, ValueError):
+            return []
+        failed: list[str] = []
+        for item in parsed:
+            if isinstance(item, (list, tuple)) and item and isinstance(item[0], str):
+                failed.append(item[0])
+        return failed
+    return []
+
+
 def filter_reference_passing_branches(
     *,
     instance_dir: Path,
@@ -413,28 +431,86 @@ def filter_reference_passing_branches(
 
     passing_ids = {row["branch_id"] for row in rows if row["passed_reference"]}
     filtered = [branch for branch in branches if branch["branch_id"] in passing_ids]
+    dropped_by_combined: list[str] = []
+    combined_rows: list[dict[str, Any]] = []
+    combined_passed = False
+    combined_failure_reason = None
+
+    for attempt in range(len(filtered) + 1):
+        if not filtered:
+            combined_failure_reason = "all branches were filtered out"
+            break
+        manifest["branches"] = filtered
+        write_json(manifest_path, manifest)
+        with tempfile.TemporaryDirectory(prefix="pb_gym_combined_filter_", ignore_cleanup_errors=True) as tmp:
+            workspace = Path(tmp) / "workspace"
+            copy_reference_workspace(instance_dir, workspace, dummy=False)
+            image_ref = metadata["image_tags"]["eval"] if runner == "docker" else ""
+            result = docker_or_host_run(
+                runner=runner,
+                docker=docker,
+                image_ref=image_ref,
+                workspace=workspace,
+                command="./oracle_tests/run_all.sh",
+                timeout=timeout,
+                log_path=log_dir / f"reference_combined_filter_attempt_{attempt}.json",
+            )
+        branch_ids = [branch["branch_id"] for branch in filtered]
+        failed_ids = parse_failed_branch_ids(result.get("stdout_tail") or "")
+        combined_rows.append(
+            {
+                "attempt": attempt,
+                "branch_ids": branch_ids,
+                "returncode": result["returncode"],
+                "timed_out": result["timed_out"],
+                "duration_seconds": result["duration_seconds"],
+                "passed_reference": result["returncode"] == 0,
+                "failed_branch_ids": failed_ids,
+                "log_path": result.get("log_path"),
+            }
+        )
+        if result["returncode"] == 0:
+            combined_passed = True
+            break
+        if not failed_ids:
+            combined_failure_reason = "combined run failed but failed branch ids could not be parsed"
+            break
+        failed_set = set(failed_ids)
+        dropped_by_combined.extend(branch_id for branch_id in failed_ids if branch_id not in dropped_by_combined)
+        filtered = [branch for branch in filtered if branch["branch_id"] not in failed_set]
+
     manifest["branches"] = filtered
     manifest["reference_pass_filter"] = {
         "created_at": dt.datetime.now(dt.UTC).isoformat(),
         "original_branch_count": len(branches),
         "kept_branch_count": len(filtered),
         "dropped_branch_ids": [branch["branch_id"] for branch in branches if branch["branch_id"] not in passing_ids],
+        "dropped_by_combined_ids": dropped_by_combined,
+        "combined_passed": combined_passed,
+        "combined_failure_reason": combined_failure_reason,
     }
     write_json(manifest_path, manifest)
     filter_log = {
-        "status": "pass" if filtered else "fail",
+        "status": "pass" if filtered and combined_passed else "fail",
         "manifest": str(manifest_path),
         "original_branch_count": len(branches),
         "kept_branch_count": len(filtered),
         "branches": rows,
+        "combined_attempts": combined_rows,
+        "dropped_by_combined_ids": dropped_by_combined,
+        "combined_passed": combined_passed,
+        "combined_failure_reason": combined_failure_reason,
     }
     write_json(log_dir / "reference_branch_filter.json", filter_log)
     return {
-        "status": "pass" if filtered else "fail",
+        "status": "pass" if filtered and combined_passed else "fail",
         "details": {
             "original_branch_count": len(branches),
             "kept_branch_count": len(filtered),
             "dropped_branch_count": len(branches) - len(filtered),
+            "dropped_by_combined_count": len(dropped_by_combined),
+            "combined_passed": combined_passed,
+            "combined_failure_reason": combined_failure_reason,
             "log_path": str(log_dir / "reference_branch_filter.json"),
         },
     }
