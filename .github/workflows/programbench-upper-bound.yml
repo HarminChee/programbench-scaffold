@@ -46,6 +46,27 @@ jobs:
       - name: Check out workspace
         uses: actions/checkout@v4
 
+      - name: Resolve Gym dispatch
+        shell: bash
+        run: |
+          case "$TASK_IDS" in
+            gym:mvp3)
+              echo "IS_GYM_DISPATCH=1" >> "$GITHUB_ENV"
+              echo "GYM_CONFIG=configs/programbench_gym_mvp3.json" >> "$GITHUB_ENV"
+              echo "GYM_OUTPUT_ROOT=reports/programbench_gym_dynamic_mvp3" >> "$GITHUB_ENV"
+              echo "GYM_ORACLE_TIMEOUT=900" >> "$GITHUB_ENV"
+              ;;
+            gym:devset10)
+              echo "IS_GYM_DISPATCH=1" >> "$GITHUB_ENV"
+              echo "GYM_CONFIG=configs/programbench_gym_devset10.json" >> "$GITHUB_ENV"
+              echo "GYM_OUTPUT_ROOT=reports/programbench_gym_dynamic_devset10" >> "$GITHUB_ENV"
+              echo "GYM_ORACLE_TIMEOUT=1800" >> "$GITHUB_ENV"
+              ;;
+            *)
+              echo "IS_GYM_DISPATCH=0" >> "$GITHUB_ENV"
+              ;;
+          esac
+
       - name: Install uv
         shell: bash
         run: |
@@ -70,8 +91,21 @@ jobs:
           uv run programbench --help
           uv run --with mini-swe-agent --with boto3 mini-extra programbench --help
 
+      - name: Run Gym dynamic gates
+        if: ${{ env.IS_GYM_DISPATCH == '1' }}
+        shell: bash
+        run: |
+          python3 tools/programbench_run_gym_dynamic_gates.py \
+            --config "$GYM_CONFIG" \
+            --output-root "$GYM_OUTPUT_ROOT" \
+            --runner docker \
+            --prepare-bundles \
+            --sync-blobs \
+            --overwrite \
+            --oracle-timeout "$GYM_ORACLE_TIMEOUT"
+
       - name: Prepare oracle specs and blobs
-        if: ${{ inputs.stage == 'prepare' || inputs.stage == 'all' }}
+        if: ${{ env.IS_GYM_DISPATCH != '1' && (inputs.stage == 'prepare' || inputs.stage == 'all') }}
         shell: bash
         run: |
           python3 tools/programbench_run_upper_bound.py \
@@ -81,7 +115,7 @@ jobs:
             --runtime-config configs/programbench_ci_smoke.yaml
 
       - name: Run baseline and oracle-spec agents
-        if: ${{ inputs.stage == 'agent' || inputs.stage == 'all' }}
+        if: ${{ env.IS_GYM_DISPATCH != '1' && (inputs.stage == 'agent' || inputs.stage == 'all') }}
         shell: bash
         run: |
           python3 tools/programbench_run_upper_bound.py \
@@ -92,7 +126,7 @@ jobs:
             --yes-run-agent
 
       - name: Evaluate submissions
-        if: ${{ inputs.stage == 'eval' || inputs.stage == 'all' }}
+        if: ${{ env.IS_GYM_DISPATCH != '1' && (inputs.stage == 'eval' || inputs.stage == 'all') }}
         shell: bash
         run: |
           python3 tools/programbench_run_upper_bound.py \
@@ -102,7 +136,7 @@ jobs:
             --runtime-config configs/programbench_ci_smoke.yaml
 
       - name: Compare upper-bound results
-        if: ${{ always() && (inputs.stage == 'compare' || inputs.stage == 'eval' || inputs.stage == 'all') }}
+        if: ${{ always() && env.IS_GYM_DISPATCH != '1' && (inputs.stage == 'compare' || inputs.stage == 'eval' || inputs.stage == 'all') }}
         shell: bash
         run: |
           python3 tools/programbench_compare_upper_bound.py --tasks $TASK_IDS
@@ -117,4 +151,16 @@ jobs:
             reports/oracle_specs/
             reports/programbench_task_selection.md
             reports/programbench_short_term_execution_plan_2026-06-24.md
+            reports/programbench_gym_dynamic_mvp3/gym_build_summary.json
+            reports/programbench_gym_dynamic_mvp3/gym_dynamic_gate_summary.json
+            reports/programbench_gym_dynamic_mvp3/gym_dynamic_gate_summary.md
+            reports/programbench_gym_dynamic_mvp3/*/quality_report.json
+            reports/programbench_gym_dynamic_mvp3/*/metadata.json
+            reports/programbench_gym_dynamic_mvp3/*/private/dynamic_gate_logs/*.json
+            reports/programbench_gym_dynamic_devset10/gym_build_summary.json
+            reports/programbench_gym_dynamic_devset10/gym_dynamic_gate_summary.json
+            reports/programbench_gym_dynamic_devset10/gym_dynamic_gate_summary.md
+            reports/programbench_gym_dynamic_devset10/*/quality_report.json
+            reports/programbench_gym_dynamic_devset10/*/metadata.json
+            reports/programbench_gym_dynamic_devset10/*/private/dynamic_gate_logs/*.json
           if-no-files-found: warn
