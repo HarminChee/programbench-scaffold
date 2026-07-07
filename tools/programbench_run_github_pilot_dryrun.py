@@ -10,6 +10,8 @@ import os
 import re
 import shutil
 import subprocess
+import tarfile
+import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -105,6 +107,97 @@ def run_command(
     return payload
 
 
+def download_url(url: str, dest: Path, *, timeout: int, log_path: Path) -> dict[str, Any]:
+    started = dt.datetime.now(dt.UTC)
+    bytes_written = 0
+    status = "pass"
+    error = None
+    try:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        with urllib.request.urlopen(url, timeout=timeout) as response, dest.open("wb") as handle:
+            while True:
+                chunk = response.read(1024 * 1024)
+                if not chunk:
+                    break
+                handle.write(chunk)
+                bytes_written += len(chunk)
+        returncode = 0
+    except Exception as exc:  # noqa: BLE001 - report the concrete fetch failure.
+        status = "fail"
+        error = repr(exc)
+        returncode = 1
+    ended = dt.datetime.now(dt.UTC)
+    payload = {
+        "url": url,
+        "dest": str(dest),
+        "returncode": returncode,
+        "status": status,
+        "error": error,
+        "bytes_written": bytes_written,
+        "started_at": started.isoformat(),
+        "ended_at": ended.isoformat(),
+        "duration_seconds": (ended - started).total_seconds(),
+    }
+    write_json(log_path, payload)
+    return payload
+
+
+def download_github_archive(candidate: dict[str, Any], dest: Path, *, timeout: int, log_path: Path) -> dict[str, Any]:
+    endpoint = f"repos/{candidate['repository']}/tarball/{candidate['commit']}"
+    started = dt.datetime.now(dt.UTC)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    with dest.open("wb") as handle:
+        try:
+            proc = subprocess.run(
+                ["gh", "api", endpoint],
+                stdout=handle,
+                stderr=subprocess.PIPE,
+                timeout=timeout,
+                text=False,
+            )
+            returncode = proc.returncode
+            stderr = proc.stderr.decode("utf-8", errors="replace")
+        except subprocess.TimeoutExpired as exc:
+            returncode = 124
+            stderr = exc.stderr.decode("utf-8", errors="replace") if isinstance(exc.stderr, bytes) else str(exc.stderr)
+    ended = dt.datetime.now(dt.UTC)
+    payload = {
+        "endpoint": endpoint,
+        "dest": str(dest),
+        "returncode": returncode,
+        "status": "pass" if returncode == 0 and dest.stat().st_size > 0 else "fail",
+        "bytes_written": dest.stat().st_size if dest.exists() else 0,
+        "stderr_tail": short_text(stderr),
+        "started_at": started.isoformat(),
+        "ended_at": ended.isoformat(),
+        "duration_seconds": (ended - started).total_seconds(),
+    }
+    write_json(log_path, payload)
+    return payload
+
+
+def safe_extract_archive(archive: Path, dest: Path) -> Path:
+    extract_root = dest.parent / (dest.name + "_extract")
+    if extract_root.exists():
+        shutil.rmtree(extract_root)
+    extract_root.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(archive, "r:gz") as tar:
+        root = extract_root.resolve()
+        for member in tar.getmembers():
+            target = (extract_root / member.name).resolve()
+            if not str(target).startswith(str(root) + os.sep):
+                raise RuntimeError(f"unsafe archive path: {member.name}")
+        tar.extractall(extract_root)
+    children = [path for path in extract_root.iterdir() if path.is_dir()]
+    if len(children) != 1:
+        raise RuntimeError(f"expected one archive root in {archive}, found {len(children)}")
+    if dest.exists():
+        shutil.rmtree(dest)
+    shutil.move(str(children[0]), str(dest))
+    shutil.rmtree(extract_root)
+    return dest
+
+
 def shell_command(
     command: str,
     *,
@@ -118,6 +211,35 @@ def shell_command(
 def clone_or_update(candidate: dict[str, Any], repo_dir: Path, log_dir: Path, timeout: int) -> dict[str, Any]:
     if repo_dir.exists():
         shutil.rmtree(repo_dir)
+    archive = log_dir / "source_archive.tar.gz"
+    archive_url = f"https://codeload.github.com/{candidate['repository']}/tar.gz/{candidate['commit']}"
+    download = (
+        download_github_archive(candidate, archive, timeout=timeout, log_path=log_dir / "download_archive_gh_api.json")
+        if command_available("gh")
+        else {"returncode": 1, "status": "skipped", "reason": "gh not available"}
+    )
+    if download["returncode"] != 0:
+        download = download_url(archive_url, archive, timeout=timeout, log_path=log_dir / "download_archive_url.json")
+    if download["returncode"] == 0:
+        try:
+            safe_extract_archive(archive, repo_dir)
+            return {
+                "status": "pass",
+                "method": "github_archive",
+                "archive_url": archive_url,
+                "download": download,
+                "head": candidate["commit"],
+            }
+        except Exception as exc:  # noqa: BLE001 - keep dry-run moving and report archive extraction issues.
+            return {
+                "status": "fail",
+                "method": "github_archive",
+                "archive_url": archive_url,
+                "download": download,
+                "extract_error": repr(exc),
+                "head": None,
+            }
+
     repo_dir.mkdir(parents=True, exist_ok=True)
     init = run_command(["git", "init"], cwd=repo_dir, timeout=30, log_path=log_dir / "git_init.json")
     if init["returncode"] != 0:

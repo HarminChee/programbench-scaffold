@@ -13,6 +13,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import shlex
 import shutil
 import stat
 import subprocess
@@ -368,6 +369,77 @@ def run_oracle_gate(
     return {"status": status, "details": {"runner": runner, "network": "none" if runner == "docker" else "host", **result}}
 
 
+def filter_reference_passing_branches(
+    *,
+    instance_dir: Path,
+    metadata: dict[str, Any],
+    runner: str,
+    docker: str,
+    timeout: int,
+    log_dir: Path,
+) -> dict[str, Any]:
+    manifest_path = instance_dir / "oracle_tests" / "sanitized" / "manifest.json"
+    manifest = read_json(manifest_path)
+    branches = list(manifest.get("branches") or [])
+    if not branches:
+        return {"status": "fail", "details": {"reason": "oracle manifest has no branches"}}
+
+    with tempfile.TemporaryDirectory(prefix="pb_gym_filter_", ignore_cleanup_errors=True) as tmp:
+        workspace = Path(tmp) / "workspace"
+        copy_reference_workspace(instance_dir, workspace, dummy=False)
+        image_ref = metadata["image_tags"]["eval"] if runner == "docker" else ""
+        rows: list[dict[str, Any]] = []
+        for branch in branches:
+            branch_id = branch["branch_id"]
+            result = docker_or_host_run(
+                runner=runner,
+                docker=docker,
+                image_ref=image_ref,
+                workspace=workspace,
+                command=f"./oracle_tests/run_branch.sh {shlex.quote(branch_id)}",
+                timeout=timeout,
+                log_path=log_dir / f"reference_branch_{branch_id}.json",
+            )
+            rows.append(
+                {
+                    "branch_id": branch_id,
+                    "returncode": result["returncode"],
+                    "timed_out": result["timed_out"],
+                    "duration_seconds": result["duration_seconds"],
+                    "passed_reference": result["returncode"] == 0,
+                    "log_path": result.get("log_path"),
+                }
+            )
+
+    passing_ids = {row["branch_id"] for row in rows if row["passed_reference"]}
+    filtered = [branch for branch in branches if branch["branch_id"] in passing_ids]
+    manifest["branches"] = filtered
+    manifest["reference_pass_filter"] = {
+        "created_at": dt.datetime.now(dt.UTC).isoformat(),
+        "original_branch_count": len(branches),
+        "kept_branch_count": len(filtered),
+        "dropped_branch_ids": [branch["branch_id"] for branch in branches if branch["branch_id"] not in passing_ids],
+    }
+    write_json(manifest_path, manifest)
+    filter_log = {
+        "status": "pass" if filtered else "fail",
+        "manifest": str(manifest_path),
+        "original_branch_count": len(branches),
+        "kept_branch_count": len(filtered),
+        "branches": rows,
+    }
+    write_json(log_dir / "reference_branch_filter.json", filter_log)
+    return {
+        "status": "pass" if filtered else "fail",
+        "details": {
+            "original_branch_count": len(branches),
+            "kept_branch_count": len(filtered),
+            "dropped_branch_count": len(branches) - len(filtered),
+            "log_path": str(log_dir / "reference_branch_filter.json"),
+        },
+    }
+
+
 def replace_gate(gates: list[dict[str, Any]], name: str, status: str, details: dict[str, Any]) -> None:
     for gate in gates:
         if gate.get("name") == name:
@@ -461,6 +533,15 @@ def run_dynamic_gates_for_instance(
             },
         }
     }
+    if materialized:
+        updates["oracle_reference_pass_filter"] = filter_reference_passing_branches(
+            instance_dir=instance_dir,
+            metadata=metadata,
+            runner=runner,
+            docker=docker,
+            timeout=oracle_timeout,
+            log_dir=log_dir,
+        )
     updates["reference_smoke_runs"] = run_reference_smoke(
         instance_dir=instance_dir,
         metadata=metadata,
