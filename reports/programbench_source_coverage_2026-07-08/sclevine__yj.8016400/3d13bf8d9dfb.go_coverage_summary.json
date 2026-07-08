@@ -1,0 +1,21 @@
+{
+  "active_branch_count": 9,
+  "branch": "3d13bf8d9dfb",
+  "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/3d13bf8d9dfb.tar.gz",
+  "commit": "80164002c0d7f88aa58fa5bec8a8cf4f1bb4e93b",
+  "copied_oracle_material": [
+    "eval",
+    "testdata"
+  ],
+  "covdata_percent_returncode": 0,
+  "covdata_textfmt_returncode": 0,
+  "cover_func_returncode": 0,
+  "coverage_total_percent": 80.2,
+  "go_build_returncode": 0,
+  "instance_id": "sclevine__yj.8016400",
+  "language": "go",
+  "logs_dir": "/tmp/programbench_source_coverage_yj/sclevine__yj.8016400/3d13bf8d9dfb/logs",
+  "pytest_returncode": 0,
+  "repository": "sclevine/yj",
+  "work_dir": "/tmp/programbench_source_coverage_yj/sclevine__yj.8016400/3d13bf8d9dfb"
+}

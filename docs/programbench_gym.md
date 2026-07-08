@@ -1,11 +1,20 @@
 # ProgramBench Gym
 
-Last updated: 2026-07-07
+Last updated: 2026-07-08
 
 ## Purpose
 
 ProgramBench Gym is the instance factory and reward environment for the
 binary-to-test direction.
+
+Direction update for 2026-07-08: the first engineering priority is
+ProgramBench parity, not external GitHub scale-up. The Gym's custom directories
+are a local wrapper around the ProgramBench contract; they must not drift into a
+different benchmark definition. We first need to reproduce ProgramBench's
+cleanroom input, per-instance Docker environment, active-branch filtering,
+hidden behavioral-test reward, and oracle-test construction quality gates on
+official ProgramBench instances. New external repositories stay candidate-only
+until that path is working.
 
 It has two jobs:
 
@@ -16,7 +25,10 @@ It has two jobs:
 
 The Gym is not a replacement for ProgramBench. It is the production path for
 making more ProgramBench-like instances and for evaluating test-generating
-agents before downstream coding-agent evaluation.
+agents before downstream coding-agent evaluation. Its primary score should stay
+compatible with ProgramBench: after active-branch and ignored-test filtering,
+score is the fraction of hidden behavioral tests that pass. Coverage, mutation,
+determinism, and dummy rejection are oracle-generation quality signals.
 
 ## Instance Contract
 
@@ -89,13 +101,19 @@ static gates must pass before using an instance for training data.
 
 ## Bootstrap Plan
 
-1. MVP-3 bootstrap from ProgramBench official tasks:
+1. Reproduce ProgramBench mechanics on official tasks first:
+   cleanroom Docker input, `submission.tar.gz`, `compile.sh`, hidden branch
+   blobs, `tests.json` filtering, and ProgramBench-style pass fraction.
+2. Establish oracle-reproduction quality gates: reference pass, dummy reject,
+   deterministic rerun, source-leak scan, offline run, and source-coverage
+   measurement against the pinned original repo.
+3. MVP-3 bootstrap from ProgramBench official tasks:
    `sclevine__yj.8016400`, `sirwart__ripsecrets.34c9e03`,
    `cmatsuoka__figlet.202a0a8`.
-2. Expand to the 10-task dev set:
+4. Expand to the 10-task dev set:
    `ripsecrets`, `csview`, `code-minimap`, `clog-cli`, `datasurgeon`, `yj`,
    `dsq`, `jplot`, `figlet`, `jp2a`.
-3. Use the same schema for new GitHub repos after the ProgramBench-compatible
+5. Use the same schema for new GitHub repos after the ProgramBench-compatible
    builder/verifier is stable.
 
 ## Current Commands
@@ -137,6 +155,11 @@ python3 tools/programbench_run_gym_dynamic_gates.py \
   --overwrite
 ```
 
+External GitHub candidate selection is paused until ProgramBench parity and
+oracle-reproduction gates are implemented on official tasks. The previous
+candidate commands are kept here for reproducibility, not as the current next
+step.
+
 Select the first wave of new GitHub repo candidates:
 
 ```bash
@@ -163,15 +186,22 @@ builder with `--materialize-cleanroom` to copy `/workspace` from
 
 ## Reward Interface
 
-Generated tests are scored by `eval/score_generated_tests.py` with this first
-reward surface:
+The ProgramBench-compatible primary reward is:
+
+- load active branches from `tests.json`;
+- remove ignored branches and ignored individual tests;
+- treat missing expected test cases as `not_run`;
+- score as `passed / total` over the remaining hidden behavioral tests.
+
+Generated oracle tests are additionally screened by `eval/score_generated_tests.py`
+with this quality surface:
 
 - tests pass on reference executable;
 - tests fail on a dummy executable;
 - tests are deterministic across repeated runs;
 - tests finish within timeout;
-- optional future hooks for coverage, mutation score, and downstream
-  coding-agent score.
+- source-leak scan passes before agent exposure;
+- coverage and mutation scores are recorded where feasible.
 
 The generated-test convention is intentionally simple: tests should execute
 `./executable` in their working directory. The scorer creates that executable as

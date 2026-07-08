@@ -1,12 +1,33 @@
 # ProgramBench Codebase Notes
 
-Last updated: 2026-07-01
+Last updated: 2026-07-08
 
 ## Current Research Direction
 
-After the 2026-06-26 meeting, the immediate goal is not to build a complex
-black-box probing scaffold first. The immediate goal is to implement an
-upper-bound setting:
+Direction correction from 2026-07-08: the immediate goal is no longer the
+external-repo scale-up or only a test-only upper-bound variant. The first goal is
+to understand and reproduce ProgramBench's own task factory and reward
+semantics:
+
+1. Match ProgramBench input: one cleanroom Docker container per instance,
+   documentation plus execute-only reference binary, no internet during
+   inference.
+2. Match ProgramBench evaluation: `submission.tar.gz`, `compile.sh`,
+   `./executable`, hidden per-branch test blobs, `tests.json` active/ignored
+   filtering, and pass-fraction scoring.
+3. Reproduce ProgramBench-style oracle tests: agent-driven behavioral pytest
+   generation, harvesting existing behavioral tests, iterative source-coverage
+   improvement, assertion-quality filtering, reference pass, dummy reject, and
+   deterministic rerun.
+4. Use coverage and mutation as oracle-quality metrics, not as replacements for
+   the ProgramBench score.
+5. Run this first on official ProgramBench instances, then extend to new GitHub
+   repos once the parity path is reliable.
+
+The earlier test-only upper-bound setting is still useful as a diagnostic
+experiment, but it is not the main project target.
+
+Historical 2026-06-26 upper-bound framing:
 
 1. Keep the original ProgramBench no-internet coding-agent environment.
 2. Change the task framing from reverse engineering to greenfield

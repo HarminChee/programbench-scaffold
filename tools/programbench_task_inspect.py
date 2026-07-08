@@ -12,6 +12,7 @@ from typing import Any
 
 PREFERRED_TERMS = ("figlet", "htmlq", "yj", "jplot", "dsq", "ripsecrets")
 PENALTY_TERMS = ("tui", "tmux", "fzf", "htop", "clock", "cmatrix", "lazygit", "nnn")
+SYNTHETIC_TASK_IDS = {"testorg__calculator.abc1234"}
 
 
 def parse_simple_yaml(path: Path) -> dict[str, Any]:
@@ -124,9 +125,11 @@ def score_task(task_id: str, meta: dict[str, Any], stats: dict[str, Any]) -> tup
     return score, notes
 
 
-def inspect_tasks(tasks_root: Path) -> list[dict[str, Any]]:
+def inspect_tasks(tasks_root: Path, *, include_synthetic: bool = False) -> list[dict[str, Any]]:
     rows = []
     for task_dir in sorted(path for path in tasks_root.iterdir() if path.is_dir()):
+        if not include_synthetic and task_dir.name in SYNTHETIC_TASK_IDS:
+            continue
         task_yaml = task_dir / "task.yaml"
         tests_json = task_dir / "tests.json"
         if not task_yaml.exists() or not tests_json.exists():
@@ -153,7 +156,9 @@ def markdown_table(rows: list[dict[str, Any]], limit: int) -> str:
     lines = [
         "# ProgramBench MVP Task Inspection",
         "",
-        "This report ranks tasks for a small Robin-style dev set: easy CLI programs, manageable tests, and enough oracle-test signal to expose specs to agents.",
+        "This report ranks official ProgramBench tasks for the parity dev set: easy CLI programs, manageable active test counts, and enough oracle-test signal to reproduce ProgramBench-style generation, filtering, and coverage checks.",
+        "",
+        "Synthetic fixture tasks such as `testorg__calculator.abc1234` are excluded by default.",
         "",
         "| rank | task | repo | lang | difficulty | active tests | branches | score | notes |",
         "|---:|---|---|---|---|---:|---:|---:|---|",
@@ -194,7 +199,7 @@ def markdown_table(rows: list[dict[str, Any]], limit: int) -> str:
             "",
             "## Immediate Dev-Set Recommendation",
             "",
-            "Start with `sclevine__yj.8016400`, `multiprocessio__dsq.c3ae0ba`, and `rs__jplot.2a54bcc`. Keep `sirwart__ripsecrets.34c9e03`, `cmatsuoka__figlet.202a0a8`, and `mgdm__htmlq.6e31bc8` as alternates after the first smoke run.",
+            "Start with `sclevine__yj.8016400`, `multiprocessio__dsq.c3ae0ba`, and `rs__jplot.2a54bcc` for ProgramBench-parity oracle reproduction. Keep `sirwart__ripsecrets.34c9e03`, `cmatsuoka__figlet.202a0a8`, and `mgdm__htmlq.6e31bc8` as alternates after the first smoke run.",
             "",
         ]
     )
@@ -211,12 +216,15 @@ def main() -> int:
     parser.add_argument("--json-out", type=Path, default=Path("reports/programbench_task_inspection.json"))
     parser.add_argument("--md-out", type=Path, default=Path("reports/programbench_task_selection.md"))
     parser.add_argument("--limit", type=int, default=25)
+    parser.add_argument("--include-synthetic", action="store_true")
     args = parser.parse_args()
 
-    rows = inspect_tasks(args.tasks_root)
+    rows = inspect_tasks(args.tasks_root, include_synthetic=args.include_synthetic)
     payload = {
         "tasks_root": str(args.tasks_root),
         "task_count": len(rows),
+        "include_synthetic": args.include_synthetic,
+        "excluded_synthetic_task_ids": [] if args.include_synthetic else sorted(SYNTHETIC_TASK_IDS),
         "preferred_terms": list(PREFERRED_TERMS),
         "rows": rows,
     }
