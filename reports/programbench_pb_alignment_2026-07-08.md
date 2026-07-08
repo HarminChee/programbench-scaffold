@@ -68,6 +68,8 @@ behavioral strength:
 - `reports/programbench_task_selection_2026-07-08.md`
 - `reports/programbench_source_coverage_2026-07-08/sclevine__yj.8016400/3d13bf8d9dfb.go_coverage_summary.json`
 - `reports/programbench_source_coverage_2026-07-08/sclevine__yj.8016400/3d13bf8d9dfb.go_coverage_summary.md`
+- `reports/programbench_source_coverage_2026-07-08/sclevine__yj.8016400/all_active.go_coverage_summary.json`
+- `reports/programbench_source_coverage_2026-07-08/sclevine__yj.8016400/all_active.go_coverage_summary.md`
 
 The upstream checkout contains ProgramBench's synthetic test fixture
 `testorg__calculator.abc1234`. `tools/programbench_task_inspect.py` now excludes
@@ -86,9 +88,9 @@ Top ProgramBench-parity dev tasks by the current heuristic:
 ## Source-Coverage Smoke
 
 Added `tools/programbench_go_coverage_harness.py` and ran it on
-`sclevine__yj.8016400`, active branch `3d13bf8d9dfb`.
+`sclevine__yj.8016400`.
 
-Result:
+Initial single-branch result:
 
 - cloned `sclevine/yj` at `80164002c0d7f88aa58fa5bec8a8cf4f1bb4e93b`;
 - copied official oracle material `eval` and `testdata` from the branch blob;
@@ -97,8 +99,25 @@ Result:
 - pytest: 143 passed, return code 0;
 - `go tool cover -func`: total statement coverage 80.2%.
 
-This establishes the first concrete baseline for comparing generated oracle
-tests against official ProgramBench branch-test coverage.
+Full yj baseline result:
+
+- selected all 9 active branches from `tests.json`;
+- materialized the official `task_cleanroom_v6` binary from Docker;
+- built both source and coverage binaries from the pinned repo commit;
+- ran the same official branch pytest suites against cleanroom, source, and
+  coverage binaries under `TZ=UTC`;
+- created `/tmp/gocoverdir` as a symlink to the run's merged coverage directory
+  because one official yj branch hardcodes that path in its subprocess env;
+- applied ProgramBench-style ignored-test filtering when judging branch pass;
+- all 9 branches pass after ignored-test filtering;
+- all 9 branches are behavior-consistent across cleanroom, source, and coverage
+  binaries;
+- merged official-test Go statement coverage: 88.8%;
+- native `go test` statement coverage: 76.2%.
+
+One branch, `09b0bec043ae`, still has raw pytest return code 1 because three
+gold-failing path-sensitive tests are intentionally ignored by `tests.json`.
+After filtering, that branch has 314 active tests and 0 active failures.
 
 ## Current Blockers
 
@@ -111,6 +130,6 @@ tests against official ProgramBench branch-test coverage.
 
 ## Next Engineering Step
 
-Extend the source-coverage harness from one yj branch to all active yj branches,
-then run generated/sanitized tests through the same harness and compare coverage
-against the official ProgramBench baseline.
+Run generated/sanitized yj tests through the same harness and compare coverage
+against the 88.8% official ProgramBench baseline and 76.2% native-test
+baseline.

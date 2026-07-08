@@ -105,7 +105,8 @@ An oracle-test reproduction is not accepted until these gates are recorded:
   the yj test blobs into the HuggingFace cache.
 - Official image smoke: `programbench/sclevine_1776_yj.8016400:task_cleanroom_v6`
   pulled successfully and exposed `/workspace/executable` as execute-only.
-- First source-coverage smoke: `tools/programbench_go_coverage_harness.py`
-  ran official yj branch `3d13bf8d9dfb` against a Go coverage build; pytest
-  passed 143/143 and `go tool cover -func` reported 80.2% total statement
-  coverage.
+- Source-coverage baseline: `tools/programbench_go_coverage_harness.py` ran
+  all 9 active yj branches against cleanroom, source-built, and Go coverage
+  binaries under `TZ=UTC`. ProgramBench-filtered branch results passed and the
+  three binaries were behavior-consistent. Merged official-test Go statement
+  coverage is 88.8%; native `go test` statement coverage is 76.2%.

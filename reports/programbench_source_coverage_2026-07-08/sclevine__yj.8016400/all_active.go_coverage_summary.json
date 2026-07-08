@@ -1,0 +1,867 @@
+{
+  "active_branch_count": 9,
+  "all_branch_binary_comparisons_consistent": true,
+  "blob_dir": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400",
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "3d13bf8d9dfb",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/3d13bf8d9dfb.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "0982889e02a90bf26d17090cd39a0cf51c7179d9f90f76c4bdfb67d288b64e4b",
+            "filtered_tests": 143,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "0982889e02a90bf26d17090cd39a0cf51c7179d9f90f76c4bdfb67d288b64e4b",
+            "tests": 143
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_3d13bf8d9dfb_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "3d13bf8d9dfb",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/3d13bf8d9dfb.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "0982889e02a90bf26d17090cd39a0cf51c7179d9f90f76c4bdfb67d288b64e4b",
+            "filtered_tests": 143,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "0982889e02a90bf26d17090cd39a0cf51c7179d9f90f76c4bdfb67d288b64e4b",
+            "tests": 143
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_3d13bf8d9dfb_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "3d13bf8d9dfb",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/3d13bf8d9dfb.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "0982889e02a90bf26d17090cd39a0cf51c7179d9f90f76c4bdfb67d288b64e4b",
+            "filtered_tests": 143,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "0982889e02a90bf26d17090cd39a0cf51c7179d9f90f76c4bdfb67d288b64e4b",
+            "tests": 143
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_3d13bf8d9dfb_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "3d13bf8d9dfb",
+      "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/3d13bf8d9dfb.tar.gz",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval",
+        "testdata"
+      ],
+      "tests_json": {
+        "active_count": 139,
+        "expected_count": 143,
+        "ignored_count": 4
+      }
+    },
+    {
+      "binary_results": [
+        {
+          "branch": "e88cc5e301f1",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/e88cc5e301f1.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "360e89e1ffefe9d0b4c7866608e37836c659cbd8ab821266e45cf1eddb0d655e",
+            "filtered_tests": 138,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "360e89e1ffefe9d0b4c7866608e37836c659cbd8ab821266e45cf1eddb0d655e",
+            "tests": 138
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_e88cc5e301f1_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "e88cc5e301f1",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/e88cc5e301f1.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "360e89e1ffefe9d0b4c7866608e37836c659cbd8ab821266e45cf1eddb0d655e",
+            "filtered_tests": 138,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "360e89e1ffefe9d0b4c7866608e37836c659cbd8ab821266e45cf1eddb0d655e",
+            "tests": 138
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_e88cc5e301f1_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "e88cc5e301f1",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/e88cc5e301f1.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "360e89e1ffefe9d0b4c7866608e37836c659cbd8ab821266e45cf1eddb0d655e",
+            "filtered_tests": 138,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "360e89e1ffefe9d0b4c7866608e37836c659cbd8ab821266e45cf1eddb0d655e",
+            "tests": 138
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_e88cc5e301f1_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "e88cc5e301f1",
+      "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/e88cc5e301f1.tar.gz",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval",
+        "testdata"
+      ],
+      "tests_json": {
+        "active_count": 131,
+        "expected_count": 138,
+        "ignored_count": 7
+      }
+    },
+    {
+      "binary_results": [
+        {
+          "branch": "09b0bec043ae",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/09b0bec043ae.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 3,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "a403b16cfcc85c6cffe02f447d8181a09cab7bc211c573439dd655fe46742d75",
+            "filtered_tests": 314,
+            "ignored_observed": 4,
+            "skipped": 0,
+            "test_names_hash": "41c3e30975ff28ea54d047df33b28261a8d25c888de475b373fea35f729368cd",
+            "tests": 318
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_09b0bec043ae_cleanroom.json",
+          "returncode": 1,
+          "timed_out": false
+        },
+        {
+          "branch": "09b0bec043ae",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/09b0bec043ae.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 3,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "a403b16cfcc85c6cffe02f447d8181a09cab7bc211c573439dd655fe46742d75",
+            "filtered_tests": 314,
+            "ignored_observed": 4,
+            "skipped": 0,
+            "test_names_hash": "41c3e30975ff28ea54d047df33b28261a8d25c888de475b373fea35f729368cd",
+            "tests": 318
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_09b0bec043ae_source.json",
+          "returncode": 1,
+          "timed_out": false
+        },
+        {
+          "branch": "09b0bec043ae",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/09b0bec043ae.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 3,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "a403b16cfcc85c6cffe02f447d8181a09cab7bc211c573439dd655fe46742d75",
+            "filtered_tests": 314,
+            "ignored_observed": 4,
+            "skipped": 0,
+            "test_names_hash": "41c3e30975ff28ea54d047df33b28261a8d25c888de475b373fea35f729368cd",
+            "tests": 318
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_09b0bec043ae_coverage.json",
+          "returncode": 1,
+          "timed_out": false
+        }
+      ],
+      "branch": "09b0bec043ae",
+      "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/09b0bec043ae.tar.gz",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": false,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval",
+        "testdata"
+      ],
+      "tests_json": {
+        "active_count": 314,
+        "expected_count": 318,
+        "ignored_count": 4
+      }
+    },
+    {
+      "binary_results": [
+        {
+          "branch": "c05b963de7e0",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/c05b963de7e0.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "a105024c3d78d8f5eaaf3e55f752dcc01ae03a40dc3be3d7cfea4ffa3a085a3b",
+            "filtered_tests": 18,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "a105024c3d78d8f5eaaf3e55f752dcc01ae03a40dc3be3d7cfea4ffa3a085a3b",
+            "tests": 18
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_c05b963de7e0_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "c05b963de7e0",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/c05b963de7e0.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "a105024c3d78d8f5eaaf3e55f752dcc01ae03a40dc3be3d7cfea4ffa3a085a3b",
+            "filtered_tests": 18,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "a105024c3d78d8f5eaaf3e55f752dcc01ae03a40dc3be3d7cfea4ffa3a085a3b",
+            "tests": 18
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_c05b963de7e0_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "c05b963de7e0",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/c05b963de7e0.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "a105024c3d78d8f5eaaf3e55f752dcc01ae03a40dc3be3d7cfea4ffa3a085a3b",
+            "filtered_tests": 18,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "a105024c3d78d8f5eaaf3e55f752dcc01ae03a40dc3be3d7cfea4ffa3a085a3b",
+            "tests": 18
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_c05b963de7e0_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "c05b963de7e0",
+      "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/c05b963de7e0.tar.gz",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval",
+        "testdata"
+      ],
+      "tests_json": {
+        "active_count": 12,
+        "expected_count": 18,
+        "ignored_count": 6
+      }
+    },
+    {
+      "binary_results": [
+        {
+          "branch": "ad54866ae646",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/ad54866ae646.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "72ca2cab62112fbee1df71d89c263186c45b2cd563d670af96a1ff374276463c",
+            "filtered_tests": 39,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "72ca2cab62112fbee1df71d89c263186c45b2cd563d670af96a1ff374276463c",
+            "tests": 39
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_ad54866ae646_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "ad54866ae646",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/ad54866ae646.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "72ca2cab62112fbee1df71d89c263186c45b2cd563d670af96a1ff374276463c",
+            "filtered_tests": 39,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "72ca2cab62112fbee1df71d89c263186c45b2cd563d670af96a1ff374276463c",
+            "tests": 39
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_ad54866ae646_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "ad54866ae646",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/ad54866ae646.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "72ca2cab62112fbee1df71d89c263186c45b2cd563d670af96a1ff374276463c",
+            "filtered_tests": 39,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "72ca2cab62112fbee1df71d89c263186c45b2cd563d670af96a1ff374276463c",
+            "tests": 39
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_ad54866ae646_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "ad54866ae646",
+      "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/ad54866ae646.tar.gz",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval",
+        "testdata"
+      ],
+      "tests_json": {
+        "active_count": 31,
+        "expected_count": 39,
+        "ignored_count": 8
+      }
+    },
+    {
+      "binary_results": [
+        {
+          "branch": "9c01a68fb797",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/9c01a68fb797.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "75deb647771c2e59a0b5f3fb2fa99a155f7b025fea26d3b6aef5aa6e7844b597",
+            "filtered_tests": 9,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "75deb647771c2e59a0b5f3fb2fa99a155f7b025fea26d3b6aef5aa6e7844b597",
+            "tests": 9
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_9c01a68fb797_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "9c01a68fb797",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/9c01a68fb797.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "75deb647771c2e59a0b5f3fb2fa99a155f7b025fea26d3b6aef5aa6e7844b597",
+            "filtered_tests": 9,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "75deb647771c2e59a0b5f3fb2fa99a155f7b025fea26d3b6aef5aa6e7844b597",
+            "tests": 9
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_9c01a68fb797_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "9c01a68fb797",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/9c01a68fb797.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "75deb647771c2e59a0b5f3fb2fa99a155f7b025fea26d3b6aef5aa6e7844b597",
+            "filtered_tests": 9,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "75deb647771c2e59a0b5f3fb2fa99a155f7b025fea26d3b6aef5aa6e7844b597",
+            "tests": 9
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_9c01a68fb797_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "9c01a68fb797",
+      "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/9c01a68fb797.tar.gz",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval",
+        "testdata"
+      ],
+      "tests_json": {
+        "active_count": 9,
+        "expected_count": 9,
+        "ignored_count": 0
+      }
+    },
+    {
+      "binary_results": [
+        {
+          "branch": "edbc931c6777",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/edbc931c6777.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "72aaaa586ca0de3c4862aa84c3ba7fe7136f02b9cd85356812578d537d16d2db",
+            "filtered_tests": 101,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "72aaaa586ca0de3c4862aa84c3ba7fe7136f02b9cd85356812578d537d16d2db",
+            "tests": 101
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_edbc931c6777_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "edbc931c6777",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/edbc931c6777.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "72aaaa586ca0de3c4862aa84c3ba7fe7136f02b9cd85356812578d537d16d2db",
+            "filtered_tests": 101,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "72aaaa586ca0de3c4862aa84c3ba7fe7136f02b9cd85356812578d537d16d2db",
+            "tests": 101
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_edbc931c6777_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "edbc931c6777",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/edbc931c6777.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "72aaaa586ca0de3c4862aa84c3ba7fe7136f02b9cd85356812578d537d16d2db",
+            "filtered_tests": 101,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "72aaaa586ca0de3c4862aa84c3ba7fe7136f02b9cd85356812578d537d16d2db",
+            "tests": 101
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_edbc931c6777_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "edbc931c6777",
+      "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/edbc931c6777.tar.gz",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval",
+        "testdata"
+      ],
+      "tests_json": {
+        "active_count": 73,
+        "expected_count": 101,
+        "ignored_count": 28
+      }
+    },
+    {
+      "binary_results": [
+        {
+          "branch": "c157470833d6",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/c157470833d6.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "21f719bbd34e1e8dc13ef2554cb2845f1f9b6b9d133c40d7a742ae7d3dc8d412",
+            "filtered_tests": 31,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "21f719bbd34e1e8dc13ef2554cb2845f1f9b6b9d133c40d7a742ae7d3dc8d412",
+            "tests": 31
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_c157470833d6_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "c157470833d6",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/c157470833d6.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "21f719bbd34e1e8dc13ef2554cb2845f1f9b6b9d133c40d7a742ae7d3dc8d412",
+            "filtered_tests": 31,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "21f719bbd34e1e8dc13ef2554cb2845f1f9b6b9d133c40d7a742ae7d3dc8d412",
+            "tests": 31
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_c157470833d6_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "c157470833d6",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/c157470833d6.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "21f719bbd34e1e8dc13ef2554cb2845f1f9b6b9d133c40d7a742ae7d3dc8d412",
+            "filtered_tests": 31,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "21f719bbd34e1e8dc13ef2554cb2845f1f9b6b9d133c40d7a742ae7d3dc8d412",
+            "tests": 31
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_c157470833d6_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "c157470833d6",
+      "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/c157470833d6.tar.gz",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval",
+        "testdata"
+      ],
+      "tests_json": {
+        "active_count": 30,
+        "expected_count": 31,
+        "ignored_count": 1
+      }
+    },
+    {
+      "binary_results": [
+        {
+          "branch": "4c850e6028da",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/4c850e6028da.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "1b4e5b8393bf299c2189b83fad7f756f342b73aa3c22f413f5db1cead46cfdd8",
+            "filtered_tests": 28,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "1b4e5b8393bf299c2189b83fad7f756f342b73aa3c22f413f5db1cead46cfdd8",
+            "tests": 28
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_4c850e6028da_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "4c850e6028da",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/4c850e6028da.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "1b4e5b8393bf299c2189b83fad7f756f342b73aa3c22f413f5db1cead46cfdd8",
+            "filtered_tests": 28,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "1b4e5b8393bf299c2189b83fad7f756f342b73aa3c22f413f5db1cead46cfdd8",
+            "tests": 28
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_4c850e6028da_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "4c850e6028da",
+          "junit": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/junit/4c850e6028da.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "1b4e5b8393bf299c2189b83fad7f756f342b73aa3c22f413f5db1cead46cfdd8",
+            "filtered_tests": 28,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "1b4e5b8393bf299c2189b83fad7f756f342b73aa3c22f413f5db1cead46cfdd8",
+            "tests": 28
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/pytest_4c850e6028da_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "4c850e6028da",
+      "branch_tar": "/home/harminchee/.cache/huggingface/hub/datasets--programbench--ProgramBench-Tests/snapshots/de0ddfb637590c7ecb54fa0b5301f6dc7dfbcee5/sclevine__yj.8016400/tests/4c850e6028da.tar.gz",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval",
+        "testdata"
+      ],
+      "tests_json": {
+        "active_count": 28,
+        "expected_count": 28,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "b26bfefa00aebfc4f30f417f72bb9291fce5a71755faad855924fd1e392204cf",
+    "image": "programbench/sclevine_1776_yj.8016400:task_cleanroom_v6",
+    "path": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "80164002c0d7f88aa58fa5bec8a8cf4f1bb4e93b",
+  "compare_binaries": true,
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/official_merged_raw"
+  },
+  "instance_id": "sclevine__yj.8016400",
+  "language": "go",
+  "logs_dir": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "go_test_package_coverage_percent": 0.0,
+    "go_test_returncode": 0,
+    "logs": {
+      "go_cover_func": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/go_native_cover_func.json",
+      "go_test": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/logs/go_native_tests.json"
+    },
+    "profile": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 76.2
+  },
+  "official_tests": {
+    "branch_count": 9,
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "profile": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active/source/coverage/official_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 88.8
+  },
+  "repository": "sclevine/yj",
+  "selected_branches": [
+    "3d13bf8d9dfb",
+    "e88cc5e301f1",
+    "09b0bec043ae",
+    "c05b963de7e0",
+    "ad54866ae646",
+    "9c01a68fb797",
+    "edbc931c6777",
+    "c157470833d6",
+    "4c850e6028da"
+  ],
+  "work_dir": "/tmp/programbench_source_coverage_yj_full/sclevine__yj.8016400/all_active"
+}
