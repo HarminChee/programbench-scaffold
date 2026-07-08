@@ -1,0 +1,519 @@
+#!/usr/bin/env python3
+"""Generate executable black-box CLI oracle tests from a reference binary.
+
+The first supported profile is ``yj``. It uses only cleanroom-visible behavior:
+the reference executable is copied from the ProgramBench cleanroom image, a
+README-derived case matrix is executed against that binary, and exact process
+observations are materialized as pytest tests plus golden fixtures.
+"""
+
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import hashlib
+import json
+import os
+import re
+import shutil
+import stat
+import subprocess
+import textwrap
+from pathlib import Path
+from typing import Any
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def image_name_from_instance_id(instance_id: str) -> str:
+    return f"programbench/{instance_id.replace('__', '_1776_')}:task_cleanroom_v6"
+
+
+def slug(value: str) -> str:
+    cleaned = re.sub(r"[^A-Za-z0-9_]+", "_", value).strip("_").lower()
+    return cleaned or "case"
+
+
+def sha256_bytes(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def short_text(value: str, limit: int = 5000) -> str:
+    if len(value) <= limit:
+        return value
+    return value[-limit:]
+
+
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def run_command(
+    cmd: list[str],
+    *,
+    cwd: Path | None = None,
+    timeout: int | None = None,
+    log_path: Path | None = None,
+) -> dict[str, Any]:
+    started = dt.datetime.now(dt.UTC)
+    try:
+        proc = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
+        timed_out = False
+        returncode = proc.returncode
+        stdout = proc.stdout
+        stderr = proc.stderr
+    except subprocess.TimeoutExpired as exc:
+        timed_out = True
+        returncode = 124
+        stdout = exc.stdout if isinstance(exc.stdout, str) else (exc.stdout or b"").decode("utf-8", errors="replace")
+        stderr = exc.stderr if isinstance(exc.stderr, str) else (exc.stderr or b"").decode("utf-8", errors="replace")
+    ended = dt.datetime.now(dt.UTC)
+    payload = {
+        "cmd": cmd,
+        "cwd": str(cwd) if cwd else None,
+        "returncode": returncode,
+        "timed_out": timed_out,
+        "started_at": started.isoformat(),
+        "ended_at": ended.isoformat(),
+        "duration_seconds": (ended - started).total_seconds(),
+        "stdout_tail": short_text(stdout),
+        "stderr_tail": short_text(stderr),
+    }
+    if log_path is not None:
+        write_json(log_path, {**payload, "stdout": stdout, "stderr": stderr})
+        payload["log_path"] = str(log_path)
+    return payload
+
+
+def materialize_cleanroom_file(
+    *,
+    image: str,
+    docker: str,
+    source_path: str,
+    dest: Path,
+    logs_dir: Path,
+) -> dict[str, Any]:
+    inspect = run_command([docker, "image", "inspect", image], timeout=60, log_path=logs_dir / "docker_image_inspect.json")
+    if inspect["returncode"] != 0:
+        pull = run_command([docker, "pull", image], timeout=1800, log_path=logs_dir / "docker_pull_cleanroom.json")
+        if pull["returncode"] != 0:
+            return {"returncode": pull["returncode"], "error": pull["stderr_tail"], "log_path": pull.get("log_path")}
+    create = run_command([docker, "create", image], timeout=120, log_path=logs_dir / f"docker_create_{dest.name}.json")
+    if create["returncode"] != 0:
+        return {"returncode": create["returncode"], "error": create["stderr_tail"], "log_path": create.get("log_path")}
+    container_id = create["stdout_tail"].strip().splitlines()[-1]
+    try:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        cp = run_command(
+            [docker, "cp", f"{container_id}:{source_path}", str(dest)],
+            timeout=300,
+            log_path=logs_dir / f"docker_cp_{dest.name}.json",
+        )
+        if cp["returncode"] != 0:
+            return {"returncode": cp["returncode"], "container_id": container_id, "error": cp["stderr_tail"]}
+        return {"returncode": 0, "container_id": container_id, "path": str(dest)}
+    finally:
+        run_command([docker, "rm", "-f", container_id], timeout=120, log_path=logs_dir / f"docker_rm_{dest.name}.json")
+
+
+def yj_cases() -> list[dict[str, Any]]:
+    yaml_doc = textwrap.dedent(
+        """\
+        name: programbench
+        enabled: true
+        count: 3
+        ratio: 1.25
+        tags:
+          - alpha
+          - beta
+        nested:
+          keep_order: yes
+          message: "hello: world"
+        """
+    )
+    yaml_special = textwrap.dedent(
+        """\
+        positive: .inf
+        negative: -.inf
+        missing: .nan
+        quoted: ".inf"
+        """
+    )
+    json_doc = json.dumps(
+        {
+            "name": "programbench",
+            "enabled": True,
+            "count": 3,
+            "tags": ["alpha", "beta"],
+            "nested": {"message": "hello: world", "angle": "<tag>&value"},
+        },
+        separators=(",", ":"),
+    ) + "\n"
+    json_array = '[{"name":"alpha","score":1},{"name":"beta","score":2}]\n'
+    toml_doc = textwrap.dedent(
+        """\
+        title = "ProgramBench"
+        enabled = true
+        count = 3
+        tags = ["alpha", "beta"]
+        timestamp = 2020-01-02T03:04:05Z
+
+        [nested]
+        message = "hello: world"
+        value = 1.25
+        """
+    )
+    hcl_doc = textwrap.dedent(
+        """\
+        name = "programbench"
+        enabled = true
+        count = 3
+        tags = ["alpha", "beta"]
+
+        nested {
+          message = "hello: world"
+          value = 1.25
+        }
+        """
+    )
+    yaml_merge_doc = textwrap.dedent(
+        """\
+        defaults: &defaults
+          adapter: postgres
+          host: localhost
+        development:
+          <<: *defaults
+          database: dev
+        production:
+          <<: *defaults
+          database: prod
+        """
+    )
+    yaml_tags_doc = textwrap.dedent(
+        """\
+        as_int: !!int "3"
+        as_str: !!str 3
+        as_bool: !!bool "true"
+        as_float: !!float "1.5"
+        """
+    )
+    toml_tables_doc = textwrap.dedent(
+        """\
+        title = "Array Tables"
+
+        [owner]
+        name = "ProgramBench"
+
+        [[products]]
+        name = "Hammer"
+        sku = 738594937
+
+        [[products]]
+        name = "Nail"
+        sku = 284758393
+        color = "gray"
+        """
+    )
+    toml_dotted_doc = textwrap.dedent(
+        """\
+        name = "Orange"
+        physical.color = "orange"
+        physical.shape = "round"
+        site."google.com" = true
+        """
+    )
+    hcl_repeated_doc = textwrap.dedent(
+        """\
+        server "web" {
+          port = 80
+          tags = ["edge", "blue"]
+        }
+
+        server "api" {
+          port = 8080
+          tags = ["internal"]
+        }
+        """
+    )
+    invalid_yaml = "name: [unterminated\n"
+    invalid_json = '{"name": "unterminated"\n'
+
+    return [
+        {"name": "help_short", "area": "help_usage", "args": ["-h"], "stdin": ""},
+        {"name": "version_short", "area": "help_usage", "args": ["-v"], "stdin": ""},
+        {"name": "invalid_short_flag", "area": "errors", "args": ["-Z"], "stdin": ""},
+        {"name": "invalid_long_help_flag", "area": "errors", "args": ["--help"], "stdin": ""},
+        {"name": "yaml_to_json_default", "area": "yaml_to_json", "args": [], "stdin": yaml_doc},
+        {"name": "yaml_to_json_explicit", "area": "yaml_to_json", "args": ["-yj"], "stdin": yaml_doc},
+        {"name": "yaml_to_json_short_alias", "area": "alias_flags", "args": ["-y"], "stdin": yaml_doc},
+        {"name": "yaml_to_toml_nodash_flags", "area": "alias_flags", "args": ["yt"], "stdin": yaml_doc},
+        {"name": "yaml_to_json_indented", "area": "yaml_to_json", "args": ["-yji"], "stdin": yaml_doc},
+        {"name": "yaml_to_yaml_roundtrip", "area": "yaml_to_yaml", "args": ["-yy"], "stdin": yaml_doc},
+        {"name": "yaml_to_toml", "area": "yaml_to_toml", "args": ["-yt"], "stdin": yaml_doc},
+        {"name": "yaml_to_toml_indented", "area": "yaml_to_toml", "args": ["-yti"], "stdin": yaml_doc},
+        {"name": "yaml_to_hcl", "area": "yaml_to_hcl", "args": ["-yc"], "stdin": yaml_doc},
+        {"name": "yaml_special_default", "area": "yaml_special_values", "args": ["-yj"], "stdin": yaml_special},
+        {"name": "yaml_special_no_convert", "area": "yaml_special_values", "args": ["-yjn"], "stdin": yaml_special},
+        {"name": "yaml_merge_to_json", "area": "yaml_alias_merge", "args": ["-yj"], "stdin": yaml_merge_doc},
+        {"name": "yaml_merge_to_yaml", "area": "yaml_alias_merge", "args": ["-yy"], "stdin": yaml_merge_doc},
+        {"name": "yaml_tags_to_json", "area": "yaml_tags", "args": ["-yj"], "stdin": yaml_tags_doc},
+        {"name": "yaml_tags_to_yaml", "area": "yaml_tags", "args": ["-yy"], "stdin": yaml_tags_doc},
+        {"name": "json_to_json", "area": "json_to_json", "args": ["-jj"], "stdin": json_doc},
+        {"name": "json_to_json_escape_html", "area": "json_to_json", "args": ["-jje"], "stdin": json_doc},
+        {"name": "json_to_yaml", "area": "json_to_yaml", "args": ["-jy"], "stdin": json_doc},
+        {"name": "json_to_yaml_short_alias", "area": "alias_flags", "args": ["-r"], "stdin": json_doc},
+        {"name": "json_to_yaml_nodash_flags", "area": "alias_flags", "args": ["jy"], "stdin": json_doc},
+        {"name": "json_array_to_yaml", "area": "json_to_yaml", "args": ["-jy"], "stdin": json_array},
+        {"name": "json_to_yaml_parse_keys", "area": "json_to_yaml", "args": ["-jyk"], "stdin": '{"1":"one","true":"yes","3.14":"pi"}\n'},
+        {"name": "json_to_toml", "area": "json_to_toml", "args": ["-jt"], "stdin": json_doc},
+        {"name": "json_array_to_toml_error", "area": "errors", "args": ["-jt"], "stdin": json_array},
+        {"name": "json_to_hcl", "area": "json_to_hcl", "args": ["-jc"], "stdin": json_doc},
+        {"name": "toml_to_json", "area": "toml_to_json", "args": ["-tj"], "stdin": toml_doc},
+        {"name": "toml_to_json_short_alias", "area": "alias_flags", "args": ["-t"], "stdin": toml_doc},
+        {"name": "toml_to_json_indented", "area": "toml_to_json", "args": ["-tji"], "stdin": toml_doc},
+        {"name": "toml_to_yaml", "area": "toml_to_yaml", "args": ["-ty"], "stdin": toml_doc},
+        {"name": "toml_to_toml", "area": "toml_to_toml", "args": ["-tt"], "stdin": toml_doc},
+        {"name": "toml_to_hcl", "area": "toml_to_hcl", "args": ["-tc"], "stdin": toml_doc},
+        {"name": "toml_tables_to_json", "area": "toml_tables", "args": ["-tj"], "stdin": toml_tables_doc},
+        {"name": "toml_tables_to_yaml", "area": "toml_tables", "args": ["-ty"], "stdin": toml_tables_doc},
+        {"name": "toml_tables_to_hcl", "area": "toml_tables", "args": ["-tc"], "stdin": toml_tables_doc},
+        {"name": "toml_dotted_to_json", "area": "toml_dotted_keys", "args": ["-tj"], "stdin": toml_dotted_doc},
+        {"name": "toml_dotted_to_yaml", "area": "toml_dotted_keys", "args": ["-ty"], "stdin": toml_dotted_doc},
+        {"name": "hcl_to_json", "area": "hcl_to_json", "args": ["-cj"], "stdin": hcl_doc},
+        {"name": "hcl_to_json_short_alias", "area": "alias_flags", "args": ["-c"], "stdin": hcl_doc},
+        {"name": "hcl_to_json_indented", "area": "hcl_to_json", "args": ["-cji"], "stdin": hcl_doc},
+        {"name": "hcl_to_yaml", "area": "hcl_to_yaml", "args": ["-cy"], "stdin": hcl_doc},
+        {"name": "hcl_to_toml", "area": "hcl_to_toml", "args": ["-ct"], "stdin": hcl_doc},
+        {"name": "hcl_to_hcl", "area": "hcl_to_hcl", "args": ["-cc"], "stdin": hcl_doc},
+        {"name": "hcl_repeated_to_json", "area": "hcl_repeated_blocks", "args": ["-cj"], "stdin": hcl_repeated_doc},
+        {"name": "hcl_repeated_to_yaml", "area": "hcl_repeated_blocks", "args": ["-cy"], "stdin": hcl_repeated_doc},
+        {"name": "hcl_repeated_to_toml", "area": "hcl_repeated_blocks", "args": ["-ct"], "stdin": hcl_repeated_doc},
+        {"name": "empty_stdin_default", "area": "edge_cases", "args": [], "stdin": ""},
+        {"name": "empty_json_to_yaml", "area": "edge_cases", "args": ["-jy"], "stdin": ""},
+        {"name": "invalid_yaml_to_json", "area": "errors", "args": ["-yj"], "stdin": invalid_yaml},
+        {"name": "invalid_json_to_yaml", "area": "errors", "args": ["-jy"], "stdin": invalid_json},
+    ]
+
+
+def cases_for_profile(profile: str) -> list[dict[str, Any]]:
+    if profile == "yj":
+        return yj_cases()
+    raise ValueError(f"Unsupported profile: {profile}")
+
+
+def run_reference_case(reference_binary: Path, case: dict[str, Any], timeout: int) -> dict[str, Any]:
+    env = os.environ.copy()
+    env["TZ"] = "UTC"
+    argv0 = case.get("argv0", "/workspace/executable")
+    proc = subprocess.run(
+        [argv0, *map(str, case.get("args", []))],
+        executable=str(reference_binary),
+        input=str(case.get("stdin", "")).encode("utf-8"),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        timeout=timeout,
+        env=env,
+    )
+    return {
+        "returncode": proc.returncode,
+        "stdout": proc.stdout,
+        "stderr": proc.stderr,
+    }
+
+
+def write_generated_pytest(bundle_root: Path) -> None:
+    test_path = bundle_root / "eval" / "tests" / "test_yj_generated_oracle.py"
+    test_path.parent.mkdir(parents=True, exist_ok=True)
+    test_path.write_text(
+        '''"""Generated black-box oracle tests for yj."""
+
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+from pathlib import Path
+
+import pytest
+
+
+WORKSPACE = Path(__file__).resolve().parents[2]
+EVAL_DIR = Path(__file__).resolve().parents[1]
+FIXTURE_DIR = EVAL_DIR / "fixtures" / "yj_generated"
+MANIFEST = json.loads((EVAL_DIR / "generated_yj_manifest.json").read_text(encoding="utf-8"))
+CASES = MANIFEST["cases"]
+
+
+@pytest.mark.parametrize("case", CASES, ids=[case["name"] for case in CASES])
+def test_yj_generated_black_box_behavior(case: dict, tmp_path: Path) -> None:
+    executable = WORKSPACE / "executable"
+    assert executable.exists(), f"missing executable at {executable}"
+
+    stdin = (FIXTURE_DIR / case["stdin_file"]).read_bytes()
+    expected_stdout = (FIXTURE_DIR / case["stdout_file"]).read_bytes()
+    expected_stderr = (FIXTURE_DIR / case["stderr_file"]).read_bytes()
+    env = os.environ.copy()
+    env["TZ"] = "UTC"
+    env.update(case.get("env", {}))
+
+    argv0 = case.get("argv0", "/workspace/executable")
+    proc = subprocess.run(
+        [argv0, *case["args"]],
+        executable=str(executable),
+        input=stdin,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        cwd=tmp_path,
+        env=env,
+        timeout=case.get("timeout", 5),
+    )
+
+    assert proc.returncode == case["returncode"]
+    assert proc.stdout == expected_stdout
+    assert proc.stderr == expected_stderr
+''',
+        encoding="utf-8",
+    )
+
+
+def write_readme(bundle_root: Path, instance_id: str, profile: str, case_count: int) -> None:
+    (bundle_root / "README.md").write_text(
+        f"""# Generated CLI Oracle Tests
+
+Instance: `{instance_id}`
+Profile: `{profile}`
+Cases: `{case_count}`
+
+These tests were generated from cleanroom-visible behavior: the ProgramBench
+reference executable was copied from the cleanroom image, then README-derived
+CLI cases were executed against it to capture exact stdout, stderr, and exit
+codes. The bundle does not include ProgramBench official test blobs or upstream
+source code.
+
+Run with a workspace-level `./executable`:
+
+```bash
+python3 -m pytest -q eval/tests
+```
+""",
+        encoding="utf-8",
+    )
+
+
+def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
+    image = args.image or image_name_from_instance_id(args.instance_id)
+    safe_instance = args.instance_id.replace("/", "_")
+    suite_label = args.suite_label or f"generated_{args.profile}_oracle"
+    work_dir = args.work_root / safe_instance / suite_label
+    out_dir = args.output_root / safe_instance / suite_label
+    logs_dir = work_dir / "logs"
+    reference_binary = work_dir / "reference_executable"
+    readme_copy = work_dir / "README.md"
+    bundle_root = out_dir / "oracle_tests"
+
+    if work_dir.exists():
+        if not args.overwrite:
+            raise FileExistsError(f"Work dir exists: {work_dir}")
+        shutil.rmtree(work_dir)
+    if bundle_root.exists():
+        if not args.overwrite:
+            raise FileExistsError(f"Bundle exists: {bundle_root}")
+        shutil.rmtree(bundle_root)
+    logs_dir.mkdir(parents=True, exist_ok=True)
+
+    binary_result = materialize_cleanroom_file(
+        image=image,
+        docker=args.docker,
+        source_path="/workspace/executable",
+        dest=reference_binary,
+        logs_dir=logs_dir,
+    )
+    if binary_result["returncode"] != 0:
+        raise RuntimeError(f"cleanroom executable materialization failed: {binary_result}")
+    reference_binary.chmod(reference_binary.stat().st_mode | stat.S_IXUSR)
+
+    readme_result = materialize_cleanroom_file(
+        image=image,
+        docker=args.docker,
+        source_path="/workspace/README.md",
+        dest=readme_copy,
+        logs_dir=logs_dir,
+    )
+
+    cases = cases_for_profile(args.profile)
+    fixture_dir = bundle_root / "eval" / "fixtures" / "yj_generated"
+    fixture_dir.mkdir(parents=True, exist_ok=True)
+    manifest_cases: list[dict[str, Any]] = []
+    for index, case in enumerate(cases):
+        name = slug(case["name"])
+        observed = run_reference_case(reference_binary, case, args.case_timeout)
+        stdin_bytes = str(case.get("stdin", "")).encode("utf-8")
+        stdout = observed["stdout"]
+        stderr = observed["stderr"]
+        stdin_name = f"{index:03d}_{name}.stdin"
+        stdout_name = f"{index:03d}_{name}.stdout"
+        stderr_name = f"{index:03d}_{name}.stderr"
+        (fixture_dir / stdin_name).write_bytes(stdin_bytes)
+        (fixture_dir / stdout_name).write_bytes(stdout)
+        (fixture_dir / stderr_name).write_bytes(stderr)
+        manifest_cases.append(
+            {
+                "name": name,
+                "area": case.get("area", "unknown"),
+                "args": list(case.get("args", [])),
+                "argv0": case.get("argv0", "/workspace/executable"),
+                "env": case.get("env", {}),
+                "timeout": args.case_timeout,
+                "returncode": observed["returncode"],
+                "stdin_file": stdin_name,
+                "stdout_file": stdout_name,
+                "stderr_file": stderr_name,
+                "stdin_sha256": sha256_bytes(stdin_bytes),
+                "stdout_sha256": sha256_bytes(stdout),
+                "stderr_sha256": sha256_bytes(stderr),
+                "stdout_bytes": len(stdout),
+                "stderr_bytes": len(stderr),
+            }
+        )
+
+    manifest = {
+        "instance_id": args.instance_id,
+        "profile": args.profile,
+        "suite_label": suite_label,
+        "method": "cleanroom_reference_binary_black_box_capture",
+        "generated_at": dt.datetime.now(dt.UTC).isoformat(),
+        "image": image,
+        "case_count": len(manifest_cases),
+        "readme_copied": readme_result["returncode"] == 0,
+        "cases": manifest_cases,
+    }
+    write_generated_pytest(bundle_root)
+    write_readme(bundle_root, args.instance_id, args.profile, len(manifest_cases))
+    write_json(bundle_root / "eval" / "generated_yj_manifest.json", manifest)
+    write_json(out_dir / "quality_report.json", {"bundle_root": str(bundle_root), **manifest})
+    return {"bundle_root": str(bundle_root), "quality_report": str(out_dir / "quality_report.json"), **manifest}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("instance_id")
+    parser.add_argument("--profile", choices=["yj"], default="yj")
+    parser.add_argument("--suite-label")
+    parser.add_argument("--image")
+    parser.add_argument("--docker", default="docker")
+    parser.add_argument("--work-root", type=Path, default=Path("/tmp/programbench_generated_cli_oracles"))
+    parser.add_argument("--output-root", type=Path, default=Path("reports/programbench_generated_oracles"))
+    parser.add_argument("--case-timeout", type=int, default=5)
+    parser.add_argument("--overwrite", action="store_true")
+    args = parser.parse_args()
+
+    args.output_root = args.output_root if args.output_root.is_absolute() else (REPO_ROOT / args.output_root).resolve()
+    result = generate_bundle(args)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

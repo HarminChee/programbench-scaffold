@@ -1,0 +1,654 @@
+{
+  "case_count": 34,
+  "cases": [
+    {
+      "area": "help_usage",
+      "args": [
+        "-h"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "help_short",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "000_help_short.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "000_help_short.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 965,
+      "stdout_file": "000_help_short.stdout",
+      "stdout_sha256": "0d9ca081f526db5ca771b0a36a388d0b98222a7d7ba921ba3038d4837ef1bfc0",
+      "timeout": 5
+    },
+    {
+      "area": "help_usage",
+      "args": [
+        "-v"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "version_short",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "001_version_short.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "001_version_short.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 7,
+      "stdout_file": "001_version_short.stdout",
+      "stdout_sha256": "30ac9c0cb3fe6723b9b78fec126a579ae35b84b3ab2ab67e1fe8ba6279aa18b6",
+      "timeout": 5
+    },
+    {
+      "area": "errors",
+      "args": [
+        "-Z"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "invalid_short_flag",
+      "returncode": 1,
+      "stderr_bytes": 999,
+      "stderr_file": "002_invalid_short_flag.stderr",
+      "stderr_sha256": "a4b96355fccf009d2d2402e994e1a875fc97812d9506462206142e2abedbcfe1",
+      "stdin_file": "002_invalid_short_flag.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "002_invalid_short_flag.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout": 5
+    },
+    {
+      "area": "errors",
+      "args": [
+        "--help"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "invalid_long_help_flag",
+      "returncode": 1,
+      "stderr_bytes": 1001,
+      "stderr_file": "003_invalid_long_help_flag.stderr",
+      "stderr_sha256": "3995328ba74196e2fbc913c0f92b8c1e956ff9126544fc50454728cb6bb64e5d",
+      "stdin_file": "003_invalid_long_help_flag.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "003_invalid_long_help_flag.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout": 5
+    },
+    {
+      "area": "yaml_to_json",
+      "args": [],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "yaml_to_json_default",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "004_yaml_to_json_default.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "004_yaml_to_json_default.stdin",
+      "stdin_sha256": "907beb4563820ba58ae87a2a4ea40fdd9793a78963e09598ee17462d05f66b57",
+      "stdout_bytes": 141,
+      "stdout_file": "004_yaml_to_json_default.stdout",
+      "stdout_sha256": "914d39cec77c8992a0b6810bf61bf4f739ed377782e0f75ecc6dcfb2af6934d8",
+      "timeout": 5
+    },
+    {
+      "area": "yaml_to_json",
+      "args": [
+        "-yj"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "yaml_to_json_explicit",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "005_yaml_to_json_explicit.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "005_yaml_to_json_explicit.stdin",
+      "stdin_sha256": "907beb4563820ba58ae87a2a4ea40fdd9793a78963e09598ee17462d05f66b57",
+      "stdout_bytes": 141,
+      "stdout_file": "005_yaml_to_json_explicit.stdout",
+      "stdout_sha256": "914d39cec77c8992a0b6810bf61bf4f739ed377782e0f75ecc6dcfb2af6934d8",
+      "timeout": 5
+    },
+    {
+      "area": "yaml_to_json",
+      "args": [
+        "-yji"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "yaml_to_json_indented",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "006_yaml_to_json_indented.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "006_yaml_to_json_indented.stdin",
+      "stdin_sha256": "907beb4563820ba58ae87a2a4ea40fdd9793a78963e09598ee17462d05f66b57",
+      "stdout_bytes": 194,
+      "stdout_file": "006_yaml_to_json_indented.stdout",
+      "stdout_sha256": "535800a7b1674ee67787f46a1ad3be2c6d2281c4153056f9cd3976d19a2e79c0",
+      "timeout": 5
+    },
+    {
+      "area": "yaml_to_yaml",
+      "args": [
+        "-yy"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "yaml_to_yaml_roundtrip",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "007_yaml_to_yaml_roundtrip.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "007_yaml_to_yaml_roundtrip.stdin",
+      "stdin_sha256": "907beb4563820ba58ae87a2a4ea40fdd9793a78963e09598ee17462d05f66b57",
+      "stdout_bytes": 133,
+      "stdout_file": "007_yaml_to_yaml_roundtrip.stdout",
+      "stdout_sha256": "741121fc25c2640c3c32596f76087975528985e9443fecb0773606a9af9369b7",
+      "timeout": 5
+    },
+    {
+      "area": "yaml_to_toml",
+      "args": [
+        "-yt"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "yaml_to_toml",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "008_yaml_to_toml.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "008_yaml_to_toml.stdin",
+      "stdin_sha256": "907beb4563820ba58ae87a2a4ea40fdd9793a78963e09598ee17462d05f66b57",
+      "stdout_bytes": 139,
+      "stdout_file": "008_yaml_to_toml.stdout",
+      "stdout_sha256": "dae342d635039a185666dec5b2b42ecab8cd45552b11776ab30a5eda8340045e",
+      "timeout": 5
+    },
+    {
+      "area": "yaml_to_toml",
+      "args": [
+        "-yti"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "yaml_to_toml_indented",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "009_yaml_to_toml_indented.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "009_yaml_to_toml_indented.stdin",
+      "stdin_sha256": "907beb4563820ba58ae87a2a4ea40fdd9793a78963e09598ee17462d05f66b57",
+      "stdout_bytes": 143,
+      "stdout_file": "009_yaml_to_toml_indented.stdout",
+      "stdout_sha256": "cb93acb931fe249d95b6950f6d1df706a6747be8b00341610a71b2e545b25ca9",
+      "timeout": 5
+    },
+    {
+      "area": "yaml_to_hcl",
+      "args": [
+        "-yc"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "yaml_to_hcl",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "010_yaml_to_hcl.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "010_yaml_to_hcl.stdin",
+      "stdin_sha256": "907beb4563820ba58ae87a2a4ea40fdd9793a78963e09598ee17462d05f66b57",
+      "stdout_bytes": 167,
+      "stdout_file": "010_yaml_to_hcl.stdout",
+      "stdout_sha256": "f49f7ba7a3c06c1889cdc4ddb27231395784b2bb926993646917347e35ebe21e",
+      "timeout": 5
+    },
+    {
+      "area": "yaml_special_values",
+      "args": [
+        "-yj"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "yaml_special_default",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "011_yaml_special_default.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "011_yaml_special_default.stdin",
+      "stdin_sha256": "a4e35d4a514e20f4520fb8bdec6197560a92c1cd293cca2890f14551a9d13be9",
+      "stdout_bytes": 79,
+      "stdout_file": "011_yaml_special_default.stdout",
+      "stdout_sha256": "499ec308aea7bb4bbf083d701c6852561484ab3e22ca274d08fc0d18bfba9b87",
+      "timeout": 5
+    },
+    {
+      "area": "yaml_special_values",
+      "args": [
+        "-yjn"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "yaml_special_no_convert",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "012_yaml_special_no_convert.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "012_yaml_special_no_convert.stdin",
+      "stdin_sha256": "a4e35d4a514e20f4520fb8bdec6197560a92c1cd293cca2890f14551a9d13be9",
+      "stdout_bytes": 104,
+      "stdout_file": "012_yaml_special_no_convert.stdout",
+      "stdout_sha256": "458eae4143d16aad5b7fe31a3119617f579a37e44f4e07d2827b4cfa3ce4b68e",
+      "timeout": 5
+    },
+    {
+      "area": "json_to_json",
+      "args": [
+        "-jj"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "json_to_json",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "013_json_to_json.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "013_json_to_json.stdin",
+      "stdin_sha256": "ec929ba8f72db35066857a1f4529cca9dea512224b0efff5ecc2cf34460bfa7b",
+      "stdout_bytes": 131,
+      "stdout_file": "013_json_to_json.stdout",
+      "stdout_sha256": "ec929ba8f72db35066857a1f4529cca9dea512224b0efff5ecc2cf34460bfa7b",
+      "timeout": 5
+    },
+    {
+      "area": "json_to_json",
+      "args": [
+        "-jje"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "json_to_json_escape_html",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "014_json_to_json_escape_html.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "014_json_to_json_escape_html.stdin",
+      "stdin_sha256": "ec929ba8f72db35066857a1f4529cca9dea512224b0efff5ecc2cf34460bfa7b",
+      "stdout_bytes": 146,
+      "stdout_file": "014_json_to_json_escape_html.stdout",
+      "stdout_sha256": "0cfa4aee6775e7ef9360399a6c9f32345dad31987a2a64adfe6481f73d946cd2",
+      "timeout": 5
+    },
+    {
+      "area": "json_to_yaml",
+      "args": [
+        "-jy"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "json_to_yaml",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "015_json_to_yaml.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "015_json_to_yaml.stdin",
+      "stdin_sha256": "ec929ba8f72db35066857a1f4529cca9dea512224b0efff5ecc2cf34460bfa7b",
+      "stdout_bytes": 122,
+      "stdout_file": "015_json_to_yaml.stdout",
+      "stdout_sha256": "8ebdd95f41a891fba952704683fb67d79e6dcc6e08f8c74e58eb848acac79d06",
+      "timeout": 5
+    },
+    {
+      "area": "json_to_yaml",
+      "args": [
+        "-jyk"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "json_to_yaml_parse_keys",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "016_json_to_yaml_parse_keys.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "016_json_to_yaml_parse_keys.stdin",
+      "stdin_sha256": "c8a81fbf6c380d28723c594e5df12993fdb8387247bb187845a8c56380fce2d5",
+      "stdout_bytes": 28,
+      "stdout_file": "016_json_to_yaml_parse_keys.stdout",
+      "stdout_sha256": "6e9cb2d78f34bc929f2ca007cee1868696cdd9bbe7b6c68feb5ee16a3ac99977",
+      "timeout": 5
+    },
+    {
+      "area": "json_to_toml",
+      "args": [
+        "-jt"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "json_to_toml",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "017_json_to_toml.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "017_json_to_toml.stdin",
+      "stdin_sha256": "ec929ba8f72db35066857a1f4529cca9dea512224b0efff5ecc2cf34460bfa7b",
+      "stdout_bytes": 129,
+      "stdout_file": "017_json_to_toml.stdout",
+      "stdout_sha256": "2b2f132790f43e4579ce6ed9ca25114dc7bd71de5c2e35332fad216beadc41fb",
+      "timeout": 5
+    },
+    {
+      "area": "errors",
+      "args": [
+        "-jt"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "json_array_to_toml_error",
+      "returncode": 1,
+      "stderr_bytes": 70,
+      "stderr_file": "018_json_array_to_toml_error.stderr",
+      "stderr_sha256": "a20cb4efacc9980068595b5d7f14f0eeb47518b4b2379cb35c9e7e6554524ce0",
+      "stdin_file": "018_json_array_to_toml_error.stdin",
+      "stdin_sha256": "025436d65683a0cb224109b7d4e025a9520122fd3ec149b8d90f8d249064e6d1",
+      "stdout_bytes": 0,
+      "stdout_file": "018_json_array_to_toml_error.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout": 5
+    },
+    {
+      "area": "json_to_hcl",
+      "args": [
+        "-jc"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "json_to_hcl",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "019_json_to_hcl.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "019_json_to_hcl.stdin",
+      "stdin_sha256": "ec929ba8f72db35066857a1f4529cca9dea512224b0efff5ecc2cf34460bfa7b",
+      "stdout_bytes": 154,
+      "stdout_file": "019_json_to_hcl.stdout",
+      "stdout_sha256": "7f9ef9c9dd15350bad28d83803dc7621ee13639eb1088304bf07484d1df01838",
+      "timeout": 5
+    },
+    {
+      "area": "toml_to_json",
+      "args": [
+        "-tj"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "toml_to_json",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "020_toml_to_json.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "020_toml_to_json.stdin",
+      "stdin_sha256": "c1760df2396f97dc02bc4bed55b97824396df5688a4dc1f6cc139840e748d2f8",
+      "stdout_bytes": 158,
+      "stdout_file": "020_toml_to_json.stdout",
+      "stdout_sha256": "7867653979d7c80d223645e1fe841c5b10ab905fcd02f09c3272e34dcc0059bc",
+      "timeout": 5
+    },
+    {
+      "area": "toml_to_json",
+      "args": [
+        "-tji"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "toml_to_json_indented",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "021_toml_to_json_indented.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "021_toml_to_json_indented.stdin",
+      "stdin_sha256": "c1760df2396f97dc02bc4bed55b97824396df5688a4dc1f6cc139840e748d2f8",
+      "stdout_bytes": 211,
+      "stdout_file": "021_toml_to_json_indented.stdout",
+      "stdout_sha256": "c321efb08942423521764cdc52c9d12610916eb63023610f472cf5db2bbffe77",
+      "timeout": 5
+    },
+    {
+      "area": "toml_to_yaml",
+      "args": [
+        "-ty"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "toml_to_yaml",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "022_toml_to_yaml.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "022_toml_to_yaml.stdin",
+      "stdin_sha256": "c1760df2396f97dc02bc4bed55b97824396df5688a4dc1f6cc139840e748d2f8",
+      "stdout_bytes": 148,
+      "stdout_file": "022_toml_to_yaml.stdout",
+      "stdout_sha256": "f5b20d555f48ed4fef89520d6ead9265d74a8a6b3913cf15982b174ec093af37",
+      "timeout": 5
+    },
+    {
+      "area": "toml_to_toml",
+      "args": [
+        "-tt"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "toml_to_toml",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "023_toml_to_toml.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "023_toml_to_toml.stdin",
+      "stdin_sha256": "c1760df2396f97dc02bc4bed55b97824396df5688a4dc1f6cc139840e748d2f8",
+      "stdout_bytes": 154,
+      "stdout_file": "023_toml_to_toml.stdout",
+      "stdout_sha256": "c1760df2396f97dc02bc4bed55b97824396df5688a4dc1f6cc139840e748d2f8",
+      "timeout": 5
+    },
+    {
+      "area": "toml_to_hcl",
+      "args": [
+        "-tc"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "toml_to_hcl",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "024_toml_to_hcl.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "024_toml_to_hcl.stdin",
+      "stdin_sha256": "c1760df2396f97dc02bc4bed55b97824396df5688a4dc1f6cc139840e748d2f8",
+      "stdout_bytes": 184,
+      "stdout_file": "024_toml_to_hcl.stdout",
+      "stdout_sha256": "a408918a788528bba8c77a3d2504fbbc070782c0aaa15b4ea549aece50bf8ae7",
+      "timeout": 5
+    },
+    {
+      "area": "hcl_to_json",
+      "args": [
+        "-cj"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "hcl_to_json",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "025_hcl_to_json.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "025_hcl_to_json.stdin",
+      "stdin_sha256": "f5d792d0e22d231f0dcbede2cbf96e50061a9d75e5865376c4ec7ff6e725799d",
+      "stdout_bytes": 124,
+      "stdout_file": "025_hcl_to_json.stdout",
+      "stdout_sha256": "40b25882a1de9759ffb7e5fbcbcbf21ef69575b8d864a7638fb699f426a45b34",
+      "timeout": 5
+    },
+    {
+      "area": "hcl_to_json",
+      "args": [
+        "-cji"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "hcl_to_json_indented",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "026_hcl_to_json_indented.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "026_hcl_to_json_indented.stdin",
+      "stdin_sha256": "f5d792d0e22d231f0dcbede2cbf96e50061a9d75e5865376c4ec7ff6e725799d",
+      "stdout_bytes": 187,
+      "stdout_file": "026_hcl_to_json_indented.stdout",
+      "stdout_sha256": "7ff5aa14bb5ea77b2f979ed266eea743c115241d6ce8316b670ae00d07aa59e9",
+      "timeout": 5
+    },
+    {
+      "area": "hcl_to_yaml",
+      "args": [
+        "-cy"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "hcl_to_yaml",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "027_hcl_to_yaml.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "027_hcl_to_yaml.stdin",
+      "stdin_sha256": "f5d792d0e22d231f0dcbede2cbf96e50061a9d75e5865376c4ec7ff6e725799d",
+      "stdout_bytes": 119,
+      "stdout_file": "027_hcl_to_yaml.stdout",
+      "stdout_sha256": "1fa5cbeaf91c7b37d5fec49b19e09e2fae0400b2ff16839a9a20ec97a1e0a4e6",
+      "timeout": 5
+    },
+    {
+      "area": "hcl_to_toml",
+      "args": [
+        "-ct"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "hcl_to_toml",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "028_hcl_to_toml.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "028_hcl_to_toml.stdin",
+      "stdin_sha256": "f5d792d0e22d231f0dcbede2cbf96e50061a9d75e5865376c4ec7ff6e725799d",
+      "stdout_bytes": 122,
+      "stdout_file": "028_hcl_to_toml.stdout",
+      "stdout_sha256": "dc633305679cd75380ef9f87d36e677d381431960ebf7131078a2649252e7e0b",
+      "timeout": 5
+    },
+    {
+      "area": "hcl_to_hcl",
+      "args": [
+        "-cc"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "hcl_to_hcl",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "029_hcl_to_hcl.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "029_hcl_to_hcl.stdin",
+      "stdin_sha256": "f5d792d0e22d231f0dcbede2cbf96e50061a9d75e5865376c4ec7ff6e725799d",
+      "stdout_bytes": 145,
+      "stdout_file": "029_hcl_to_hcl.stdout",
+      "stdout_sha256": "75dc31f278190678f906ff3d3e2df2f2647dbb063e0e6086de8ae46e0a2d5a85",
+      "timeout": 5
+    },
+    {
+      "area": "edge_cases",
+      "args": [],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "empty_stdin_default",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "030_empty_stdin_default.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "030_empty_stdin_default.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "030_empty_stdin_default.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout": 5
+    },
+    {
+      "area": "edge_cases",
+      "args": [
+        "-jy"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "empty_json_to_yaml",
+      "returncode": 1,
+      "stderr_bytes": 49,
+      "stderr_file": "031_empty_json_to_yaml.stderr",
+      "stderr_sha256": "cf52f1e401028eb7bef050e43729449d342d000dd6c8509b7b7c7d061c974549",
+      "stdin_file": "031_empty_json_to_yaml.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "031_empty_json_to_yaml.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout": 5
+    },
+    {
+      "area": "errors",
+      "args": [
+        "-yj"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "invalid_yaml_to_json",
+      "returncode": 1,
+      "stderr_bytes": 67,
+      "stderr_file": "032_invalid_yaml_to_json.stderr",
+      "stderr_sha256": "c6b863836aaa85cae701bee89465b322ae11f96fee553e49d904c0192f360f06",
+      "stdin_file": "032_invalid_yaml_to_json.stdin",
+      "stdin_sha256": "f55908bbe6bc5c9106ffccb2ccb6b9c1e1931a40d53b6e2edbe4f4ae3cf48d25",
+      "stdout_bytes": 0,
+      "stdout_file": "032_invalid_yaml_to_json.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout": 5
+    },
+    {
+      "area": "errors",
+      "args": [
+        "-jy"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "invalid_json_to_yaml",
+      "returncode": 1,
+      "stderr_bytes": 49,
+      "stderr_file": "033_invalid_json_to_yaml.stderr",
+      "stderr_sha256": "cf52f1e401028eb7bef050e43729449d342d000dd6c8509b7b7c7d061c974549",
+      "stdin_file": "033_invalid_json_to_yaml.stdin",
+      "stdin_sha256": "1946ae1644f690c6ecba0e2a10ae0e41d703b744b5b4c361e329f3cd4f235a17",
+      "stdout_bytes": 0,
+      "stdout_file": "033_invalid_json_to_yaml.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout": 5
+    }
+  ],
+  "generated_at": "2026-07-08T10:18:56.453235+00:00",
+  "image": "programbench/sclevine_1776_yj.8016400:task_cleanroom_v6",
+  "instance_id": "sclevine__yj.8016400",
+  "method": "cleanroom_reference_binary_black_box_capture",
+  "profile": "yj",
+  "readme_copied": true,
+  "suite_label": "generated_yj_oracle_v1"
+}

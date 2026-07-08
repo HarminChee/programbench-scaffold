@@ -1,0 +1,4 @@
+positive: .inf
+negative: -.inf
+missing: .nan
+quoted: ".inf"

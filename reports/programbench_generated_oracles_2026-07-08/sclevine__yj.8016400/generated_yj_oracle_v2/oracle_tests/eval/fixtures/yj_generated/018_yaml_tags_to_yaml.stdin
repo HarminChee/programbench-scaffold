@@ -1,0 +1,4 @@
+as_int: !!int "3"
+as_str: !!str 3
+as_bool: !!bool "true"
+as_float: !!float "1.5"

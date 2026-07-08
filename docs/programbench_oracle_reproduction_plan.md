@@ -110,3 +110,11 @@ An oracle-test reproduction is not accepted until these gates are recorded:
   binaries under `TZ=UTC`. ProgramBench-filtered branch results passed and the
   three binaries were behavior-consistent. Merged official-test Go statement
   coverage is 88.8%; native `go test` statement coverage is 76.2%.
+- Generated yj oracle v2: `tools/programbench_generate_cli_oracle_bundle.py`
+  generated 53 cleanroom black-box CLI cases for `sclevine__yj.8016400`.
+  The same Go coverage harness reports 78.7% Go statement coverage. This is
+  above the native baseline by 2.5 percentage points and below the PB official
+  all-active-branch baseline by 10.1 percentage points. The v2 suite passes on
+  cleanroom/source/coverage binaries, rejects an `exit 0` no-output dummy
+  (`52 failed, 1 passed`), passes source-leak scans, and reruns as `53 passed`
+  with `GOCOVERDIR` set.

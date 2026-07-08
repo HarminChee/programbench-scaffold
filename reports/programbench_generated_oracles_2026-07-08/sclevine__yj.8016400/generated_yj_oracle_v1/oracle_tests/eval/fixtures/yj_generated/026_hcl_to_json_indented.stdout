@@ -1,0 +1,15 @@
+{
+  "name": "programbench",
+  "enabled": true,
+  "count": 3,
+  "tags": [
+    "alpha",
+    "beta"
+  ],
+  "nested": [
+    {
+      "message": "hello: world",
+      "value": 1.25
+    }
+  ]
+}

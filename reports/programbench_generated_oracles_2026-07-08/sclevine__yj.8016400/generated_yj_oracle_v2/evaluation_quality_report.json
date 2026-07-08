@@ -1,0 +1,60 @@
+{
+  "artifacts": {
+    "coverage_summary_json": "reports/programbench_source_coverage_2026-07-08/sclevine__yj.8016400/generated_yj_oracle_v2.go_coverage_summary.json",
+    "coverage_summary_md": "reports/programbench_source_coverage_2026-07-08/sclevine__yj.8016400/generated_yj_oracle_v2.go_coverage_summary.md",
+    "dummy_junit": "/tmp/programbench_yj_generated_v2_dummy_reject/dummy.results.xml",
+    "oracle_bundle": "reports/programbench_generated_oracles_2026-07-08/sclevine__yj.8016400/generated_yj_oracle_v2/oracle_tests",
+    "repeat_junit": "/tmp/programbench_source_coverage_yj_generated/sclevine__yj.8016400/generated_yj_oracle_v2/source/coverage/junit/generated_yj_oracle_v2.repeat.results.xml",
+    "work_dir": "/tmp/programbench_source_coverage_yj_generated/sclevine__yj.8016400/generated_yj_oracle_v2"
+  },
+  "coverage": {
+    "delta_generated_vs_native_pp": 2.5,
+    "delta_generated_vs_pb_official_pp": -10.1,
+    "generated_go_statement_coverage_percent": 78.7,
+    "metric": "go_statement_coverage",
+    "native_go_statement_coverage_percent": 76.2,
+    "pb_official_go_statement_coverage_percent": 88.8
+  },
+  "dummy_reject": {
+    "dummy_executable": "exit_0_no_output",
+    "failed": 52,
+    "junit": "/tmp/programbench_yj_generated_v2_dummy_reject/dummy.results.xml",
+    "passed": 1,
+    "pytest_returncode": 1,
+    "rejected": true,
+    "total": 53
+  },
+  "generated_suite": {
+    "case_count": 53,
+    "generation_method": "cleanroom_reference_binary_black_box_capture",
+    "suite_label": "generated_yj_oracle_v2"
+  },
+  "instance_id": "sclevine__yj.8016400",
+  "reference_pass": {
+    "cleanroom": {
+      "passed": 53,
+      "pytest_returncode": 0
+    },
+    "coverage": {
+      "passed": 53,
+      "pytest_returncode": 0
+    },
+    "source": {
+      "passed": 53,
+      "pytest_returncode": 0
+    }
+  },
+  "source_leak_scan": {
+    "passed": true,
+    "source_identifying_string_matches": 0,
+    "source_like_file_matches": 0
+  },
+  "repeat_check": {
+    "environment": {
+      "GOCOVERDIR": "/tmp/programbench_yj_generated_v2_repeat_gocover"
+    },
+    "passed": 53,
+    "pytest_returncode": 0,
+    "total": 53
+  }
+}

@@ -234,6 +234,21 @@ def copy_oracle_material(extract_dir: Path, repo_dir: Path) -> list[str]:
     return copied
 
 
+def resolve_oracle_material_root(path: Path) -> Path:
+    candidate = path.expanduser().resolve()
+    if (candidate / "eval").exists():
+        return candidate
+    nested = candidate / "oracle_tests"
+    if (nested / "eval").exists():
+        return nested
+    raise FileNotFoundError(f"Could not find eval/ under oracle material root: {candidate}")
+
+
+def safe_run_label(value: str) -> str:
+    label = re.sub(r"[^A-Za-z0-9_.-]+", "_", value).strip("_.-")
+    return label or "suite"
+
+
 def parse_total_statement_coverage(text: str) -> float | None:
     for line in reversed(text.splitlines()):
         match = re.search(r"\btotal:\s+\(statements\)\s+([0-9.]+)%", line)
@@ -492,6 +507,12 @@ def main() -> int:
     parser.add_argument("--tasks-root", type=Path, default=DEFAULT_TASKS_ROOT)
     parser.add_argument("--blob-dir", type=Path)
     parser.add_argument("--branch", default="first-active", help="first-active, all, or comma-separated active branch ids")
+    parser.add_argument(
+        "--oracle-material-root",
+        type=Path,
+        help="Run a generated/custom oracle bundle root containing eval/ instead of official ProgramBench blobs.",
+    )
+    parser.add_argument("--suite-label", help="Label used for custom/generated suite reports")
     parser.add_argument("--work-root", type=Path, default=Path("/tmp/programbench_source_coverage"))
     parser.add_argument("--output-root", type=Path, default=Path("reports/programbench_source_coverage"))
     parser.add_argument("--overwrite", action="store_true")
@@ -513,8 +534,15 @@ def main() -> int:
     test_metadata = branch_test_metadata(task_dir)
     if not all_active:
         raise ValueError(f"{args.instance_id} has no active branches")
-    selected_branches = select_branches(args.branch, all_active)
-    run_label = "all_active" if selected_branches == all_active else "_".join(selected_branches)
+
+    oracle_material_root = resolve_oracle_material_root(args.oracle_material_root) if args.oracle_material_root else None
+    suite_kind = "generated" if oracle_material_root else "official"
+    if oracle_material_root:
+        run_label = safe_run_label(args.suite_label or oracle_material_root.parent.name or "generated_oracle")
+        selected_branches = [run_label]
+    else:
+        selected_branches = select_branches(args.branch, all_active)
+        run_label = "all_active" if selected_branches == all_active else "_".join(selected_branches)
 
     safe_instance = args.instance_id.replace("/", "_")
     work_dir = args.work_root / safe_instance / run_label
@@ -526,12 +554,12 @@ def main() -> int:
     branch_root = work_dir / "branches"
     logs_dir = work_dir / "logs"
     result_dir = repo_dir / "coverage" / "junit"
-    official_cov_dir = repo_dir / "coverage" / "official_merged_raw"
+    suite_cov_dir = repo_dir / "coverage" / f"{run_label}_merged_raw"
     logs_dir.mkdir(parents=True, exist_ok=True)
 
     repository = str(meta["repository"])
     commit = str(meta["commit"])
-    blob_dir = find_blob_dir(args.instance_id, args.blob_dir)
+    blob_dir = None if oracle_material_root else find_blob_dir(args.instance_id, args.blob_dir)
     clone_url = f"https://github.com/{repository}.git"
 
     clone = run_command(["git", "clone", clone_url, str(repo_dir)], timeout=900, log_path=logs_dir / "git_clone.json")
@@ -559,6 +587,8 @@ def main() -> int:
     if build_coverage["returncode"] != 0:
         raise RuntimeError(f"go coverage build failed: {build_coverage['stderr_tail']}")
 
+    native = run_native_tests(repo_dir, logs_dir) if args.run_native_tests else None
+
     cleanroom_binary = work_dir / "executable_cleanroom"
     cleanroom = None
     if args.compare_binaries:
@@ -567,16 +597,28 @@ def main() -> int:
             raise RuntimeError(f"cleanroom binary materialization failed: {cleanroom}")
 
     python = install_pytest(work_dir / ".venv", logs_dir)
-    gocoverdir_alias = prepare_gocoverdir_alias(official_cov_dir)
+    gocoverdir_alias = prepare_gocoverdir_alias(suite_cov_dir)
     branch_results: list[dict[str, Any]] = []
     for branch in selected_branches:
-        branch_meta = test_metadata[branch]
-        ignored_tests = branch_meta["ignored"]
-        branch_tar = blob_dir / "tests" / f"{branch}.tar.gz"
-        if not branch_tar.exists():
-            raise FileNotFoundError(f"Missing branch tarball: {branch_tar}")
-        extract_dir = branch_root / branch / "blob"
-        safe_extract(branch_tar, extract_dir)
+        if oracle_material_root:
+            branch_meta = {
+                "ignored": set(),
+                "expected_count": None,
+                "active_count": None,
+                "ignored_count": 0,
+            }
+            ignored_tests: set[str] = set()
+            branch_tar = None
+            extract_dir = oracle_material_root
+        else:
+            branch_meta = test_metadata[branch]
+            ignored_tests = branch_meta["ignored"]
+            assert blob_dir is not None
+            branch_tar = blob_dir / "tests" / f"{branch}.tar.gz"
+            if not branch_tar.exists():
+                raise FileNotFoundError(f"Missing branch tarball: {branch_tar}")
+            extract_dir = branch_root / branch / "blob"
+            safe_extract(branch_tar, extract_dir)
         copied_material = copy_oracle_material(extract_dir, repo_dir)
 
         binary_results: list[dict[str, Any]] = []
@@ -619,46 +661,47 @@ def main() -> int:
             logs_dir=logs_dir,
             timeout=args.pytest_timeout,
             xdist=args.xdist,
-            gocoverdir=official_cov_dir,
+            gocoverdir=suite_cov_dir,
             ignored_tests=ignored_tests,
         )
         binary_results.append(coverage_result)
-        branch_results.append(
-            {
-                "branch": branch,
-                "branch_tar": str(branch_tar),
-                "tests_json": {
-                    "expected_count": branch_meta["expected_count"],
-                    "active_count": branch_meta["active_count"],
-                    "ignored_count": branch_meta["ignored_count"],
-                },
-                "copied_oracle_material": copied_material,
-                "binary_results": binary_results,
-                "comparison": compare_binary_results(binary_results),
-            }
-        )
+        branch_result = {
+            "branch": branch,
+            "tests_json": {
+                "expected_count": branch_meta["expected_count"],
+                "active_count": branch_meta["active_count"],
+                "ignored_count": branch_meta["ignored_count"],
+            },
+            "copied_oracle_material": copied_material,
+            "binary_results": binary_results,
+            "comparison": compare_binary_results(binary_results),
+        }
+        if branch_tar is not None:
+            branch_result["branch_tar"] = str(branch_tar)
+        if oracle_material_root is not None:
+            branch_result["oracle_material_root"] = str(oracle_material_root)
+        branch_results.append(branch_result)
 
-    official_profile = repo_dir / "coverage" / "official_merged_profile.txt"
+    suite_profile = repo_dir / "coverage" / f"{run_label}_merged_profile.txt"
     cov_percent = run_command(
-        ["go", "tool", "covdata", "percent", "-i", str(official_cov_dir)],
+        ["go", "tool", "covdata", "percent", "-i", str(suite_cov_dir)],
         cwd=repo_dir,
         timeout=300,
-        log_path=logs_dir / "go_official_covdata_percent.json",
+        log_path=logs_dir / f"go_{run_label}_covdata_percent.json",
     )
     cov_textfmt = run_command(
-        ["go", "tool", "covdata", "textfmt", "-i", str(official_cov_dir), "-o", str(official_profile)],
+        ["go", "tool", "covdata", "textfmt", "-i", str(suite_cov_dir), "-o", str(suite_profile)],
         cwd=repo_dir,
         timeout=300,
-        log_path=logs_dir / "go_official_covdata_textfmt.json",
+        log_path=logs_dir / f"go_{run_label}_covdata_textfmt.json",
     )
     cover_func = run_command(
-        ["go", "tool", "cover", "-func", str(official_profile)],
+        ["go", "tool", "cover", "-func", str(suite_profile)],
         cwd=repo_dir,
         timeout=300,
-        log_path=logs_dir / "go_official_cover_func.json",
+        log_path=logs_dir / f"go_{run_label}_cover_func.json",
     )
 
-    native = run_native_tests(repo_dir, logs_dir) if args.run_native_tests else None
     all_branch_comparisons_ok = all(item["comparison"]["behavior_consistent"] for item in branch_results)
     all_coverage_pytests_ok = all(
         result["junit_summary"].get("filtered_failures") == 0
@@ -668,6 +711,18 @@ def main() -> int:
         for result in item["binary_results"]
         if result["label"] == "coverage"
     )
+    test_suite_summary = {
+        "kind": suite_kind,
+        "label": run_label,
+        "coverage_metric": "go_statement_coverage",
+        "pytest_all_coverage_runs_passed": all_coverage_pytests_ok,
+        "suite_count": len(selected_branches),
+        "statement_coverage_percent": parse_total_statement_coverage(cover_func["stdout_tail"]),
+        "covdata_percent_returncode": cov_percent["returncode"],
+        "covdata_textfmt_returncode": cov_textfmt["returncode"],
+        "cover_func_returncode": cover_func["returncode"],
+        "profile": str(suite_profile),
+    }
     summary = {
         "instance_id": args.instance_id,
         "repository": repository,
@@ -675,39 +730,38 @@ def main() -> int:
         "language": meta.get("language"),
         "selected_branches": selected_branches,
         "active_branch_count": len(all_active),
-        "blob_dir": str(blob_dir),
         "work_dir": str(work_dir),
         "compare_binaries": args.compare_binaries,
         "cleanroom_binary": cleanroom,
         "gocoverdir_alias": gocoverdir_alias,
-        "official_tests": {
-            "coverage_metric": "go_statement_coverage",
-            "pytest_all_coverage_runs_passed": all_coverage_pytests_ok,
-            "branch_count": len(selected_branches),
-            "statement_coverage_percent": parse_total_statement_coverage(cover_func["stdout_tail"]),
-            "covdata_percent_returncode": cov_percent["returncode"],
-            "covdata_textfmt_returncode": cov_textfmt["returncode"],
-            "cover_func_returncode": cover_func["returncode"],
-            "profile": str(official_profile),
-        },
+        "test_suite": test_suite_summary,
         "native_tests": native,
         "branch_results": branch_results,
         "all_branch_binary_comparisons_consistent": all_branch_comparisons_ok,
         "logs_dir": str(logs_dir),
     }
+    if suite_kind == "official":
+        summary["blob_dir"] = str(blob_dir)
+        summary["official_tests"] = {**test_suite_summary, "branch_count": len(selected_branches)}
+    else:
+        summary["oracle_material_root"] = str(oracle_material_root)
+        summary["generated_tests"] = test_suite_summary
 
     out_dir = output_root / args.instance_id
     json_path = out_dir / f"{run_label}.go_coverage_summary.json"
     md_path = out_dir / f"{run_label}.go_coverage_summary.md"
     write_json(json_path, summary)
+    suite_display = "Official-test" if suite_kind == "official" else "Generated-test"
     md_lines = [
-        f"# Go Coverage Baseline: `{args.instance_id}`",
+        f"# Go Coverage Run: `{args.instance_id}`",
         "",
         f"- Repository: `{repository}`",
         f"- Commit: `{commit}`",
-        f"- Branches: `{', '.join(selected_branches)}`",
-        f"- Official-test coverage metric: `{summary['official_tests']['coverage_metric']}`",
-        f"- Official-test statement coverage: `{summary['official_tests']['statement_coverage_percent']}`",
+        f"- Suite kind: `{suite_kind}`",
+        f"- Suite label: `{run_label}`",
+        f"- Branches/suites: `{', '.join(selected_branches)}`",
+        f"- {suite_display} coverage metric: `{test_suite_summary['coverage_metric']}`",
+        f"- {suite_display} statement coverage: `{test_suite_summary['statement_coverage_percent']}`",
         f"- Native-test statement coverage: `{native['statement_coverage_percent'] if native else None}`",
         f"- Coverage pytest runs passed: `{all_coverage_pytests_ok}`",
         f"- Binary comparisons consistent: `{all_branch_comparisons_ok}`",

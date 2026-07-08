@@ -1,0 +1,15 @@
+"name" = "programbench"
+
+"enabled" = true
+
+"count" = 3
+
+"ratio" = 1.25
+
+"tags" = ["alpha", "beta"]
+
+"nested" = {
+  "keep_order" = "yes"
+
+  "message" = "hello: world"
+}

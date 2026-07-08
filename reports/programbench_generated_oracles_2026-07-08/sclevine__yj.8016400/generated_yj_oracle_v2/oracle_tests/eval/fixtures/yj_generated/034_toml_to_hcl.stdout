@@ -1,0 +1,15 @@
+"title" = "ProgramBench"
+
+"enabled" = true
+
+"count" = 3
+
+"tags" = ["alpha", "beta"]
+
+"timestamp" = "2020-01-02T03:04:05Z"
+
+"nested" = {
+  "message" = "hello: world"
+
+  "value" = 1.25
+}
