@@ -1,0 +1,9 @@
+[[server]]
+
+[[server.web]]
+port = 80
+tags = ["edge", "blue"]
+
+[[server.api]]
+port = 8080
+tags = ["internal"]

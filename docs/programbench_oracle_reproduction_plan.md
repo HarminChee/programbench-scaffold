@@ -1,6 +1,6 @@
 # ProgramBench Oracle Reproduction Plan
 
-Last updated: 2026-07-08
+Last updated: 2026-07-09
 
 ## Direction
 
@@ -118,3 +118,14 @@ An oracle-test reproduction is not accepted until these gates are recorded:
   cleanroom/source/coverage binaries, rejects an `exit 0` no-output dummy
   (`52 failed, 1 passed`), passes source-leak scans, and reruns as `53 passed`
   with `GOCOVERDIR` set.
+- Generated yj oracle v3: the same generator now produces 85 cleanroom
+  black-box CLI cases with coverage-guided additions for flag validation, YAML
+  complex keys/alias/merge/null/error paths, TOML special floats/nested arrays
+  of tables/many-key structs, and HCL duplicate/repeated/error paths. The Go
+  coverage harness reports 88.8% Go statement coverage, matching the PB
+  official all-active-branch baseline and exceeding native `go test` by 12.6
+  percentage points. The v3 suite passes on cleanroom/source/coverage binaries,
+  rejects a no-output `/bin/true` dummy (`84 failed, 1 passed`), passes
+  source-leak scans, and reruns as `85 passed` with `GOCOVERDIR` set. Equal
+  aggregate statement coverage is not treated as byte-for-byte oracle
+  equivalence; function-level coverage still differs in a few paths.

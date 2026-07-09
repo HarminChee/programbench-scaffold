@@ -237,14 +237,166 @@ def yj_cases() -> list[dict[str, Any]]:
         }
         """
     )
+    yaml_complex_keys_doc = textwrap.dedent(
+        """\
+        ? [alpha, beta]
+        : list key
+        ? {nested: value}
+        : map key
+        ? true
+        : bool key
+        ? 3.14
+        : number key
+        """
+    )
+    yaml_merge_sequence_doc = textwrap.dedent(
+        """\
+        defaults_a: &defaults_a
+          adapter: postgres
+          host: localhost
+        defaults_b: &defaults_b
+          host: db.local
+          pool: 5
+        development:
+          <<: [*defaults_a, *defaults_b]
+          database: dev
+        """
+    )
+    yaml_large_alias_doc = (
+        "base: &base\n"
+        "  name: item\n"
+        "  enabled: true\n"
+        "items:\n"
+        + "  - *base\n" * 1200
+    )
+    yaml_nulls_doc = textwrap.dedent(
+        """\
+        unset:
+        explicit_null: null
+        list:
+          - alpha
+          -
+          - beta
+        nested:
+          keep:
+        """
+    )
+    json_key_objects_doc = json.dumps(
+        {
+            "[1,2]": "array key",
+            '{"nested":true}': "object key",
+            "null": "null key",
+            '"quoted"': "quoted key",
+            "3.0": "float key",
+        },
+        separators=(",", ":"),
+    ) + "\n"
+    json_numbers_doc = json.dumps(
+        {
+            "integerish": 1.0,
+            "precise": 1.25,
+            "items": [0.0, 2.5, 10.0],
+            "nested": {"answer": 42.0},
+        },
+        separators=(",", ":"),
+    ) + "\n"
+    json_nulls_doc = json.dumps(
+        {
+            "name": "programbench",
+            "missing": None,
+            "items": ["alpha", None, "beta"],
+            "nested": {"keep": None, "value": 1},
+        },
+        separators=(",", ":"),
+    ) + "\n"
+    json_many_keys_doc = json.dumps(
+        {f"key_{i:02d}": i for i in range(34)} | {"empty": None},
+        separators=(",", ":"),
+    ) + "\n"
+    toml_special_doc = textwrap.dedent(
+        """\
+        pos = inf
+        neg = -inf
+        missing = nan
+        list = [1.0, inf, -inf, nan]
+        """
+    )
+    toml_nested_arrays_doc = textwrap.dedent(
+        """\
+        title = "Nested Tables"
+
+        [[services]]
+        name = "web"
+        ports = [80, 443]
+
+        [[services.routes]]
+        path = "/"
+        upstream = "root"
+
+        [[services.routes]]
+        path = "/api"
+        upstream = "api"
+
+        [[services]]
+        name = "worker"
+        ports = [9000]
+        """
+    )
+    hcl_nested_repeated_doc = textwrap.dedent(
+        """\
+        service "web" {
+          endpoint "root" {
+            path = "/"
+          }
+
+          endpoint "api" {
+            path = "/api"
+          }
+        }
+
+        service "worker" {
+          endpoint "jobs" {
+            path = "/jobs"
+          }
+        }
+        """
+    )
+    hcl_duplicate_attr_doc = textwrap.dedent(
+        """\
+        name = "first"
+        name = "second"
+        enabled = true
+        """
+    )
+    hcl_block_then_scalar_doc = textwrap.dedent(
+        """\
+        server "web" {
+          port = 80
+        }
+        server = "scalar"
+        """
+    )
     invalid_yaml = "name: [unterminated\n"
     invalid_json = '{"name": "unterminated"\n'
+    invalid_toml = 'name = "unterminated\n'
+    invalid_hcl = 'server "web" {\n  port = \n'
+    invalid_yaml_merge = textwrap.dedent(
+        """\
+        broken:
+          <<: 1
+        """
+    )
 
     return [
         {"name": "help_short", "area": "help_usage", "args": ["-h"], "stdin": ""},
         {"name": "version_short", "area": "help_usage", "args": ["-v"], "stdin": ""},
         {"name": "invalid_short_flag", "area": "errors", "args": ["-Z"], "stdin": ""},
         {"name": "invalid_long_help_flag", "area": "errors", "args": ["--help"], "stdin": ""},
+        {"name": "split_flags_yaml_json_indent", "area": "flag_matrix", "args": ["-y", "j", "i"], "stdin": yaml_doc},
+        {"name": "split_flags_json_yaml_keys", "area": "flag_matrix", "args": ["-j", "y", "k"], "stdin": json_key_objects_doc},
+        {"name": "invalid_json_keys_for_json_output", "area": "flag_matrix", "args": ["-jjk"], "stdin": json_doc},
+        {"name": "invalid_escape_for_yaml_output", "area": "flag_matrix", "args": ["-jye"], "stdin": json_doc},
+        {"name": "invalid_indent_for_hcl_output", "area": "flag_matrix", "args": ["-jci"], "stdin": json_doc},
         {"name": "yaml_to_json_default", "area": "yaml_to_json", "args": [], "stdin": yaml_doc},
         {"name": "yaml_to_json_explicit", "area": "yaml_to_json", "args": ["-yj"], "stdin": yaml_doc},
         {"name": "yaml_to_json_short_alias", "area": "alias_flags", "args": ["-y"], "stdin": yaml_doc},
@@ -260,6 +412,14 @@ def yj_cases() -> list[dict[str, Any]]:
         {"name": "yaml_merge_to_yaml", "area": "yaml_alias_merge", "args": ["-yy"], "stdin": yaml_merge_doc},
         {"name": "yaml_tags_to_json", "area": "yaml_tags", "args": ["-yj"], "stdin": yaml_tags_doc},
         {"name": "yaml_tags_to_yaml", "area": "yaml_tags", "args": ["-yy"], "stdin": yaml_tags_doc},
+        {"name": "yaml_complex_keys_to_json", "area": "yaml_complex_keys", "args": ["-yj"], "stdin": yaml_complex_keys_doc},
+        {"name": "yaml_complex_keys_to_yaml", "area": "yaml_complex_keys", "args": ["-yy"], "stdin": yaml_complex_keys_doc},
+        {"name": "yaml_merge_sequence_to_json", "area": "yaml_alias_merge", "args": ["-yj"], "stdin": yaml_merge_sequence_doc},
+        {"name": "yaml_merge_sequence_to_toml", "area": "yaml_alias_merge", "args": ["-yt"], "stdin": yaml_merge_sequence_doc},
+        {"name": "yaml_large_alias_to_json", "area": "yaml_alias_merge", "args": ["-yj"], "stdin": yaml_large_alias_doc},
+        {"name": "yaml_nulls_to_toml", "area": "toml_nulls", "args": ["-yt"], "stdin": yaml_nulls_doc},
+        {"name": "yaml_special_to_toml", "area": "toml_special_values", "args": ["-yt"], "stdin": yaml_special},
+        {"name": "yaml_special_to_toml_no_convert", "area": "toml_special_values", "args": ["-ytn"], "stdin": yaml_special},
         {"name": "json_to_json", "area": "json_to_json", "args": ["-jj"], "stdin": json_doc},
         {"name": "json_to_json_escape_html", "area": "json_to_json", "args": ["-jje"], "stdin": json_doc},
         {"name": "json_to_yaml", "area": "json_to_yaml", "args": ["-jy"], "stdin": json_doc},
@@ -267,8 +427,13 @@ def yj_cases() -> list[dict[str, Any]]:
         {"name": "json_to_yaml_nodash_flags", "area": "alias_flags", "args": ["jy"], "stdin": json_doc},
         {"name": "json_array_to_yaml", "area": "json_to_yaml", "args": ["-jy"], "stdin": json_array},
         {"name": "json_to_yaml_parse_keys", "area": "json_to_yaml", "args": ["-jyk"], "stdin": '{"1":"one","true":"yes","3.14":"pi"}\n'},
+        {"name": "json_to_yaml_parse_object_keys", "area": "yaml_json_keys", "args": ["-jyk"], "stdin": json_key_objects_doc},
+        {"name": "json_numbers_to_yaml", "area": "yaml_number_encoding", "args": ["-jy"], "stdin": json_numbers_doc},
         {"name": "json_to_toml", "area": "json_to_toml", "args": ["-jt"], "stdin": json_doc},
         {"name": "json_array_to_toml_error", "area": "errors", "args": ["-jt"], "stdin": json_array},
+        {"name": "json_nulls_to_toml", "area": "toml_nulls", "args": ["-jt"], "stdin": json_nulls_doc},
+        {"name": "json_many_keys_to_toml", "area": "toml_many_keys", "args": ["-jt"], "stdin": json_many_keys_doc},
+        {"name": "json_many_keys_to_toml_indented", "area": "toml_many_keys", "args": ["-jti"], "stdin": json_many_keys_doc},
         {"name": "json_to_hcl", "area": "json_to_hcl", "args": ["-jc"], "stdin": json_doc},
         {"name": "toml_to_json", "area": "toml_to_json", "args": ["-tj"], "stdin": toml_doc},
         {"name": "toml_to_json_short_alias", "area": "alias_flags", "args": ["-t"], "stdin": toml_doc},
@@ -281,6 +446,12 @@ def yj_cases() -> list[dict[str, Any]]:
         {"name": "toml_tables_to_hcl", "area": "toml_tables", "args": ["-tc"], "stdin": toml_tables_doc},
         {"name": "toml_dotted_to_json", "area": "toml_dotted_keys", "args": ["-tj"], "stdin": toml_dotted_doc},
         {"name": "toml_dotted_to_yaml", "area": "toml_dotted_keys", "args": ["-ty"], "stdin": toml_dotted_doc},
+        {"name": "toml_special_to_json", "area": "toml_special_values", "args": ["-tj"], "stdin": toml_special_doc},
+        {"name": "toml_special_to_json_no_convert", "area": "toml_special_values", "args": ["-tjn"], "stdin": toml_special_doc},
+        {"name": "toml_special_to_yaml", "area": "toml_special_values", "args": ["-ty"], "stdin": toml_special_doc},
+        {"name": "toml_nested_arrays_to_json", "area": "toml_nested_arrays", "args": ["-tj"], "stdin": toml_nested_arrays_doc},
+        {"name": "toml_nested_arrays_to_yaml", "area": "toml_nested_arrays", "args": ["-ty"], "stdin": toml_nested_arrays_doc},
+        {"name": "toml_nested_arrays_to_hcl", "area": "toml_nested_arrays", "args": ["-tc"], "stdin": toml_nested_arrays_doc},
         {"name": "hcl_to_json", "area": "hcl_to_json", "args": ["-cj"], "stdin": hcl_doc},
         {"name": "hcl_to_json_short_alias", "area": "alias_flags", "args": ["-c"], "stdin": hcl_doc},
         {"name": "hcl_to_json_indented", "area": "hcl_to_json", "args": ["-cji"], "stdin": hcl_doc},
@@ -290,10 +461,18 @@ def yj_cases() -> list[dict[str, Any]]:
         {"name": "hcl_repeated_to_json", "area": "hcl_repeated_blocks", "args": ["-cj"], "stdin": hcl_repeated_doc},
         {"name": "hcl_repeated_to_yaml", "area": "hcl_repeated_blocks", "args": ["-cy"], "stdin": hcl_repeated_doc},
         {"name": "hcl_repeated_to_toml", "area": "hcl_repeated_blocks", "args": ["-ct"], "stdin": hcl_repeated_doc},
+        {"name": "hcl_nested_repeated_to_json", "area": "hcl_repeated_blocks", "args": ["-cj"], "stdin": hcl_nested_repeated_doc},
+        {"name": "hcl_nested_repeated_to_yaml", "area": "hcl_repeated_blocks", "args": ["-cy"], "stdin": hcl_nested_repeated_doc},
+        {"name": "hcl_duplicate_attr_to_json", "area": "hcl_duplicate_keys", "args": ["-cj"], "stdin": hcl_duplicate_attr_doc},
+        {"name": "hcl_block_then_scalar_error", "area": "errors", "args": ["-cj"], "stdin": hcl_block_then_scalar_doc},
         {"name": "empty_stdin_default", "area": "edge_cases", "args": [], "stdin": ""},
         {"name": "empty_json_to_yaml", "area": "edge_cases", "args": ["-jy"], "stdin": ""},
         {"name": "invalid_yaml_to_json", "area": "errors", "args": ["-yj"], "stdin": invalid_yaml},
+        {"name": "invalid_yaml_merge_to_json", "area": "errors", "args": ["-yj"], "stdin": invalid_yaml_merge},
         {"name": "invalid_json_to_yaml", "area": "errors", "args": ["-jy"], "stdin": invalid_json},
+        {"name": "invalid_toml_to_json", "area": "errors", "args": ["-tj"], "stdin": invalid_toml},
+        {"name": "invalid_hcl_to_json", "area": "errors", "args": ["-cj"], "stdin": invalid_hcl},
+        {"name": "invalid_hcl_to_yaml", "area": "errors", "args": ["-cy"], "stdin": invalid_hcl},
     ]
 
 

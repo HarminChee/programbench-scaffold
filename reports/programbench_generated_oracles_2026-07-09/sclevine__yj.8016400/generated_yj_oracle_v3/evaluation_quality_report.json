@@ -1,0 +1,64 @@
+{
+  "artifacts": {
+    "coverage_summary_json": "reports/programbench_source_coverage_2026-07-09/sclevine__yj.8016400/generated_yj_oracle_v3.go_coverage_summary.json",
+    "coverage_summary_md": "reports/programbench_source_coverage_2026-07-09/sclevine__yj.8016400/generated_yj_oracle_v3.go_coverage_summary.md",
+    "dummy_junit": "/tmp/programbench_yj_generated_v3_dummy_reject/dummy.results.xml",
+    "oracle_bundle": "reports/programbench_generated_oracles_2026-07-09/sclevine__yj.8016400/generated_yj_oracle_v3/oracle_tests",
+    "repeat_junit": "/tmp/programbench_source_coverage_yj_generated_v3/sclevine__yj.8016400/generated_yj_oracle_v3/source/coverage/junit/generated_yj_oracle_v3.repeat.results.xml",
+    "work_dir": "/tmp/programbench_source_coverage_yj_generated_v3/sclevine__yj.8016400/generated_yj_oracle_v3"
+  },
+  "coverage": {
+    "delta_generated_vs_native_pp": 12.6,
+    "delta_generated_vs_pb_official_pp": 0.0,
+    "generated_go_statement_coverage_percent": 88.8,
+    "metric": "go_statement_coverage",
+    "native_go_statement_coverage_percent": 76.2,
+    "pb_official_go_statement_coverage_percent": 88.8
+  },
+  "dummy_reject": {
+    "dummy_executable": "exit_0_no_output",
+    "errors": 0,
+    "failed": 84,
+    "junit": "/tmp/programbench_yj_generated_v3_dummy_reject/dummy.results.xml",
+    "passed": 1,
+    "pytest_returncode": 1,
+    "rejected": true,
+    "total": 85
+  },
+  "generated_suite": {
+    "case_count": 85,
+    "generation_method": "cleanroom_reference_binary_black_box_capture",
+    "suite_label": "generated_yj_oracle_v3"
+  },
+  "instance_id": "sclevine__yj.8016400",
+  "reference_pass": {
+    "cleanroom": {
+      "passed": 85,
+      "pytest_returncode": 0
+    },
+    "coverage": {
+      "passed": 85,
+      "pytest_returncode": 0
+    },
+    "source": {
+      "passed": 85,
+      "pytest_returncode": 0
+    }
+  },
+  "repeat_check": {
+    "environment": {
+      "GOCOVERDIR": "/tmp/programbench_yj_generated_v3_repeat_gocover"
+    },
+    "errors": 0,
+    "failed": 0,
+    "passed": 85,
+    "pytest_returncode": 0,
+    "total": 85
+  },
+  "source_leak_scan": {
+    "passed": true,
+    "source_identifying_string_matches": 0,
+    "source_like_file_matches": 0,
+    "total_files_scanned": 258
+  }
+}

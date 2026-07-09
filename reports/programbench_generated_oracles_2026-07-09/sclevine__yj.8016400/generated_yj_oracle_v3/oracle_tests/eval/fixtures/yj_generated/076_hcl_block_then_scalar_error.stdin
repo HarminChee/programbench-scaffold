@@ -1,0 +1,4 @@
+server "web" {
+  port = 80
+}
+server = "scalar"

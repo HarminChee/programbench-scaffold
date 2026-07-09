@@ -1,0 +1,17 @@
+title = "Nested Tables"
+
+[[services]]
+name = "web"
+ports = [80, 443]
+
+[[services.routes]]
+path = "/"
+upstream = "root"
+
+[[services.routes]]
+path = "/api"
+upstream = "api"
+
+[[services]]
+name = "worker"
+ports = [9000]

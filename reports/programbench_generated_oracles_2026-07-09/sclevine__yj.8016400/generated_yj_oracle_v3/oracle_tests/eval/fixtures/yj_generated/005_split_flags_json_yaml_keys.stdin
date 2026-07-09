@@ -1,0 +1,1 @@
+{"[1,2]":"array key","{\"nested\":true}":"object key","null":"null key","\"quoted\"":"quoted key","3.0":"float key"}

@@ -1,0 +1,4 @@
+- name: alpha
+  score: 1
+- name: beta
+  score: 2
