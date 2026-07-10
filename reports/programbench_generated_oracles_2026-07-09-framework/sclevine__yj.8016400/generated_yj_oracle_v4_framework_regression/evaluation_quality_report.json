@@ -1,0 +1,93 @@
+{
+  "all_dummies_rejected": true,
+  "dummy_reject": [
+    {
+      "junit": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/dummy_true/workspace/true.results.xml",
+      "junit_summary": {
+        "errors": 0,
+        "exists": true,
+        "failures": 84,
+        "skipped": 0,
+        "tests": 85
+      },
+      "kind": "true",
+      "log_path": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/logs/dummy_true_true.results.xml.pytest.json",
+      "pytest_returncode": 1,
+      "rejected": true,
+      "timed_out": false,
+      "workspace": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/dummy_true/workspace"
+    },
+    {
+      "junit": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/dummy_cat-stdin/workspace/cat-stdin.results.xml",
+      "junit_summary": {
+        "errors": 0,
+        "exists": true,
+        "failures": 82,
+        "skipped": 0,
+        "tests": 85
+      },
+      "kind": "cat-stdin",
+      "log_path": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/logs/dummy_cat-stdin_cat-stdin.results.xml.pytest.json",
+      "pytest_returncode": 1,
+      "rejected": true,
+      "timed_out": false,
+      "workspace": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/dummy_cat-stdin/workspace"
+    },
+    {
+      "junit": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/dummy_false/workspace/false.results.xml",
+      "junit_summary": {
+        "errors": 0,
+        "exists": true,
+        "failures": 85,
+        "skipped": 0,
+        "tests": 85
+      },
+      "kind": "false",
+      "log_path": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/logs/dummy_false_false.results.xml.pytest.json",
+      "pytest_returncode": 1,
+      "rejected": true,
+      "timed_out": false,
+      "workspace": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/dummy_false/workspace"
+    },
+    {
+      "junit": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/dummy_empty-stderr/workspace/empty-stderr.results.xml",
+      "junit_summary": {
+        "errors": 0,
+        "exists": true,
+        "failures": 85,
+        "skipped": 0,
+        "tests": 85
+      },
+      "kind": "empty-stderr",
+      "log_path": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/logs/dummy_empty-stderr_empty-stderr.results.xml.pytest.json",
+      "pytest_returncode": 1,
+      "rejected": true,
+      "timed_out": false,
+      "workspace": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/dummy_empty-stderr/workspace"
+    }
+  ],
+  "oracle_material_root": "/home/harminchee/codex-workspaces/programbench/reports/programbench_generated_oracles_2026-07-09-framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/oracle_tests",
+  "python": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/.venv/bin/python",
+  "repeat_check": {
+    "junit": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/repeat_workspace/repeat.results.xml",
+    "junit_summary": {
+      "errors": 0,
+      "exists": true,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 85
+    },
+    "log_path": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/logs/sclevine__yj.8016400_repeat.results.xml.pytest.json",
+    "pytest_returncode": 0,
+    "timed_out": false,
+    "workspace": "/tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/repeat_workspace"
+  },
+  "source_leak_scan": {
+    "passed": true,
+    "source_identifying_matches": [],
+    "source_identifying_string_matches": 0,
+    "source_like_file_matches": 0,
+    "source_like_files": [],
+    "total_files_scanned": 259
+  }
+}

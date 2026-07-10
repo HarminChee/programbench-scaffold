@@ -166,6 +166,7 @@ def run_command(
     timeout: int | None = None,
     env: dict[str, str] | None = None,
     log_path: Path | None = None,
+    include_output: bool = False,
 ) -> dict[str, Any]:
     started = dt.datetime.now(dt.UTC)
     try:
@@ -194,6 +195,9 @@ def run_command(
     if log_path is not None:
         write_json(log_path, {**payload, "stdout": stdout, "stderr": stderr})
         payload["log_path"] = str(log_path)
+    if include_output:
+        payload["stdout"] = stdout
+        payload["stderr"] = stderr
     return payload
 
 
@@ -208,23 +212,17 @@ def safe_extract(tar_path: Path, dest: Path) -> None:
         archive.extractall(dest)
 
 
-def clear_oracle_material(repo_dir: Path) -> None:
-    for name in ORACLE_MATERIAL_DIRS:
-        target = repo_dir / name
-        if target.is_dir():
-            shutil.rmtree(target)
-        elif target.exists():
-            target.unlink()
-
-
 def copy_oracle_material(extract_dir: Path, repo_dir: Path) -> list[str]:
-    clear_oracle_material(repo_dir)
     copied: list[str] = []
     for name in ORACLE_MATERIAL_DIRS:
         source = extract_dir / name
         if not source.exists():
             continue
         target = repo_dir / name
+        if target.is_dir():
+            shutil.rmtree(target)
+        elif target.exists():
+            target.unlink()
         if source.is_dir():
             shutil.copytree(source, target, dirs_exist_ok=True)
         else:
@@ -257,11 +255,119 @@ def parse_total_statement_coverage(text: str) -> float | None:
     return None
 
 
+def parse_cover_profile_statement_coverage(path: Path) -> float | None:
+    if not path.exists():
+        return None
+    total = 0
+    covered = 0
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        if line.startswith("mode:"):
+            continue
+        parts = line.split()
+        if len(parts) != 3:
+            continue
+        try:
+            statements = int(parts[1])
+            count = int(parts[2])
+        except ValueError:
+            continue
+        total += statements
+        if count:
+            covered += statements
+    if total == 0:
+        return None
+    return round((covered / total) * 100, 1)
+
+
 def parse_go_test_package_coverage(text: str) -> float | None:
     matches = re.findall(r"coverage:\s+([0-9.]+)%\s+of\s+statements", text)
     if not matches:
         return None
     return float(matches[-1])
+
+
+def parse_json_stream(text: str) -> list[dict[str, Any]]:
+    decoder = json.JSONDecoder()
+    items: list[dict[str, Any]] = []
+    index = 0
+    while index < len(text):
+        while index < len(text) and text[index].isspace():
+            index += 1
+        if index >= len(text):
+            break
+        item, end = decoder.raw_decode(text, index)
+        if isinstance(item, dict):
+            items.append(item)
+        index = end
+    return items
+
+
+def relative_go_package(repo_dir: Path, package: dict[str, Any]) -> str:
+    package_dir = Path(str(package.get("Dir", ""))).resolve()
+    repo_resolved = repo_dir.resolve()
+    if package_dir == repo_resolved:
+        return "."
+    try:
+        rel = package_dir.relative_to(repo_resolved)
+    except ValueError:
+        return str(package.get("ImportPath", "."))
+    return "./" + rel.as_posix()
+
+
+def discover_go_main_packages(repo_dir: Path, repository: str, logs_dir: Path) -> dict[str, Any]:
+    result = run_command(
+        ["go", "list", "-json", "./..."],
+        cwd=repo_dir,
+        timeout=900,
+        log_path=logs_dir / "go_list_packages.json",
+        include_output=True,
+    )
+    packages = parse_json_stream(result.get("stdout", "")) if result["returncode"] == 0 else []
+    repo_name = repository.rstrip("/").split("/")[-1]
+    candidates: list[dict[str, Any]] = []
+    for package in packages:
+        if package.get("Name") != "main":
+            continue
+        target = relative_go_package(repo_dir, package)
+        rel = "." if target == "." else target.removeprefix("./")
+        parts = [] if rel == "." else rel.split("/")
+        score = 0
+        if target == ".":
+            score += 100
+        if parts[:1] == ["cmd"]:
+            score += 80
+        if parts and parts[-1] == repo_name:
+            score += 60
+        score -= len(parts)
+        candidates.append(
+            {
+                "import_path": package.get("ImportPath"),
+                "dir": package.get("Dir"),
+                "target": target,
+                "score": score,
+            }
+        )
+    candidates.sort(key=lambda item: (-int(item["score"]), str(item["target"])))
+    selected = candidates[0]["target"] if candidates else "."
+    return {
+        "command_returncode": result["returncode"],
+        "log_path": result.get("log_path"),
+        "selected": selected,
+        "candidates": candidates,
+        "fallback_used": not candidates,
+    }
+
+
+def select_go_build_package(repo_dir: Path, requested: str, repository: str, logs_dir: Path) -> dict[str, Any]:
+    if requested != "auto":
+        return {
+            "mode": "explicit",
+            "selected": requested,
+            "candidates": [],
+            "fallback_used": False,
+        }
+    discovery = discover_go_main_packages(repo_dir, repository, logs_dir)
+    return {"mode": "auto", **discovery}
 
 
 def normalize_test_name(name: str) -> str:
@@ -440,11 +546,11 @@ def run_pytest_for_binary(
     }
 
 
-def run_native_tests(repo_dir: Path, logs_dir: Path) -> dict[str, Any]:
+def run_native_tests(repo_dir: Path, logs_dir: Path, coverpkg: str) -> dict[str, Any]:
     profile = repo_dir / "coverage" / "native_profile.txt"
     profile.parent.mkdir(parents=True, exist_ok=True)
     test = run_command(
-        ["go", "test", "-coverpkg=./...", f"-coverprofile={profile}", "./..."],
+        ["go", "test", f"-coverpkg={coverpkg}", f"-coverprofile={profile}", "./..."],
         cwd=repo_dir,
         timeout=1800,
         log_path=logs_dir / "go_native_tests.json",
@@ -521,6 +627,12 @@ def main() -> int:
     parser.add_argument("--docker", default="docker")
     parser.add_argument("--xdist", default="auto")
     parser.add_argument("--pytest-timeout", type=int, default=1800)
+    parser.add_argument(
+        "--go-build-package",
+        default="auto",
+        help="Go package to build as executable, or auto to discover a main package.",
+    )
+    parser.add_argument("--go-coverpkg", default="./...", help="Value for go build/test -coverpkg.")
     args = parser.parse_args()
 
     tasks_root = args.tasks_root if args.tasks_root.is_absolute() else (REPO_ROOT / args.tasks_root).resolve()
@@ -573,13 +685,20 @@ def main() -> int:
     if mod_download["returncode"] != 0:
         raise RuntimeError(f"go mod download failed: {mod_download['stderr_tail']}")
 
+    go_build_package = select_go_build_package(repo_dir, args.go_build_package, repository, logs_dir)
+    go_build_target = str(go_build_package["selected"])
     source_binary = work_dir / "executable_source"
     coverage_binary = work_dir / "executable_coverage"
-    build_source = run_command(["go", "build", "-o", str(source_binary), "."], cwd=repo_dir, timeout=900, log_path=logs_dir / "go_build_source.json")
+    build_source = run_command(
+        ["go", "build", "-o", str(source_binary), go_build_target],
+        cwd=repo_dir,
+        timeout=900,
+        log_path=logs_dir / "go_build_source.json",
+    )
     if build_source["returncode"] != 0:
         raise RuntimeError(f"go source build failed: {build_source['stderr_tail']}")
     build_coverage = run_command(
-        ["go", "build", "-cover", "-coverpkg=./...", "-o", str(coverage_binary), "."],
+        ["go", "build", "-cover", f"-coverpkg={args.go_coverpkg}", "-o", str(coverage_binary), go_build_target],
         cwd=repo_dir,
         timeout=900,
         log_path=logs_dir / "go_build_cover.json",
@@ -587,7 +706,7 @@ def main() -> int:
     if build_coverage["returncode"] != 0:
         raise RuntimeError(f"go coverage build failed: {build_coverage['stderr_tail']}")
 
-    native = run_native_tests(repo_dir, logs_dir) if args.run_native_tests else None
+    native = run_native_tests(repo_dir, logs_dir, args.go_coverpkg) if args.run_native_tests else None
 
     cleanroom_binary = work_dir / "executable_cleanroom"
     cleanroom = None
@@ -701,6 +820,11 @@ def main() -> int:
         timeout=300,
         log_path=logs_dir / f"go_{run_label}_cover_func.json",
     )
+    statement_coverage = parse_total_statement_coverage(cover_func["stdout_tail"])
+    coverage_percent_source = "go_tool_cover_func"
+    if statement_coverage is None:
+        statement_coverage = parse_cover_profile_statement_coverage(suite_profile)
+        coverage_percent_source = "cover_profile_statement_blocks"
 
     all_branch_comparisons_ok = all(item["comparison"]["behavior_consistent"] for item in branch_results)
     all_coverage_pytests_ok = all(
@@ -717,7 +841,8 @@ def main() -> int:
         "coverage_metric": "go_statement_coverage",
         "pytest_all_coverage_runs_passed": all_coverage_pytests_ok,
         "suite_count": len(selected_branches),
-        "statement_coverage_percent": parse_total_statement_coverage(cover_func["stdout_tail"]),
+        "statement_coverage_percent": statement_coverage,
+        "coverage_percent_source": coverage_percent_source,
         "covdata_percent_returncode": cov_percent["returncode"],
         "covdata_textfmt_returncode": cov_textfmt["returncode"],
         "cover_func_returncode": cover_func["returncode"],
@@ -728,6 +853,8 @@ def main() -> int:
         "repository": repository,
         "commit": commit,
         "language": meta.get("language"),
+        "go_build_package": go_build_package,
+        "go_coverpkg": args.go_coverpkg,
         "selected_branches": selected_branches,
         "active_branch_count": len(all_active),
         "work_dir": str(work_dir),
@@ -778,8 +905,9 @@ def main() -> int:
             f"consistent `{item['comparison']['behavior_consistent']}`"
         )
     md_path.write_text("\n".join(md_lines) + "\n", encoding="utf-8")
+    coverage_summary_ok = statement_coverage is not None and cov_textfmt["returncode"] == 0
     print(json.dumps(summary, indent=2, sort_keys=True))
-    return 0 if all_coverage_pytests_ok and cover_func["returncode"] == 0 and all_branch_comparisons_ok else 1
+    return 0 if all_coverage_pytests_ok and coverage_summary_ok and all_branch_comparisons_ok else 1
 
 
 if __name__ == "__main__":

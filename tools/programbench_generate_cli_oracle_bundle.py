@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Generate executable black-box CLI oracle tests from a reference binary.
 
-The first supported profile is ``yj``. It uses only cleanroom-visible behavior:
-the reference executable is copied from the ProgramBench cleanroom image, a
-README-derived case matrix is executed against that binary, and exact process
-observations are materialized as pytest tests plus golden fixtures.
+Profiles provide candidate CLI cases. The capture engine is generic: it copies
+the ProgramBench cleanroom executable, runs each case against that reference
+binary, and materializes exact process observations as pytest fixtures.
 """
 
 from __future__ import annotations
@@ -24,6 +23,7 @@ from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+MANIFEST_NAME = "generated_cli_manifest.json"
 
 
 def image_name_from_instance_id(instance_id: str) -> str:
@@ -116,6 +116,18 @@ def materialize_cleanroom_file(
         return {"returncode": 0, "container_id": container_id, "path": str(dest)}
     finally:
         run_command([docker, "rm", "-f", container_id], timeout=120, log_path=logs_dir / f"docker_rm_{dest.name}.json")
+
+
+def generic_cli_smoke_cases() -> list[dict[str, Any]]:
+    """Small black-box CLI probe set that does not assume repo-specific docs."""
+    return [
+        {"name": "no_args_empty_stdin", "area": "generic_cli_smoke", "args": [], "stdin": ""},
+        {"name": "help_short", "area": "generic_cli_smoke", "args": ["-h"], "stdin": ""},
+        {"name": "help_long", "area": "generic_cli_smoke", "args": ["--help"], "stdin": ""},
+        {"name": "version_short", "area": "generic_cli_smoke", "args": ["-v"], "stdin": ""},
+        {"name": "version_long", "area": "generic_cli_smoke", "args": ["--version"], "stdin": ""},
+        {"name": "invalid_long_flag", "area": "generic_cli_smoke", "args": ["--programbench-invalid-flag"], "stdin": ""},
+    ]
 
 
 def yj_cases() -> list[dict[str, Any]]:
@@ -476,37 +488,88 @@ def yj_cases() -> list[dict[str, Any]]:
     ]
 
 
+PROFILE_BUILDERS = {
+    "generic-cli-smoke": generic_cli_smoke_cases,
+    "yj": yj_cases,
+}
+
+
 def cases_for_profile(profile: str) -> list[dict[str, Any]]:
-    if profile == "yj":
-        return yj_cases()
-    raise ValueError(f"Unsupported profile: {profile}")
+    try:
+        return PROFILE_BUILDERS[profile]()
+    except KeyError as exc:
+        raise ValueError(f"Unsupported profile: {profile}") from exc
+
+
+def load_cases_json(path: Path) -> tuple[str, list[dict[str, Any]], dict[str, Any]]:
+    """Load generated/sampled candidate CLI cases from a JSON file."""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    metadata: dict[str, Any] = {}
+    if isinstance(payload, list):
+        profile = path.stem
+        cases = payload
+    elif isinstance(payload, dict):
+        profile = str(payload.get("profile") or path.stem)
+        raw_cases = payload.get("cases")
+        if not isinstance(raw_cases, list):
+            raise ValueError(f"Expected `cases` list in {path}")
+        cases = raw_cases
+        metadata = {key: value for key, value in payload.items() if key != "cases"}
+    else:
+        raise ValueError(f"Expected JSON list or object in {path}")
+
+    normalized: list[dict[str, Any]] = []
+    for index, case in enumerate(cases):
+        if not isinstance(case, dict):
+            raise ValueError(f"Case {index} in {path} is not an object")
+        normalized_case = dict(case)
+        normalized_case.setdefault("name", f"case_{index:03d}")
+        normalized_case.setdefault("area", "external_case_spec")
+        normalized_case.setdefault("args", [])
+        normalized_case.setdefault("stdin", "")
+        if not isinstance(normalized_case["args"], list):
+            raise ValueError(f"Case {normalized_case['name']} has non-list args")
+        normalized.append(normalized_case)
+    return profile, normalized, metadata
 
 
 def run_reference_case(reference_binary: Path, case: dict[str, Any], timeout: int) -> dict[str, Any]:
     env = os.environ.copy()
     env["TZ"] = "UTC"
+    env.update({str(k): str(v) for k, v in dict(case.get("env", {})).items()})
     argv0 = case.get("argv0", "/workspace/executable")
-    proc = subprocess.run(
-        [argv0, *map(str, case.get("args", []))],
-        executable=str(reference_binary),
-        input=str(case.get("stdin", "")).encode("utf-8"),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        timeout=timeout,
-        env=env,
-    )
-    return {
-        "returncode": proc.returncode,
-        "stdout": proc.stdout,
-        "stderr": proc.stderr,
-    }
+    try:
+        proc = subprocess.run(
+            [argv0, *map(str, case.get("args", []))],
+            executable=str(reference_binary),
+            input=str(case.get("stdin", "")).encode("utf-8"),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=timeout,
+            env=env,
+        )
+        return {
+            "returncode": proc.returncode,
+            "stdout": proc.stdout,
+            "stderr": proc.stderr,
+            "timed_out": False,
+        }
+    except subprocess.TimeoutExpired as exc:
+        stdout = exc.stdout if isinstance(exc.stdout, bytes) else (exc.stdout or "").encode("utf-8", errors="replace")
+        stderr = exc.stderr if isinstance(exc.stderr, bytes) else (exc.stderr or "").encode("utf-8", errors="replace")
+        return {
+            "returncode": 124,
+            "stdout": stdout,
+            "stderr": stderr,
+            "timed_out": True,
+        }
 
 
-def write_generated_pytest(bundle_root: Path) -> None:
-    test_path = bundle_root / "eval" / "tests" / "test_yj_generated_oracle.py"
+def write_generated_pytest(bundle_root: Path, profile: str) -> None:
+    test_path = bundle_root / "eval" / "tests" / "test_generated_cli_oracle.py"
     test_path.parent.mkdir(parents=True, exist_ok=True)
     test_path.write_text(
-        '''"""Generated black-box oracle tests for yj."""
+        '''"""Generated black-box CLI oracle tests."""
 
 from __future__ import annotations
 
@@ -520,13 +583,16 @@ import pytest
 
 WORKSPACE = Path(__file__).resolve().parents[2]
 EVAL_DIR = Path(__file__).resolve().parents[1]
-FIXTURE_DIR = EVAL_DIR / "fixtures" / "yj_generated"
-MANIFEST = json.loads((EVAL_DIR / "generated_yj_manifest.json").read_text(encoding="utf-8"))
+MANIFEST_PATH = EVAL_DIR / "generated_cli_manifest.json"
+if not MANIFEST_PATH.exists():
+    MANIFEST_PATH = EVAL_DIR / "generated_yj_manifest.json"
+MANIFEST = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+FIXTURE_DIR = EVAL_DIR / "fixtures" / MANIFEST.get("fixture_subdir", "generated_cli")
 CASES = MANIFEST["cases"]
 
 
 @pytest.mark.parametrize("case", CASES, ids=[case["name"] for case in CASES])
-def test_yj_generated_black_box_behavior(case: dict, tmp_path: Path) -> None:
+def test_generated_black_box_behavior(case: dict, tmp_path: Path) -> None:
     executable = WORKSPACE / "executable"
     assert executable.exists(), f"missing executable at {executable}"
 
@@ -566,7 +632,7 @@ Profile: `{profile}`
 Cases: `{case_count}`
 
 These tests were generated from cleanroom-visible behavior: the ProgramBench
-reference executable was copied from the cleanroom image, then README-derived
+reference executable was copied from the cleanroom image, then profile-provided
 CLI cases were executed against it to capture exact stdout, stderr, and exit
 codes. The bundle does not include ProgramBench official test blobs or upstream
 source code.
@@ -621,13 +687,37 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
         logs_dir=logs_dir,
     )
 
-    cases = cases_for_profile(args.profile)
-    fixture_dir = bundle_root / "eval" / "fixtures" / "yj_generated"
+    case_spec_metadata: dict[str, Any] = {}
+    case_spec_path: Path | None = None
+    if args.cases_json:
+        case_spec_path = args.cases_json.expanduser().resolve()
+        profile, cases, case_spec_metadata = load_cases_json(case_spec_path)
+        case_source = "cases_json"
+    else:
+        profile = args.profile
+        cases = cases_for_profile(profile)
+        case_source = "builtin_profile"
+    fixture_subdir = slug(profile).replace("_", "-")
+    fixture_dir = bundle_root / "eval" / "fixtures" / fixture_subdir
     fixture_dir.mkdir(parents=True, exist_ok=True)
     manifest_cases: list[dict[str, Any]] = []
+    skipped_cases: list[dict[str, Any]] = []
     for index, case in enumerate(cases):
         name = slug(case["name"])
         observed = run_reference_case(reference_binary, case, args.case_timeout)
+        if observed["timed_out"] and args.skip_timed_out_cases:
+            skipped_cases.append(
+                {
+                    "name": name,
+                    "area": case.get("area", "unknown"),
+                    "args": list(case.get("args", [])),
+                    "reason": "reference_timeout",
+                    "timeout": args.case_timeout,
+                    "stdout_sha256": sha256_bytes(observed["stdout"]),
+                    "stderr_sha256": sha256_bytes(observed["stderr"]),
+                }
+            )
+            continue
         stdin_bytes = str(case.get("stdin", "")).encode("utf-8")
         stdout = observed["stdout"]
         stderr = observed["stderr"]
@@ -646,6 +736,7 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
                 "env": case.get("env", {}),
                 "timeout": args.case_timeout,
                 "returncode": observed["returncode"],
+                "timed_out": observed["timed_out"],
                 "stdin_file": stdin_name,
                 "stdout_file": stdout_name,
                 "stderr_file": stderr_name,
@@ -659,18 +750,27 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
 
     manifest = {
         "instance_id": args.instance_id,
-        "profile": args.profile,
+        "profile": profile,
         "suite_label": suite_label,
         "method": "cleanroom_reference_binary_black_box_capture",
         "generated_at": dt.datetime.now(dt.UTC).isoformat(),
         "image": image,
+        "case_source": case_source,
+        "case_spec_path": str(case_spec_path) if case_spec_path else None,
+        "case_spec_metadata": case_spec_metadata,
         "case_count": len(manifest_cases),
+        "candidate_case_count": len(cases),
+        "skipped_case_count": len(skipped_cases),
+        "skipped_cases": skipped_cases,
+        "fixture_subdir": fixture_subdir,
         "readme_copied": readme_result["returncode"] == 0,
         "cases": manifest_cases,
     }
-    write_generated_pytest(bundle_root)
-    write_readme(bundle_root, args.instance_id, args.profile, len(manifest_cases))
-    write_json(bundle_root / "eval" / "generated_yj_manifest.json", manifest)
+    write_generated_pytest(bundle_root, profile)
+    write_readme(bundle_root, args.instance_id, profile, len(manifest_cases))
+    write_json(bundle_root / "eval" / MANIFEST_NAME, manifest)
+    if args.profile == "yj":
+        write_json(bundle_root / "eval" / "generated_yj_manifest.json", manifest)
     write_json(out_dir / "quality_report.json", {"bundle_root": str(bundle_root), **manifest})
     return {"bundle_root": str(bundle_root), "quality_report": str(out_dir / "quality_report.json"), **manifest}
 
@@ -678,13 +778,15 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("instance_id")
-    parser.add_argument("--profile", choices=["yj"], default="yj")
+    parser.add_argument("--profile", default="yj", help=f"Built-in profile name. Available: {', '.join(sorted(PROFILE_BUILDERS))}")
+    parser.add_argument("--cases-json", type=Path, help="JSON list/object of candidate CLI cases to capture with the same engine.")
     parser.add_argument("--suite-label")
     parser.add_argument("--image")
     parser.add_argument("--docker", default="docker")
     parser.add_argument("--work-root", type=Path, default=Path("/tmp/programbench_generated_cli_oracles"))
     parser.add_argument("--output-root", type=Path, default=Path("reports/programbench_generated_oracles"))
     parser.add_argument("--case-timeout", type=int, default=5)
+    parser.add_argument("--skip-timed-out-cases", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 

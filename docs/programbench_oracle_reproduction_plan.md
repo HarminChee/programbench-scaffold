@@ -1,6 +1,6 @@
 # ProgramBench Oracle Reproduction Plan
 
-Last updated: 2026-07-09
+Last updated: 2026-07-10
 
 ## Direction
 
@@ -129,3 +129,42 @@ An oracle-test reproduction is not accepted until these gates are recorded:
   source-leak scans, and reruns as `85 passed` with `GOCOVERDIR` set. Equal
   aggregate statement coverage is not treated as byte-for-byte oracle
   equivalence; function-level coverage still differs in a few paths.
+
+## Go Oracle Framework Evidence From 2026-07-10
+
+The Go path now has a reusable framework with three scripts:
+
+- `tools/programbench_generate_cli_oracle_bundle.py` is a profile/JSON-case
+  black-box capture engine. It copies `/workspace/executable` from the
+  ProgramBench cleanroom image, runs candidate CLI cases, and writes executable
+  pytest oracles with exact returncode/stdout/stderr fixtures.
+- `tools/programbench_go_coverage_harness.py` clones the pinned Go source,
+  auto-discovers the executable `main` package with `go list -json ./...`,
+  builds source and coverage binaries, compares cleanroom/source/coverage
+  behavior, and records Go statement coverage plus native `go test` coverage.
+- `tools/programbench_run_generated_oracle_quality_gates.py` runs reusable
+  generated-oracle gates: dummy rejection, source-leak scan, and repeat
+  execution. It creates a pytest venv automatically when `--python` is omitted.
+
+Important harness fix: oracle material copying no longer deletes source
+directories that are absent from the oracle bundle. This was found by the
+`rs__jplot.2a54bcc` smoke run, where the older harness deleted the repo's
+source `data/` package before `go tool cover -func`.
+
+Recorded results:
+
+| instance | suite | cases | Go statement coverage | native coverage | quality gates |
+| --- | --- | ---: | ---: | ---: | --- |
+| `sclevine__yj.8016400` | `generated_yj_oracle_v4_framework_regression` | 85 | 88.8% | 76.2% | pass |
+| `multiprocessio__dsq.c3ae0ba` | `generated_generic_cli_smoke_v1` | 6 | 22.7% | 0.0% | pass |
+| `rs__jplot.2a54bcc` | `generated_generic_cli_smoke_v1` | 6 | 10.8% | 0.0% | pass |
+| `psampaz__go-mod-outdated.bb79367` | `generated_generic_cli_smoke_v1` | 6 | 34.7% | 84.7% | pass |
+
+The three `generic-cli-smoke` suites deliberately do not inspect official
+ProgramBench oracle tests. They validate framework generality, not oracle
+strength. The next quality step is to feed repo-aware or agent-generated
+candidate cases through `--cases-json` and require coverage lift under the same
+reference-pass, dummy-reject, repeat, source-leak, and binary-consistency gates.
+
+Detailed evidence is in
+`reports/programbench_go_oracle_framework_status_2026-07-10.md`.

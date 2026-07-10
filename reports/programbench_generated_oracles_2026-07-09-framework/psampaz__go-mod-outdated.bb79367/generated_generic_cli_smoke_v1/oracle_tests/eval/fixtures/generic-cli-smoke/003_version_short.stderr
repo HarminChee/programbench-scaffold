@@ -1,0 +1,10 @@
+flag provided but not defined: -v
+Usage of /workspace/executable:
+  -ci
+    	Non-zero exit code when at least one outdated dependency was found
+  -direct
+    	List only direct modules
+  -style string
+    	Output style, pass 'markdown' for a Markdown table (default "default")
+  -update
+    	List only modules with updates

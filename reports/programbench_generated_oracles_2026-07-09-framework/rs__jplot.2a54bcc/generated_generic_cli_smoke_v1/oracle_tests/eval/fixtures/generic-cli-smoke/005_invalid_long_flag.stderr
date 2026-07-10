@@ -1,0 +1,19 @@
+flag provided but not defined: -programbench-invalid-flag
+Usage: jplot [OPTIONS] FIELD_SPEC [FIELD_SPEC...]:
+
+OPTIONS:
+  -interval duration
+    	When url is provided, defines the interval between fetches. Note that counter fields are computed based on this interval. (default 1s)
+  -rows int
+    	Limits the height of the graph output.
+  -steps int
+    	Number of values to plot. (default 100)
+  -url string
+    	URL to fetch every second. Read JSON objects from stdin if not specified.
+
+FIELD_SPEC: [<option>[,<option>...]:]path
+  option:
+    - counter: Computes the difference with the last value. The value must increase monotonically.
+    - marker: When the value is none-zero, a vertical line is drawn.
+  path:
+    JSON field path (eg: field.sub-field).

@@ -1,0 +1,15 @@
+service "web" {
+  endpoint "root" {
+    path = "/"
+  }
+
+  endpoint "api" {
+    path = "/api"
+  }
+}
+
+service "worker" {
+  endpoint "jobs" {
+    path = "/jobs"
+  }
+}

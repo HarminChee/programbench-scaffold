@@ -1,0 +1,14 @@
+title: Nested Tables
+services:
+  - name: web
+    ports:
+      - 80
+      - 443
+    routes:
+      - path: /
+        upstream: root
+      - path: /api
+        upstream: api
+  - name: worker
+    ports:
+      - 9000

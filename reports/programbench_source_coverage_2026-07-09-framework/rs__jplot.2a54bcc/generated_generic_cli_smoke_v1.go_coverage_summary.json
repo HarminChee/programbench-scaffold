@@ -1,0 +1,176 @@
+{
+  "active_branch_count": 8,
+  "all_branch_binary_comparisons_consistent": true,
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "generated_generic_cli_smoke_v1",
+          "junit": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/source/coverage/junit/generated_generic_cli_smoke_v1.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "b1582cb0edca7206b0e3a9d4d82903e4b1ef6890950376b878de2a7f5c2686d8",
+            "filtered_tests": 6,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "b1582cb0edca7206b0e3a9d4d82903e4b1ef6890950376b878de2a7f5c2686d8",
+            "tests": 6
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/logs/pytest_generated_generic_cli_smoke_v1_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "generated_generic_cli_smoke_v1",
+          "junit": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/source/coverage/junit/generated_generic_cli_smoke_v1.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "b1582cb0edca7206b0e3a9d4d82903e4b1ef6890950376b878de2a7f5c2686d8",
+            "filtered_tests": 6,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "b1582cb0edca7206b0e3a9d4d82903e4b1ef6890950376b878de2a7f5c2686d8",
+            "tests": 6
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/logs/pytest_generated_generic_cli_smoke_v1_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "generated_generic_cli_smoke_v1",
+          "junit": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/source/coverage/junit/generated_generic_cli_smoke_v1.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "b1582cb0edca7206b0e3a9d4d82903e4b1ef6890950376b878de2a7f5c2686d8",
+            "filtered_tests": 6,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "b1582cb0edca7206b0e3a9d4d82903e4b1ef6890950376b878de2a7f5c2686d8",
+            "tests": 6
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/logs/pytest_generated_generic_cli_smoke_v1_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "generated_generic_cli_smoke_v1",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval"
+      ],
+      "oracle_material_root": "/home/harminchee/codex-workspaces/programbench/reports/programbench_generated_oracles_2026-07-09-framework/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/oracle_tests",
+      "tests_json": {
+        "active_count": null,
+        "expected_count": null,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "44faacdc6e60f55045b1a554ac41df3db0a0598eb07e1b75df0e089afb7ae4bd",
+    "image": "programbench/rs_1776_jplot.2a54bcc:task_cleanroom_v6",
+    "path": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "2a54bccf26d9cb644ec987994123cf20683fa75b",
+  "compare_binaries": true,
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "kind": "generated",
+    "label": "generated_generic_cli_smoke_v1",
+    "profile": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/source/coverage/generated_generic_cli_smoke_v1_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 10.8,
+    "suite_count": 1
+  },
+  "go_build_package": {
+    "candidates": [
+      {
+        "dir": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/source",
+        "import_path": "github.com/rs/jplot",
+        "score": 100,
+        "target": "."
+      },
+      {
+        "dir": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/source/doc",
+        "import_path": "github.com/rs/jplot/doc",
+        "score": -1,
+        "target": "./doc"
+      }
+    ],
+    "command_returncode": 0,
+    "fallback_used": false,
+    "log_path": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/logs/go_list_packages.json",
+    "mode": "auto",
+    "selected": "."
+  },
+  "go_coverpkg": "./...",
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/source/coverage/generated_generic_cli_smoke_v1_merged_raw"
+  },
+  "instance_id": "rs__jplot.2a54bcc",
+  "language": "go",
+  "logs_dir": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/logs",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "go_test_package_coverage_percent": 0.0,
+    "go_test_returncode": 0,
+    "logs": {
+      "go_cover_func": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/logs/go_native_cover_func.json",
+      "go_test": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/logs/go_native_tests.json"
+    },
+    "profile": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 0.0
+  },
+  "oracle_material_root": "/home/harminchee/codex-workspaces/programbench/reports/programbench_generated_oracles_2026-07-09-framework/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/oracle_tests",
+  "repository": "rs/jplot",
+  "selected_branches": [
+    "generated_generic_cli_smoke_v1"
+  ],
+  "test_suite": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "kind": "generated",
+    "label": "generated_generic_cli_smoke_v1",
+    "profile": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1/source/coverage/generated_generic_cli_smoke_v1_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 10.8,
+    "suite_count": 1
+  },
+  "work_dir": "/tmp/programbench_source_coverage_go_generic_smoke/rs__jplot.2a54bcc/generated_generic_cli_smoke_v1"
+}

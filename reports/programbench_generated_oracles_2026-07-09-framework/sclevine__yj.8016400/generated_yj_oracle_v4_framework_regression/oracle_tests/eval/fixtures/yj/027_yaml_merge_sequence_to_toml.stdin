@@ -1,0 +1,9 @@
+defaults_a: &defaults_a
+  adapter: postgres
+  host: localhost
+defaults_b: &defaults_b
+  host: db.local
+  pool: 5
+development:
+  <<: [*defaults_a, *defaults_b]
+  database: dev

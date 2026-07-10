@@ -1,0 +1,170 @@
+{
+  "active_branch_count": 9,
+  "all_branch_binary_comparisons_consistent": true,
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "generated_yj_oracle_v4_framework_regression",
+          "junit": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/source/coverage/junit/generated_yj_oracle_v4_framework_regression.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "5eca5b16fc580ed2c5d41f19b768d4b4973a85fa141349e8ef9cd549430a9fe9",
+            "filtered_tests": 85,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "5eca5b16fc580ed2c5d41f19b768d4b4973a85fa141349e8ef9cd549430a9fe9",
+            "tests": 85
+          },
+          "label": "cleanroom",
+          "log_path": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/logs/pytest_generated_yj_oracle_v4_framework_regression_cleanroom.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "generated_yj_oracle_v4_framework_regression",
+          "junit": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/source/coverage/junit/generated_yj_oracle_v4_framework_regression.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "5eca5b16fc580ed2c5d41f19b768d4b4973a85fa141349e8ef9cd549430a9fe9",
+            "filtered_tests": 85,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "5eca5b16fc580ed2c5d41f19b768d4b4973a85fa141349e8ef9cd549430a9fe9",
+            "tests": 85
+          },
+          "label": "source",
+          "log_path": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/logs/pytest_generated_yj_oracle_v4_framework_regression_source.json",
+          "returncode": 0,
+          "timed_out": false
+        },
+        {
+          "branch": "generated_yj_oracle_v4_framework_regression",
+          "junit": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/source/coverage/junit/generated_yj_oracle_v4_framework_regression.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failures": 0,
+            "filtered_errors": 0,
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_test_names_hash": "5eca5b16fc580ed2c5d41f19b768d4b4973a85fa141349e8ef9cd549430a9fe9",
+            "filtered_tests": 85,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "5eca5b16fc580ed2c5d41f19b768d4b4973a85fa141349e8ef9cd549430a9fe9",
+            "tests": 85
+          },
+          "label": "coverage",
+          "log_path": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/logs/pytest_generated_yj_oracle_v4_framework_regression_coverage.json",
+          "returncode": 0,
+          "timed_out": false
+        }
+      ],
+      "branch": "generated_yj_oracle_v4_framework_regression",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "eval"
+      ],
+      "oracle_material_root": "/home/harminchee/codex-workspaces/programbench/reports/programbench_generated_oracles_2026-07-09-framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/oracle_tests",
+      "tests_json": {
+        "active_count": null,
+        "expected_count": null,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "d0c97413526edc3d01625f33a40547dd77fae9ba6de5f4c350a8bd4f5189c8f6",
+    "image": "programbench/sclevine_1776_yj.8016400:task_cleanroom_v6",
+    "path": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "80164002c0d7f88aa58fa5bec8a8cf4f1bb4e93b",
+  "compare_binaries": true,
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "kind": "generated",
+    "label": "generated_yj_oracle_v4_framework_regression",
+    "profile": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/source/coverage/generated_yj_oracle_v4_framework_regression_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 88.8,
+    "suite_count": 1
+  },
+  "go_build_package": {
+    "candidates": [
+      {
+        "dir": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/source",
+        "import_path": "github.com/sclevine/yj/v5",
+        "score": 100,
+        "target": "."
+      }
+    ],
+    "command_returncode": 0,
+    "fallback_used": false,
+    "log_path": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/logs/go_list_packages.json",
+    "mode": "auto",
+    "selected": "."
+  },
+  "go_coverpkg": "./...",
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/source/coverage/generated_yj_oracle_v4_framework_regression_merged_raw"
+  },
+  "instance_id": "sclevine__yj.8016400",
+  "language": "go",
+  "logs_dir": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/logs",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "go_test_package_coverage_percent": 0.0,
+    "go_test_returncode": 0,
+    "logs": {
+      "go_cover_func": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/logs/go_native_cover_func.json",
+      "go_test": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/logs/go_native_tests.json"
+    },
+    "profile": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 76.2
+  },
+  "oracle_material_root": "/home/harminchee/codex-workspaces/programbench/reports/programbench_generated_oracles_2026-07-09-framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/oracle_tests",
+  "repository": "sclevine/yj",
+  "selected_branches": [
+    "generated_yj_oracle_v4_framework_regression"
+  ],
+  "test_suite": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "kind": "generated",
+    "label": "generated_yj_oracle_v4_framework_regression",
+    "profile": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/source/coverage/generated_yj_oracle_v4_framework_regression_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 88.8,
+    "suite_count": 1
+  },
+  "work_dir": "/tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression"
+}

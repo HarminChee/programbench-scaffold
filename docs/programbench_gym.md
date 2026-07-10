@@ -1,6 +1,6 @@
 # ProgramBench Gym
 
-Last updated: 2026-07-08
+Last updated: 2026-07-10
 
 ## Purpose
 
@@ -118,6 +118,45 @@ static gates must pass before using an instance for training data.
 
 ## Current Commands
 
+Generate a cleanroom black-box CLI oracle bundle for a ProgramBench Go task:
+
+```bash
+python3 tools/programbench_generate_cli_oracle_bundle.py sclevine__yj.8016400 \
+  --profile yj \
+  --suite-label generated_yj_oracle_v4_framework_regression \
+  --output-root reports/programbench_generated_oracles_2026-07-09-framework \
+  --work-root /tmp/programbench_generated_cli_oracles_2026-07-09-framework \
+  --overwrite
+```
+
+Run the Go source-coverage and binary-consistency harness:
+
+```bash
+python3 tools/programbench_go_coverage_harness.py sclevine__yj.8016400 \
+  --tasks-root /home/harminchee/codex-workspaces/ProgramBench/src/programbench/data/tasks \
+  --oracle-material-root reports/programbench_generated_oracles_2026-07-09-framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/oracle_tests \
+  --suite-label generated_yj_oracle_v4_framework_regression \
+  --work-root /tmp/programbench_source_coverage_yj_framework \
+  --output-root reports/programbench_source_coverage_2026-07-09-framework \
+  --overwrite \
+  --run-native-tests \
+  --compare-binaries \
+  --xdist 1 \
+  --pytest-timeout 1800
+```
+
+Run generated-oracle quality gates:
+
+```bash
+python3 tools/programbench_run_generated_oracle_quality_gates.py \
+  --oracle-material-root reports/programbench_generated_oracles_2026-07-09-framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/oracle_tests \
+  --output-json reports/programbench_generated_oracles_2026-07-09-framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/evaluation_quality_report.json \
+  --work-root /tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400 \
+  --repeat-executable /tmp/programbench_source_coverage_yj_framework/sclevine__yj.8016400/generated_yj_oracle_v4_framework_regression/executable_coverage \
+  --repeat-gocoverdir /tmp/programbench_generated_oracle_quality_gates_framework/sclevine__yj.8016400/repeat_cov \
+  --overwrite
+```
+
 Build the MVP-3 ProgramBench-derived Gym instances:
 
 ```bash
@@ -209,7 +248,7 @@ a symlink to the reference binary or as a dummy program during reward checks.
 
 ## Current Build Outputs
 
-As of 2026-07-07:
+As of 2026-07-10:
 
 - MVP-3 was regenerated in `/private/tmp` after cleanup; 3/3 static gates pass.
 - The 10-task dev-set config remains ready for regeneration; prior generated
@@ -221,6 +260,17 @@ As of 2026-07-07:
 - `reports/programbench_gym_external_pilot5_candidates` was generated as a
   lightweight candidate-only skeleton: 5/5 candidate static gates pass, but 0/5
   are accepted training instances until clone/build/test/dummy/offline gates run.
+- The Go oracle-reproduction framework is validated on `sclevine__yj.8016400`
+  with 85 generated black-box tests, 88.8% Go statement coverage, 76.2% native
+  baseline, cleanroom/source/coverage binary consistency, dummy rejection,
+  source-leak pass, and repeat pass.
+- The repo-agnostic `generic-cli-smoke` profile has also run end-to-end on
+  `multiprocessio__dsq.c3ae0ba`, `rs__jplot.2a54bcc`, and
+  `psampaz__go-mod-outdated.bb79367` without inspecting their official oracle
+  tests. These smoke suites are framework-generalization checks, not accepted
+  high-strength oracle suites.
+- Detailed Go framework evidence is recorded in
+  `reports/programbench_go_oracle_framework_status_2026-07-10.md`.
 
 Dynamic gates are intentionally still skipped on the local Mac run:
 `reference_binary_materialized`, `reference_smoke_runs`,

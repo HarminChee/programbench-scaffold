@@ -1,0 +1,138 @@
+{
+  "bundle_root": "/home/harminchee/codex-workspaces/programbench/reports/programbench_generated_oracles_2026-07-09-framework/psampaz__go-mod-outdated.bb79367/generated_generic_cli_smoke_v1/oracle_tests",
+  "candidate_case_count": 6,
+  "case_count": 6,
+  "case_source": "builtin_profile",
+  "case_spec_metadata": {},
+  "case_spec_path": null,
+  "cases": [
+    {
+      "area": "generic_cli_smoke",
+      "args": [],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "no_args_empty_stdin",
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_file": "000_no_args_empty_stdin.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_file": "000_no_args_empty_stdin.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "000_no_args_empty_stdin.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout": 5
+    },
+    {
+      "area": "generic_cli_smoke",
+      "args": [
+        "-h"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "help_short",
+      "returncode": 0,
+      "stderr_bytes": 288,
+      "stderr_file": "001_help_short.stderr",
+      "stderr_sha256": "727883c63c662c4cc71672d2e1091de3c50b56e51aec71dce85cc6e885988d87",
+      "stdin_file": "001_help_short.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "001_help_short.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout": 5
+    },
+    {
+      "area": "generic_cli_smoke",
+      "args": [
+        "--help"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "help_long",
+      "returncode": 0,
+      "stderr_bytes": 288,
+      "stderr_file": "002_help_long.stderr",
+      "stderr_sha256": "727883c63c662c4cc71672d2e1091de3c50b56e51aec71dce85cc6e885988d87",
+      "stdin_file": "002_help_long.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "002_help_long.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout": 5
+    },
+    {
+      "area": "generic_cli_smoke",
+      "args": [
+        "-v"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "version_short",
+      "returncode": 2,
+      "stderr_bytes": 322,
+      "stderr_file": "003_version_short.stderr",
+      "stderr_sha256": "7da858ab4117af1c4772ac7609f3fc738a165e24ecda1d7fda95585ba021df16",
+      "stdin_file": "003_version_short.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "003_version_short.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout": 5
+    },
+    {
+      "area": "generic_cli_smoke",
+      "args": [
+        "--version"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "version_long",
+      "returncode": 2,
+      "stderr_bytes": 328,
+      "stderr_file": "004_version_long.stderr",
+      "stderr_sha256": "22850350335bc774bec996ea752b6b27408fe53e22a8bc1605aaa1e49ea11fbc",
+      "stdin_file": "004_version_long.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "004_version_long.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout": 5
+    },
+    {
+      "area": "generic_cli_smoke",
+      "args": [
+        "--programbench-invalid-flag"
+      ],
+      "argv0": "/workspace/executable",
+      "env": {},
+      "name": "invalid_long_flag",
+      "returncode": 2,
+      "stderr_bytes": 346,
+      "stderr_file": "005_invalid_long_flag.stderr",
+      "stderr_sha256": "04034618a5434da1c6770365ae85de3196b7feb1449527a26eb3a47e1dd15451",
+      "stdin_file": "005_invalid_long_flag.stdin",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_file": "005_invalid_long_flag.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout": 5
+    }
+  ],
+  "fixture_subdir": "generic-cli-smoke",
+  "generated_at": "2026-07-10T01:35:37.266087+00:00",
+  "image": "programbench/psampaz_1776_go-mod-outdated.bb79367:task_cleanroom_v6",
+  "instance_id": "psampaz__go-mod-outdated.bb79367",
+  "method": "cleanroom_reference_binary_black_box_capture",
+  "profile": "generic-cli-smoke",
+  "readme_copied": true,
+  "skipped_case_count": 0,
+  "skipped_cases": [],
+  "suite_label": "generated_generic_cli_smoke_v1"
+}

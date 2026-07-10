@@ -1,0 +1,8 @@
+pos: .inf
+neg: -.inf
+missing: .nan
+list:
+  - 1.0
+  - .inf
+  - -.inf
+  - .nan

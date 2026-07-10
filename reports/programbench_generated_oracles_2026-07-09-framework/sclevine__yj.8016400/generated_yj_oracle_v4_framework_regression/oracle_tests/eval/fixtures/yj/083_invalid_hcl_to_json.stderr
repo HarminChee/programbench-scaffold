@@ -1,0 +1,1 @@
+Error parsing HCL: At 3:2: object expected closing RBRACE got: EOF

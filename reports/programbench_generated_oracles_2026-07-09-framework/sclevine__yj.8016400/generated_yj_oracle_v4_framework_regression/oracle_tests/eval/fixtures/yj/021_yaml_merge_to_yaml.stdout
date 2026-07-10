@@ -1,0 +1,11 @@
+defaults:
+  adapter: postgres
+  host: localhost
+development:
+  adapter: postgres
+  host: localhost
+  database: dev
+production:
+  adapter: postgres
+  host: localhost
+  database: prod
