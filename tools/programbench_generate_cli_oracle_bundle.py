@@ -18,12 +18,16 @@ import shutil
 import stat
 import subprocess
 import textwrap
+import time
 from pathlib import Path
 from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_NAME = "generated_cli_manifest.json"
+VOLATILE_OUTPUT_RE = re.compile(
+    rb"\b\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}\b|\b\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}"
+)
 
 
 def image_name_from_instance_id(instance_id: str) -> str:
@@ -565,6 +569,19 @@ def run_reference_case(reference_binary: Path, case: dict[str, Any], timeout: in
         }
 
 
+def observed_signature(observed: dict[str, Any]) -> tuple[int, bool, bytes, bytes]:
+    return (
+        int(observed["returncode"]),
+        bool(observed["timed_out"]),
+        observed["stdout"],
+        observed["stderr"],
+    )
+
+
+def has_volatile_output(observed: dict[str, Any]) -> bool:
+    return bool(VOLATILE_OUTPUT_RE.search(observed["stdout"]) or VOLATILE_OUTPUT_RE.search(observed["stderr"]))
+
+
 def write_generated_pytest(bundle_root: Path, profile: str) -> None:
     test_path = bundle_root / "eval" / "tests" / "test_generated_cli_oracle.py"
     test_path.parent.mkdir(parents=True, exist_ok=True)
@@ -718,6 +735,43 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
                 }
             )
             continue
+        if args.skip_volatile_output_cases and has_volatile_output(observed):
+            skipped_cases.append(
+                {
+                    "name": name,
+                    "area": case.get("area", "unknown"),
+                    "args": list(case.get("args", [])),
+                    "reason": "volatile_reference_output",
+                    "timeout": args.case_timeout,
+                    "stdout_sha256": sha256_bytes(observed["stdout"]),
+                    "stderr_sha256": sha256_bytes(observed["stderr"]),
+                }
+            )
+            continue
+        deterministic = True
+        mismatch_index = None
+        for rerun_index in range(args.determinism_reruns):
+            if args.determinism_rerun_delay > 0:
+                time.sleep(args.determinism_rerun_delay)
+            rerun = run_reference_case(reference_binary, case, args.case_timeout)
+            if observed_signature(rerun) != observed_signature(observed):
+                deterministic = False
+                mismatch_index = rerun_index
+                break
+        if not deterministic and args.skip_nondeterministic_cases:
+            skipped_cases.append(
+                {
+                    "name": name,
+                    "area": case.get("area", "unknown"),
+                    "args": list(case.get("args", [])),
+                    "reason": "nondeterministic_reference_output",
+                    "rerun_index": mismatch_index,
+                    "timeout": args.case_timeout,
+                    "stdout_sha256": sha256_bytes(observed["stdout"]),
+                    "stderr_sha256": sha256_bytes(observed["stderr"]),
+                }
+            )
+            continue
         stdin_bytes = str(case.get("stdin", "")).encode("utf-8")
         stdout = observed["stdout"]
         stderr = observed["stderr"]
@@ -761,6 +815,7 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
         "case_count": len(manifest_cases),
         "candidate_case_count": len(cases),
         "skipped_case_count": len(skipped_cases),
+        "determinism_reruns": args.determinism_reruns,
         "skipped_cases": skipped_cases,
         "fixture_subdir": fixture_subdir,
         "readme_copied": readme_result["returncode"] == 0,
@@ -787,6 +842,10 @@ def main() -> int:
     parser.add_argument("--output-root", type=Path, default=Path("reports/programbench_generated_oracles"))
     parser.add_argument("--case-timeout", type=int, default=5)
     parser.add_argument("--skip-timed-out-cases", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--determinism-reruns", type=int, default=0)
+    parser.add_argument("--determinism-rerun-delay", type=float, default=0.0)
+    parser.add_argument("--skip-nondeterministic-cases", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--skip-volatile-output-cases", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 

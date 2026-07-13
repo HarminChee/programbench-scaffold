@@ -27,6 +27,10 @@ reports/programbench_gym_scale_seed_repos_*.md
 reports/programbench_opus48_*/
 reports/mined_specs_smoke/*.json
 reports/mined_specs_smoke/*.yaml
+reports/programbench_pb_style_agent_packs/
+reports/programbench_pb_style_generated_oracles/
+reports/programbench_pb_style_go_coverage/
+reports/programbench_pb_style_go_oracle_pipeline/
 
 # Generated exploratory JSON artifacts.
 reports/programbench_behavior_probe_*.json

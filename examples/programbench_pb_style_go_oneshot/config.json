@@ -1,0 +1,12 @@
+{
+  "default_target_instance_id": "sclevine__yj.8016400",
+  "default_example_instance_id": "multiprocessio__dsq.c3ae0ba",
+  "language": "go",
+  "policy": {
+    "agent_may_see_target_source_docs_native_tests": true,
+    "agent_must_not_see_target_official_oracle_tests": true,
+    "one_shot_example_must_not_equal_target": true,
+    "one_shot_example_may_include_official_oracle_excerpt": true
+  },
+  "runtime_pack_root": "reports/programbench_pb_style_agent_packs"
+}

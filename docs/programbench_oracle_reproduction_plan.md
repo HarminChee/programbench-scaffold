@@ -168,3 +168,52 @@ reference-pass, dummy-reject, repeat, source-leak, and binary-consistency gates.
 
 Detailed evidence is in
 `reports/programbench_go_oracle_framework_status_2026-07-10.md`.
+
+## PB-Style Go Builder Evidence From 2026-07-12
+
+The Go path now explicitly separates the two ProgramBench phases:
+
+- oracle construction may inspect source code, docs, native tests, source
+  fixtures, coverage reports, and a different same-language one-shot example;
+- inference/evaluation must still hide source and target official oracle tests
+  from the solving agent.
+
+New source-aware builder pieces:
+
+- `tools/programbench_generate_source_aware_cli_cases.py`
+- `tools/programbench_prepare_pb_style_go_agent_pack.py`
+- `tools/programbench_assertion_linter.py`
+- `tools/programbench_run_pb_style_go_oracle_pipeline.py`
+
+The shared pipeline is:
+
+```text
+source/docs/native tests
+  -> candidate CLI cases
+  -> cleanroom reference capture
+  -> deterministic/volatile-output filtering
+  -> generated pytest executable oracle bundle
+  -> Go coverage harness
+  -> dummy rejection + repeat + source-leak + assertion-lint gates
+```
+
+Validated `pb_source_aware_go_v2` rows:
+
+| instance | candidate cases | kept tests | skipped | Go statement coverage | native coverage | gates |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `sclevine__yj.8016400` | 159 | 159 | 0 | 78.7% | 76.2% | pass |
+| `multiprocessio__dsq.c3ae0ba` | 135 | 135 | 0 | 38.4% | 0.0% | pass |
+| `rs__jplot.2a54bcc` | 27 | 27 | 0 | 10.8% | 0.0% | pass |
+| `psampaz__go-mod-outdated.bb79367` | 39 | 34 | 5 | 77.8% | 84.7% | pass |
+
+Runtime outputs are intentionally ignored by Git:
+
+```text
+reports/programbench_pb_style_agent_packs/
+reports/programbench_pb_style_generated_oracles/
+reports/programbench_pb_style_go_coverage/
+reports/programbench_pb_style_go_oracle_pipeline/
+```
+
+Detailed evidence is in
+`reports/programbench_pb_style_go_oracle_framework_2026-07-12.md`.

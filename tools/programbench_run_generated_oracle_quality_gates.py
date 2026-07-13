@@ -15,6 +15,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
+from programbench_assertion_linter import lint_oracle_root
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SOURCE_LIKE_NAMES = {"go.mod", "go.sum", "Makefile", "Dockerfile"}
@@ -261,6 +263,7 @@ def main() -> int:
     parser.add_argument("--repeat-executable", type=Path)
     parser.add_argument("--repeat-gocoverdir", type=Path)
     parser.add_argument("--timeout", type=int, default=300)
+    parser.add_argument("--skip-assertion-lint", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 
@@ -289,6 +292,7 @@ def main() -> int:
         dummy_kinds=args.dummy_kind,
     )
     leak = source_leak_scan(oracle_root)
+    assertion_lint = None if args.skip_assertion_lint else lint_oracle_root(oracle_root)
     repeat = None
     if args.repeat_executable is not None:
         repeat = run_pytest_bundle(
@@ -308,6 +312,7 @@ def main() -> int:
         "dummy_reject": dummy_results,
         "all_dummies_rejected": all(item["rejected"] for item in dummy_results),
         "source_leak_scan": leak,
+        "assertion_lint": assertion_lint,
         "repeat_check": repeat,
     }
     write_json(output_json, payload)
@@ -318,7 +323,8 @@ def main() -> int:
         and repeat["junit_summary"].get("failures") == 0
         and repeat["junit_summary"].get("errors") == 0
     )
-    return 0 if payload["all_dummies_rejected"] and leak["passed"] and repeat_ok else 1
+    lint_ok = assertion_lint is None or assertion_lint.get("passed", False)
+    return 0 if payload["all_dummies_rejected"] and leak["passed"] and lint_ok and repeat_ok else 1
 
 
 if __name__ == "__main__":
