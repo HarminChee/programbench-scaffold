@@ -1,62 +1,63 @@
 # ProgramBench-style Oracle Test Gym
 
-本分支实现一个 Go-first、agent-driven 的 PB-style oracle-test generation gym。目标是在不向 generation agent 暴露 target repo 的 PB 官方 oracle tests 的前提下，使用 target source/docs/native tests、execute-only reference binary、不同实例 example、质量门禁和 coverage feedback，独立生成高质量 behavioral tests。
+This branch implements a Go-first, agent-driven, PB-style oracle-test generation gym. Its goal is to generate high-quality behavioral tests independently, using the target source, documentation, native tests, an execute-only reference binary, an example from a different instance, deterministic quality gates, and coverage feedback. The target repository's official ProgramBench oracle tests are never exposed to the generation agent.
 
 ## Workflow
 
 ```text
-测量 native 与 PB gold-filtered official statement coverage
-→ 准备无 target-oracle 泄露的 agent context 和 deterministic seed
-→ Sonnet generation agent 更新完整 candidate_cases.json
-→ reference capture 生成 pytest behavioral oracle
-→ cleanroom/source-built/coverage 三 binary 验证
-→ assertion linter + 四 dummy + repeat + source-leak
-→ Opus reviewer 对每个 test 给 keep/revise/reject
-→ 质量失败则先修质量；质量通过但 statement coverage 不足则按 gaps 补 tests
-→ 达到 official statement coverage 后，在新 workspace 独立复验
-→ 保存 final suite、coverage、quality、review 和 trajectory artifacts
+Measure native and PB gold-filtered official statement coverage
+→ Prepare a target-oracle-free agent context and deterministic seed
+→ Let the Sonnet generation agent update the complete candidate_cases.json
+→ Capture reference behavior and generate a pytest behavioral oracle
+→ Validate against cleanroom, source-built, and coverage binaries
+→ Run assertion linter, four dummies, repeat, and source-leak gates
+→ Let the Opus reviewer mark every test keep, revise, or reject
+→ Repair quality failures first; otherwise add tests for coverage gaps
+→ Reach the official statement-coverage target
+→ Revalidate independently in a fresh workspace
+→ Save the final suite, coverage, quality, review, and trajectory artifacts
 ```
 
-正式成功要求同时满足：我们的 Go statement coverage 达到或超过同一 pinned source 上 PB gold-filtered deterministic official oracle；所有 tests 在三 binary 上通过且行为一致；所有 tests 确定性重复通过；assertion linter、source-leak 和 repeat gates 通过；每个 test 拒绝 `true`、`false`、`cat-stdin`、`empty-stderr` 四种 dummy；reviewer 对所有 tests 均为 `keep`。Plateau 或预算耗尽只保存 best-quality suite，不算正式成功。
+A run is fully successful only when all of the following are true: our Go statement coverage reaches or exceeds the gold-filtered deterministic PB official oracle on the same pinned source; every test passes with consistent behavior on the cleanroom, source-built, and coverage binaries; all tests remain deterministic under reruns; the assertion-linter, source-leak, and repeat gates pass; every test rejects the `true`, `false`, `cat-stdin`, and `empty-stderr` dummy implementations; and the independent reviewer marks every test as `keep`. A plateau or exhausted budget preserves the best-quality suite but does not count as success.
 
-## Core scripts
-
-| Script | Responsibility |
-|---|---|
-| `tools/programbench_agent_oracle_loop.py` | 主控制循环：generation、pipeline、review、coverage feedback、checkpoint 和停止状态 |
-| `tools/programbench_agent_provider.py` | Claude Code/Agent Maestro generation 与 review provider |
-| `tools/programbench_prepare_pb_style_go_agent_pack.py` | 准备 target source/docs/native tests 和不同实例 example，阻止 target official oracle 泄露 |
-| `tools/programbench_generate_source_aware_cli_cases.py` | 从 source、flags、native tests 和 testdata 生成 deterministic seed cases |
-| `tools/programbench_agent_probe_reference.py` | Execute-only reference probe，支持 args/stdin/env/files/local HTTP |
-| `tools/programbench_agent_probe_reference_windows.ps1` | Windows Agent Maestro 到 WSL reference probe 的安全桥接 |
-| `tools/programbench_agent_validate_cases_windows.ps1` | 在 agent 提交 suite 前验证 candidate schema、数量和可执行性 |
-| `tools/programbench_generate_cli_oracle_bundle.py` | 捕获 reference stdout/stderr/return code，做 determinism/volatile filtering，并生成 pytest bundle |
-| `tools/programbench_go_coverage_harness.py` | 构建 source/coverage binary，运行 native/official/generated suites，测 Go coverage 并比较三 binary |
-| `tools/programbench_assertion_linter.py` | PB Table 8/A.3.5 风格弱断言检查 |
-| `tools/programbench_run_generated_oracle_quality_gates.py` | 逐 test dummy rejection、linter、repeat 和 source-leak gates |
-| `tools/programbench_test_review_agent.py` | 独立 reviewer 对每个 test 输出 keep/revise/reject |
-| `tools/programbench_run_pb_style_go_oracle_pipeline.py` | 可复用单轮：capture → coverage/三 binary → quality gates |
-| `tools/programbench_run_go_agent_batch.py` | 多 instance 调度、resume、并发限制和基础设施重试 |
-| `tools/programbench_summarize_go_agent_runs.py` | 将 run summaries 聚合为 Markdown/CSV/JSON |
-
-## Environment scripts
+## Core Scripts
 
 | Script | Responsibility |
 |---|---|
-| `setup/programbench_wsl_bootstrap.sh` | 初始化 WSL、Docker、Python 和 Go 研究运行环境 |
-| `setup/programbench_wsl_user_setup.sh` | 配置 WSL research user |
-| `setup/initialize_programbench_research_workspace.py` | 建立 scaffold、official ProgramBench 和 oracle workspace 目录 |
-| `setup/setup_programbench_windows.ps1` | Windows 侧 ProgramBench 基础设置 |
-| `setup/initialize_agent_maestro_api_key.ps1` | 从 Windows DPAPI 恢复已有 Maestro key，不把 key 写入仓库/WSL |
-| `setup/invoke_agent_maestro_anthropic.ps1` | 调用本机 Maestro Anthropic endpoint |
-| `setup/start_claude_via_agent_maestro.ps1` | 启动指定 Sonnet/Opus Claude Code 会话 |
-| `setup/run_claude_code_via_agent_maestro_noninteractive.ps1` | 主循环使用的非交互 Claude Code 入口 |
+| `tools/programbench_agent_oracle_loop.py` | Controls the full loop: generation, pipeline execution, review, coverage feedback, checkpoints, and terminal status. |
+| `tools/programbench_agent_provider.py` | Provides the Claude Code and Agent Maestro interfaces for generation and review. |
+| `tools/programbench_prepare_pb_style_go_agent_pack.py` | Builds the target source/docs/native-test context and different-instance example without leaking the target official oracle. |
+| `tools/programbench_generate_source_aware_cli_cases.py` | Generates deterministic seed cases from source code, CLI flags, native tests, and testdata. |
+| `tools/programbench_agent_probe_reference.py` | Runs execute-only reference probes with args, stdin, environment variables, files, and local HTTP fixtures. |
+| `tools/programbench_agent_probe_reference_windows.ps1` | Bridges Windows Agent Maestro calls to the WSL reference probe safely. |
+| `tools/programbench_agent_validate_cases_windows.ps1` | Validates candidate schema, count, uniqueness, and executability before the agent commits a suite. |
+| `tools/programbench_generate_cli_oracle_bundle.py` | Captures reference stdout, stderr, and return codes; filters nondeterministic or volatile cases; and generates the pytest bundle. |
+| `tools/programbench_go_coverage_harness.py` | Builds source and coverage binaries, runs native/official/generated suites, measures Go coverage, and compares all three binaries. |
+| `tools/programbench_assertion_linter.py` | Detects weak assertions using PB Table 8 and Appendix A.3.5-inspired rules. |
+| `tools/programbench_run_generated_oracle_quality_gates.py` | Runs per-test dummy rejection, assertion linting, repeat execution, and source-leak gates. |
+| `tools/programbench_test_review_agent.py` | Uses an independent reviewer to mark every test as `keep`, `revise`, or `reject`. |
+| `tools/programbench_run_pb_style_go_oracle_pipeline.py` | Runs one reusable capture → coverage/three-binary → quality-gate iteration. |
+| `tools/programbench_run_go_agent_batch.py` | Schedules multiple instances with resume support, bounded concurrency, and infrastructure retries. |
+| `tools/programbench_summarize_go_agent_runs.py` | Aggregates run summaries into Markdown, CSV, and JSON reports. |
 
-Windows 实验直接连接 `127.0.0.1:23333`。不要关闭 Maestro 鉴权，不生成或轮换 key，不把 key 输出到终端、日志、WSL 或仓库。
+## Environment Scripts
 
-## Run one Go instance
+| Script | Responsibility |
+|---|---|
+| `setup/programbench_wsl_bootstrap.sh` | Bootstraps the WSL, Docker, Python, and Go research environment. |
+| `setup/programbench_wsl_user_setup.sh` | Configures the WSL research user. |
+| `setup/initialize_programbench_research_workspace.py` | Creates the scaffold, official ProgramBench, and oracle-workspace directory layout. |
+| `setup/setup_programbench_windows.ps1` | Performs the Windows-side ProgramBench setup. |
+| `setup/initialize_agent_maestro_api_key.ps1` | Restores the existing Maestro key from Windows DPAPI without writing it to the repository or WSL. |
+| `setup/invoke_agent_maestro_anthropic.ps1` | Calls the local Maestro Anthropic endpoint. |
+| `setup/start_claude_via_agent_maestro.ps1` | Starts a Sonnet or Opus Claude Code session through Maestro. |
+| `setup/run_claude_code_via_agent_maestro_noninteractive.ps1` | Provides the non-interactive Claude Code entry point used by the main loop. |
 
-先测量并过滤 official ground truth，确定 `TARGET_STATEMENT_COVERAGE`，再运行：
+Windows experiments connect directly to `127.0.0.1:23333`. Do not disable Maestro authentication, create or rotate keys, or print keys to terminals, logs, WSL, or the repository.
+
+## Run One Go Instance
+
+First measure and filter the official ground truth to determine `TARGET_STATEMENT_COVERAGE`, then run:
 
 ```bash
 cd /home/programbench/research/programbench-scaffold
@@ -73,18 +74,18 @@ cd /home/programbench/research/programbench-scaffold
   --overwrite
 ```
 
-## Reproduced results so far
+## Reproduced Results So Far
 
 | Instance | Native statement | PB official statement | Generated tests | Our statement | Result |
 |---|---:|---:|---:|---:|---|
-| `sclevine__yj.8016400` | 76.2% | 88.8% | 143 | 89.7% | target met; 143 keep; 0 dummy-passing |
-| `tomnomnom__gron.88a6234` | 70.2% | 93.3% | 100 | 93.5% | target met; 100 keep; 0 dummy-passing; independent 8x capture passed |
+| `sclevine__yj.8016400` | 76.2% | 88.8% | 143 | 89.7% | Target met; 143 keep; 0 dummy-passing tests. |
+| `tomnomnom__gron.88a6234` | 70.2% | 93.3% | 100 | 93.5% | Target met; 100 keep; 0 dummy-passing tests; independent 8x capture passed. |
 
-Detailed evidence and all 46 Go seed-baseline rows are in [docs/programbench_complete_experiment_results_and_workflow_2026-07-15_zh.md](docs/programbench_complete_experiment_results_and_workflow_2026-07-15_zh.md).
+Detailed evidence and all 46 Go seed-baseline rows are available in [docs/programbench_complete_experiment_results_and_workflow_2026-07-15_zh.md](docs/programbench_complete_experiment_results_and_workflow_2026-07-15_zh.md).
 
-## Answer for Robin: success metrics
+## Success Metrics
 
-Reproducing the ProgramBench pipeline should not be justified by coverage alone. We should report success at four levels. First, **fidelity**: the same pinned repository, commit, cleanroom image, gold executable protocol, and filtering stages are reproduced without exposing the target's official oracle tests to the generation agent. Second, **oracle effectiveness**: on PB repositories, our primary Go metric is statement coverage and the generated suite should reach or exceed the gold-filtered deterministic PB official oracle; executable-line, per-file, and per-function coverage are supporting diagnostics. Third, **oracle quality**: tests must pass on the cleanroom, source-built, and coverage binaries; remain deterministic under independent reruns; reject every dummy implementation; pass assertion-quality and source-leak checks; and receive `keep` decisions from the independent reviewer. Fourth, **efficiency and reproducibility**: report generated and retained test counts, coverage per retained test, agent calls/turns/probes, wall time, failure/filter reasons, and whether a fresh-workspace rerun reproduces the same result. The number of tests is therefore an efficiency/compactness metric, not the primary success criterion. A pipeline is fully successful only when it matches PB-level coverage while satisfying all quality, non-leakage, determinism, and reproducibility gates.
+Reproducing the ProgramBench pipeline should not be justified by coverage alone. Success should be reported at four levels. First, **fidelity**: reproduce the same pinned repository, commit, cleanroom image, gold-executable protocol, and filtering stages without exposing the target's official oracle tests to the generation agent. Second, **oracle effectiveness**: on PB repositories, use statement coverage as the primary Go metric and require the generated suite to reach or exceed the gold-filtered deterministic PB official oracle; executable-line, per-file, and per-function coverage remain supporting diagnostics. Third, **oracle quality**: require tests to pass on the cleanroom, source-built, and coverage binaries; remain deterministic under independent reruns; reject every dummy implementation; pass assertion-quality and source-leak checks; and receive `keep` decisions from the independent reviewer. Fourth, **efficiency and reproducibility**: report generated and retained test counts, coverage per retained test, agent calls, turns, probes, wall time, failure and filtering reasons, and whether a fresh-workspace rerun reproduces the same result. Test count is therefore an efficiency and compactness metric, not the primary success criterion. A pipeline is fully successful only when it matches PB-level coverage while satisfying all quality, non-leakage, determinism, and reproducibility gates.
 
 ## Tests
 
