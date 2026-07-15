@@ -65,6 +65,8 @@ def summary_from_coverage(path: Path) -> dict[str, Any]:
     native = data.get("native_tests") or {}
     generated_cov = generated.get("total_statement_coverage_percent", generated.get("statement_coverage_percent"))
     native_cov = native.get("total_statement_coverage_percent", native.get("statement_coverage_percent"))
+    generated_line_cov = generated.get("line_coverage_percent")
+    native_line_cov = native.get("line_coverage_percent")
     junit_summary = {}
     for result in branch.get("binary_results") or []:
         if result.get("label") == "coverage":
@@ -78,6 +80,8 @@ def summary_from_coverage(path: Path) -> dict[str, Any]:
         "go_coverpkg": data.get("go_coverpkg"),
         "generated_go_statement_coverage": generated_cov,
         "native_go_statement_coverage": native_cov,
+        "generated_go_line_coverage": generated_line_cov,
+        "native_go_line_coverage": native_line_cov,
         "binary_behavior_consistent": data.get("all_branch_binary_comparisons_consistent"),
         "junit_summary": junit_summary,
     }
@@ -89,12 +93,28 @@ def summary_from_quality(path: Path) -> dict[str, Any]:
     data = read_json(path)
     assertion = data.get("assertion_lint") or {}
     repeat = data.get("repeat_check") or {}
+    dummy_results = data.get("dummy_reject") or []
     return {
         "exists": True,
         "all_dummies_rejected": data.get("all_dummies_rejected"),
+        "all_tests_reject_all_dummies": data.get("all_tests_reject_all_dummies"),
+        "dummy_passing_test_count": data.get("dummy_passing_test_count", 0),
+        "dummy_passing_test_names": data.get("dummy_passing_test_names") or [],
+        "dummy_results": [
+            {
+                "kind": item.get("kind"),
+                "all_tests_rejected": item.get("all_tests_rejected"),
+                "passing_test_count": item.get("passing_test_count", 0),
+                "passing_test_names": item.get("passing_test_names") or [],
+            }
+            for item in dummy_results
+        ],
         "source_leak_passed": (data.get("source_leak_scan") or {}).get("passed"),
         "assertion_lint_passed": assertion.get("passed"),
         "assertion_lint_high_count": assertion.get("high_count"),
+        "assertion_lint_medium_count": assertion.get("medium_count"),
+        "assertion_lint_low_count": assertion.get("low_count"),
+        "assertion_lint_issues": assertion.get("issues") or [],
         "repeat_returncode": repeat.get("pytest_returncode") if repeat else None,
         "repeat_junit_summary": repeat.get("junit_summary") if repeat else None,
     }
@@ -111,7 +131,7 @@ def main() -> int:
     parser.add_argument("--output-root", type=Path, default=REPO_ROOT / "reports/programbench_pb_style_go_oracle_pipeline")
     parser.add_argument("--generated-output-root", type=Path, default=REPO_ROOT / "reports/programbench_pb_style_generated_oracles")
     parser.add_argument("--coverage-output-root", type=Path, default=REPO_ROOT / "reports/programbench_pb_style_go_coverage")
-    parser.add_argument("--case-timeout", type=int, default=10)
+    parser.add_argument("--case-timeout", type=int, default=4)
     parser.add_argument("--determinism-reruns", type=int, default=2)
     parser.add_argument("--xdist", default="1")
     parser.add_argument("--pytest-timeout", type=int, default=900)
@@ -211,15 +231,27 @@ def main() -> int:
         cmd.append("--run-native-tests")
     if not args.skip_compare_binaries:
         cmd.append("--compare-binaries")
-    step = run_step("run_go_coverage_harness", cmd, logs_dir, timeout=3600)
-    steps.append(step)
-    if step["returncode"] != 0:
-        write_json(run_root / "pipeline_summary.json", {"status": "failed", "failed_step": step, "steps": steps})
-        return step["returncode"]
-
     coverage_summary = (
         args.coverage_output_root / args.instance_id / f"{args.suite_label}.go_coverage_summary.json"
     ).resolve()
+    step = run_step("run_go_coverage_harness", cmd, logs_dir, timeout=3600)
+    steps.append(step)
+    # The coverage harness returns non-zero when generated tests expose a
+    # behavioral mismatch.  That is useful repair evidence, not necessarily
+    # an infrastructure failure.  Continue through the quality gates whenever
+    # the harness managed to write its structured summary and executable.
+    if step["returncode"] != 0 and not coverage_summary.exists():
+        write_json(
+            run_root / "pipeline_summary.json",
+            {
+                "status": "failed",
+                "failed_step": step,
+                "coverage_summary_path": None,
+                "coverage": {"exists": False},
+                "steps": steps,
+            },
+        )
+        return step["returncode"]
     repeat_executable = coverage_work_root / args.instance_id / args.suite_label / "executable_coverage"
     quality_json = args.generated_output_root / args.instance_id / args.suite_label / "evaluation_quality_report.json"
     cmd = [
@@ -255,6 +287,7 @@ def main() -> int:
         "quality_report_path": str(quality_json),
         "coverage": summary_from_coverage(coverage_summary),
         "quality": summary_from_quality(quality_json),
+        "failed_step": next((item for item in steps if item["returncode"] != 0), None),
         "steps": steps,
     }
     write_json(run_root / "pipeline_summary.json", summary)

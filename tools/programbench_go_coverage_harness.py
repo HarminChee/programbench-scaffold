@@ -10,6 +10,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tarfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -214,15 +215,19 @@ def safe_extract(tar_path: Path, dest: Path) -> None:
 
 def copy_oracle_material(extract_dir: Path, repo_dir: Path) -> list[str]:
     copied: list[str] = []
+    # A branch is a cleanroom unit. Remove material left by the previous
+    # branch even when the new tarball does not contain the same directory.
     for name in ORACLE_MATERIAL_DIRS:
-        source = extract_dir / name
-        if not source.exists():
-            continue
         target = repo_dir / name
         if target.is_dir():
             shutil.rmtree(target)
         elif target.exists():
             target.unlink()
+    for name in ORACLE_MATERIAL_DIRS:
+        source = extract_dir / name
+        if not source.exists():
+            continue
+        target = repo_dir / name
         if source.is_dir():
             shutil.copytree(source, target, dirs_exist_ok=True)
         else:
@@ -279,6 +284,64 @@ def parse_cover_profile_statement_coverage(path: Path) -> float | None:
     return round((covered / total) * 100, 1)
 
 
+def parse_cover_profile_line_coverage(path: Path) -> dict[str, Any]:
+    """Approximate PB-style line coverage from Go cover-profile blocks.
+
+    Go records statement blocks rather than individual executable lines. We
+    take the union of source lines spanned by those blocks and mark a line
+    covered when at least one block spanning it has a non-zero count.
+    """
+
+    if not path.exists():
+        return {"line_coverage_percent": None, "covered_executable_lines": 0, "total_executable_lines": 0}
+    all_lines: dict[str, set[int]] = {}
+    covered_lines: dict[str, set[int]] = {}
+    pattern = re.compile(r"^(.*):(\d+)\.(\d+),(\d+)\.(\d+)\s+(\d+)\s+(\d+)$")
+    for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        if raw.startswith("mode:"):
+            continue
+        match = pattern.match(raw.strip())
+        if not match:
+            continue
+        source = match.group(1)
+        start_line = int(match.group(2))
+        end_line = int(match.group(4))
+        end_column = int(match.group(5))
+        statements = int(match.group(6))
+        count = int(match.group(7))
+        if statements <= 0:
+            continue
+        if end_column <= 1 and end_line > start_line:
+            end_line -= 1
+        lines = set(range(start_line, max(start_line, end_line) + 1))
+        all_lines.setdefault(source, set()).update(lines)
+        if count:
+            covered_lines.setdefault(source, set()).update(lines)
+    total = sum(len(lines) for lines in all_lines.values())
+    covered = sum(len(covered_lines.get(source, set()) & lines) for source, lines in all_lines.items())
+    per_file = {
+        source: {
+            "covered_executable_lines": len(covered_lines.get(source, set()) & lines),
+            "total_executable_lines": len(lines),
+            "line_coverage_percent": round(
+                len(covered_lines.get(source, set()) & lines) / len(lines) * 100,
+                1,
+            )
+            if lines
+            else None,
+        }
+        for source, lines in sorted(all_lines.items())
+    }
+    return {
+        "line_coverage_percent": round(covered / total * 100, 1) if total else None,
+        "covered_executable_lines": covered,
+        "total_executable_lines": total,
+        "line_coverage_source": "go_cover_profile_block_line_union",
+        "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+        "per_file_line_coverage": per_file,
+    }
+
+
 def parse_go_test_package_coverage(text: str) -> float | None:
     matches = re.findall(r"coverage:\s+([0-9.]+)%\s+of\s+statements", text)
     if not matches:
@@ -314,39 +377,90 @@ def relative_go_package(repo_dir: Path, package: dict[str, Any]) -> str:
     return "./" + rel.as_posix()
 
 
-def discover_go_main_packages(repo_dir: Path, repository: str, logs_dir: Path) -> dict[str, Any]:
+def discover_go_main_packages(
+    repo_dir: Path, repository: str, logs_dir: Path, go_executable: str = "go"
+) -> dict[str, Any]:
     result = run_command(
-        ["go", "list", "-json", "./..."],
+        [go_executable, "list", "-e", "-json", "./..."],
         cwd=repo_dir,
         timeout=900,
         log_path=logs_dir / "go_list_packages.json",
         include_output=True,
     )
-    packages = parse_json_stream(result.get("stdout", "")) if result["returncode"] == 0 else []
+    packages = parse_json_stream(result.get("stdout", ""))
     repo_name = repository.rstrip("/").split("/")[-1]
-    candidates: list[dict[str, Any]] = []
+    normalized_repo_name = re.sub(r"[^a-z0-9]", "", repo_name.lower())
+    candidates_by_target: dict[str, dict[str, Any]] = {}
+
+    def score_target(target: str) -> int:
+        rel = "." if target == "." else target.removeprefix("./")
+        parts = [] if rel == "." else rel.split("/")
+        leaf = parts[-1] if parts else repo_name
+        score = 0
+        if target == ".":
+            score += 120
+        if parts[:1] == ["cmd"]:
+            score += 90
+        if re.sub(r"[^a-z0-9]", "", leaf.lower()) == normalized_repo_name:
+            score += 70
+        if "internal" in parts:
+            score -= 80
+        if any(part in {"example", "examples", "testdata", "tests", "tools"} for part in parts):
+            score -= 100
+        return score - len(parts)
+
+    def add_candidate(*, target: str, import_path: str | None, directory: str, discovered_by: str) -> None:
+        candidate = {
+            "import_path": import_path,
+            "dir": directory,
+            "target": target,
+            "score": score_target(target),
+            "discovered_by": [discovered_by],
+        }
+        previous = candidates_by_target.get(target)
+        if previous:
+            previous["discovered_by"] = sorted(set(previous["discovered_by"] + [discovered_by]))
+            if import_path:
+                previous["import_path"] = import_path
+            return
+        candidates_by_target[target] = candidate
+
     for package in packages:
         if package.get("Name") != "main":
             continue
         target = relative_go_package(repo_dir, package)
-        rel = "." if target == "." else target.removeprefix("./")
-        parts = [] if rel == "." else rel.split("/")
-        score = 0
-        if target == ".":
-            score += 100
-        if parts[:1] == ["cmd"]:
-            score += 80
-        if parts and parts[-1] == repo_name:
-            score += 60
-        score -= len(parts)
-        candidates.append(
-            {
-                "import_path": package.get("ImportPath"),
-                "dir": package.get("Dir"),
-                "target": target,
-                "score": score,
-            }
+        add_candidate(
+            target=target,
+            import_path=package.get("ImportPath"),
+            directory=str(package.get("Dir", "")),
+            discovered_by="go_list",
         )
+
+    # Some pinned repositories require a newer Go toolchain than the caller,
+    # so `go list` can omit their intended command.  A source scan gives us a
+    # deterministic fallback and lets the subsequent build-attempt loop choose
+    # the first candidate that really compiles.
+    excluded_parts = {".git", "vendor", "node_modules"}
+    for go_file in repo_dir.rglob("*.go"):
+        relative = go_file.relative_to(repo_dir)
+        if go_file.name.endswith("_test.go") or any(part in excluded_parts for part in relative.parts):
+            continue
+        try:
+            prefix = go_file.read_text(encoding="utf-8", errors="replace")[:8192]
+        except OSError:
+            continue
+        if not re.search(r"(?m)^\s*package\s+main\b", prefix):
+            continue
+        parent = relative.parent
+        target = "." if str(parent) == "." else "./" + parent.as_posix()
+        add_candidate(
+            target=target,
+            import_path=None,
+            directory=str(go_file.parent.resolve()),
+            discovered_by="source_scan",
+        )
+
+    candidates = list(candidates_by_target.values())
     candidates.sort(key=lambda item: (-int(item["score"]), str(item["target"])))
     selected = candidates[0]["target"] if candidates else "."
     return {
@@ -354,11 +468,17 @@ def discover_go_main_packages(repo_dir: Path, repository: str, logs_dir: Path) -
         "log_path": result.get("log_path"),
         "selected": selected,
         "candidates": candidates,
-        "fallback_used": not candidates,
+        "fallback_used": not any("go_list" in item["discovered_by"] for item in candidates),
     }
 
 
-def select_go_build_package(repo_dir: Path, requested: str, repository: str, logs_dir: Path) -> dict[str, Any]:
+def select_go_build_package(
+    repo_dir: Path,
+    requested: str,
+    repository: str,
+    logs_dir: Path,
+    go_executable: str = "go",
+) -> dict[str, Any]:
     if requested != "auto":
         return {
             "mode": "explicit",
@@ -366,7 +486,7 @@ def select_go_build_package(repo_dir: Path, requested: str, repository: str, log
             "candidates": [],
             "fallback_used": False,
         }
-    discovery = discover_go_main_packages(repo_dir, repository, logs_dir)
+    discovery = discover_go_main_packages(repo_dir, repository, logs_dir, go_executable)
     return {"mode": "auto", **discovery}
 
 
@@ -392,6 +512,7 @@ def parse_junit(path: Path, *, ignored_tests: set[str] | None = None) -> dict[st
     failed_names: set[str] = set()
     error_names: set[str] = set()
     skipped_names: set[str] = set()
+    failure_details: list[dict[str, str]] = []
     ignored = ignored_tests or set()
     for suite in root.iter("testsuite"):
         tests += int(float(suite.attrib.get("tests", "0") or 0))
@@ -415,6 +536,18 @@ def parse_junit(path: Path, *, ignored_tests: set[str] | None = None) -> dict[st
             error_names.add(full_name)
         if "skipped" in child_tags:
             skipped_names.add(full_name)
+        if full_name not in ignored and len(failure_details) < 40:
+            for child in testcase:
+                if child.tag not in {"failure", "error"}:
+                    continue
+                detail = "\n".join(part for part in [child.attrib.get("message", ""), child.text or ""] if part)
+                failure_details.append(
+                    {
+                        "test": full_name,
+                        "kind": child.tag,
+                        "detail": detail[-2000:],
+                    }
+                )
     if tests == 0 and names:
         tests = len(names)
     filtered_names = names - ignored
@@ -433,6 +566,10 @@ def parse_junit(path: Path, *, ignored_tests: set[str] | None = None) -> dict[st
         "filtered_failures": len(filtered_failed),
         "filtered_errors": len(filtered_errors),
         "filtered_skipped": len(filtered_skipped),
+        "filtered_failed_test_names": sorted(filtered_failed),
+        "filtered_error_test_names": sorted(filtered_errors),
+        "filtered_skipped_test_names": sorted(filtered_skipped),
+        "failure_details": failure_details,
         "filtered_test_names_hash": stable_names_hash(filtered_names),
     }
 
@@ -509,14 +646,27 @@ def run_pytest_for_binary(
     xdist: str,
     gocoverdir: Path | None = None,
     ignored_tests: set[str] | None = None,
+    workspace_alias: Path | None = None,
+    deselected_tests: list[str] | None = None,
 ) -> dict[str, Any]:
-    executable = repo_dir / "executable"
-    if executable.exists():
-        executable.unlink()
+    # ProgramBench executes each branch in a fresh container. Mirror that
+    # isolation for every binary so cache files, SQLite databases, fixtures,
+    # and pytest side effects cannot leak between cleanroom/source/coverage
+    # runs or across branches.
+    execution_dir = repo_dir.parent / "pytest_workspaces" / branch / label
+    if execution_dir.exists():
+        shutil.rmtree(execution_dir)
+    shutil.copytree(
+        repo_dir,
+        execution_dir,
+        ignore=shutil.ignore_patterns(".git", "coverage", "executable", "__pycache__", ".pytest_cache"),
+    )
+    executable = execution_dir / "executable"
     shutil.copy2(executable_source, executable)
     executable.chmod(executable.stat().st_mode | 0o555)
 
     junit = result_dir / f"{branch}.{label}.results.xml"
+    timeout_method = "signal" if str(xdist).strip().lower() in {"0", "no", "false"} else "thread"
     cmd = [
         str(python),
         "-m",
@@ -524,17 +674,37 @@ def run_pytest_for_binary(
         "eval/tests/",
         f"--junitxml={junit}",
         "--timeout=5",
-        "--timeout-method=thread",
+        f"--timeout-method={timeout_method}",
         "-n",
         xdist,
         "-v",
     ]
+    for node_id in sorted(set(deselected_tests or [])):
+        cmd.append(f"--deselect={node_id}")
     env = os.environ.copy()
     env["TZ"] = "UTC"
     if gocoverdir is not None:
         gocoverdir.mkdir(parents=True, exist_ok=True)
         env["GOCOVERDIR"] = str(gocoverdir)
-    result = run_command(cmd, cwd=repo_dir, env=env, timeout=timeout, log_path=logs_dir / f"pytest_{branch}_{label}.json")
+    alias_executable: Path | None = None
+    if workspace_alias is not None:
+        if not workspace_alias.is_dir():
+            raise FileNotFoundError(f"pytest workspace alias directory does not exist: {workspace_alias}")
+        alias_executable = workspace_alias / "executable"
+        if alias_executable.exists() or alias_executable.is_symlink():
+            raise FileExistsError(f"refusing to replace existing workspace alias executable: {alias_executable}")
+        alias_executable.symlink_to(executable)
+    try:
+        result = run_command(
+            cmd,
+            cwd=execution_dir,
+            env=env,
+            timeout=timeout,
+            log_path=logs_dir / f"pytest_{branch}_{label}.json",
+        )
+    finally:
+        if alias_executable is not None and alias_executable.is_symlink():
+            alias_executable.unlink()
     return {
         "label": label,
         "branch": branch,
@@ -543,20 +713,23 @@ def run_pytest_for_binary(
         "junit": str(junit),
         "junit_summary": parse_junit(junit, ignored_tests=ignored_tests),
         "log_path": result.get("log_path"),
+        "execution_workspace": str(execution_dir),
+        "workspace_alias": str(workspace_alias) if workspace_alias else None,
+        "deselected_tests": sorted(set(deselected_tests or [])),
     }
 
 
-def run_native_tests(repo_dir: Path, logs_dir: Path, coverpkg: str) -> dict[str, Any]:
+def run_native_tests(repo_dir: Path, logs_dir: Path, coverpkg: str, go_executable: str = "go") -> dict[str, Any]:
     profile = repo_dir / "coverage" / "native_profile.txt"
     profile.parent.mkdir(parents=True, exist_ok=True)
     test = run_command(
-        ["go", "test", f"-coverpkg={coverpkg}", f"-coverprofile={profile}", "./..."],
+        [go_executable, "test", f"-coverpkg={coverpkg}", f"-coverprofile={profile}", "./..."],
         cwd=repo_dir,
         timeout=1800,
         log_path=logs_dir / "go_native_tests.json",
     )
     cover = run_command(
-        ["go", "tool", "cover", "-func", str(profile)],
+        [go_executable, "tool", "cover", "-func", str(profile)],
         cwd=repo_dir,
         timeout=300,
         log_path=logs_dir / "go_native_cover_func.json",
@@ -566,6 +739,7 @@ def run_native_tests(repo_dir: Path, logs_dir: Path, coverpkg: str) -> dict[str,
         "go_test_package_coverage_percent": parse_go_test_package_coverage(test["stdout_tail"]),
         "cover_func_returncode": cover["returncode"],
         "statement_coverage_percent": parse_total_statement_coverage(cover["stdout_tail"]),
+        **parse_cover_profile_line_coverage(profile),
         "profile": str(profile),
         "logs": {
             "go_test": test.get("log_path"),
@@ -628,9 +802,32 @@ def main() -> int:
     parser.add_argument("--xdist", default="auto")
     parser.add_argument("--pytest-timeout", type=int, default=1800)
     parser.add_argument(
+        "--workspace-alias",
+        type=Path,
+        help="Optional pre-created directory used for tests that hard-code /workspace/executable.",
+    )
+    parser.add_argument(
+        "--deselect-test",
+        action="append",
+        default=[],
+        help="Exact pytest node id to remove before execution and coverage; repeatable and recorded per binary.",
+    )
+    parser.add_argument(
+        "--pytest-python",
+        type=Path,
+        help="Existing Python with pytest/pytest-timeout/pytest-xdist; defaults to the current interpreter when usable.",
+    )
+    parser.add_argument(
         "--go-build-package",
         default="auto",
         help="Go package to build as executable, or auto to discover a main package.",
+    )
+    parser.add_argument("--go-executable", default="go", help="Primary Go command or absolute executable path.")
+    parser.add_argument(
+        "--fallback-go-executable",
+        action="append",
+        default=[],
+        help="Fallback Go executable for pinned repositories incompatible with the primary toolchain.",
     )
     parser.add_argument("--go-coverpkg", default="./...", help="Value for go build/test -coverpkg.")
     args = parser.parse_args()
@@ -681,32 +878,159 @@ def main() -> int:
     if checkout["returncode"] != 0:
         raise RuntimeError(f"git checkout failed: {checkout['stderr_tail']}")
 
-    mod_download = run_command(["go", "mod", "download"], cwd=repo_dir, timeout=900, log_path=logs_dir / "go_mod_download.json")
+    toolchain_executables = [args.go_executable, *args.fallback_go_executable]
+    legacy_go = Path("/usr/local/go1.21.13/bin/go")
+    if legacy_go.exists() and str(legacy_go) not in toolchain_executables:
+        toolchain_executables.append(str(legacy_go))
+
+    mod_download = run_command(
+        [args.go_executable, "mod", "download"],
+        cwd=repo_dir,
+        timeout=900,
+        log_path=logs_dir / "go_mod_download.json",
+    )
     if mod_download["returncode"] != 0:
         raise RuntimeError(f"go mod download failed: {mod_download['stderr_tail']}")
 
-    go_build_package = select_go_build_package(repo_dir, args.go_build_package, repository, logs_dir)
-    go_build_target = str(go_build_package["selected"])
+    selected_toolchain = run_command(
+        [args.go_executable, "version"],
+        cwd=repo_dir,
+        timeout=300,
+        log_path=logs_dir / "go_selected_toolchain.json",
+        include_output=True,
+    )
+    toolchain_env = run_command(
+        [args.go_executable, "env", "GOTOOLCHAIN", "GOVERSION", "GOROOT"],
+        cwd=repo_dir,
+        timeout=300,
+        log_path=logs_dir / "go_toolchain_env.json",
+        include_output=True,
+    )
+
+    go_build_package = select_go_build_package(
+        repo_dir, args.go_build_package, repository, logs_dir, args.go_executable
+    )
     source_binary = work_dir / "executable_source"
     coverage_binary = work_dir / "executable_coverage"
-    build_source = run_command(
-        ["go", "build", "-o", str(source_binary), go_build_target],
-        cwd=repo_dir,
-        timeout=900,
-        log_path=logs_dir / "go_build_source.json",
-    )
-    if build_source["returncode"] != 0:
-        raise RuntimeError(f"go source build failed: {build_source['stderr_tail']}")
-    build_coverage = run_command(
-        ["go", "build", "-cover", f"-coverpkg={args.go_coverpkg}", "-o", str(coverage_binary), go_build_target],
-        cwd=repo_dir,
-        timeout=900,
-        log_path=logs_dir / "go_build_cover.json",
-    )
-    if build_coverage["returncode"] != 0:
-        raise RuntimeError(f"go coverage build failed: {build_coverage['stderr_tail']}")
+    if go_build_package.get("mode") == "explicit":
+        build_targets = [str(go_build_package["selected"])]
+    else:
+        build_targets = [str(item["target"]) for item in go_build_package.get("candidates") or []]
+        if "." not in build_targets:
+            build_targets.append(".")
+    candidate_dirs = {
+        str(item["target"]): Path(str(item["dir"])).resolve()
+        for item in go_build_package.get("candidates") or []
+        if item.get("dir")
+    }
 
-    native = run_native_tests(repo_dir, logs_dir, args.go_coverpkg) if args.run_native_tests else None
+    def build_context(target: str) -> tuple[Path, str]:
+        candidate_dir = candidate_dirs.get(target)
+        if candidate_dir is None:
+            candidate_dir = repo_dir if target == "." else (repo_dir / target.removeprefix("./")).resolve()
+        module_root = candidate_dir
+        while module_root != repo_dir and not (module_root / "go.mod").exists():
+            module_root = module_root.parent
+        if not (module_root / "go.mod").exists():
+            module_root = repo_dir
+        if module_root == repo_dir:
+            return repo_dir, target
+        relative_target = candidate_dir.relative_to(module_root)
+        nested_target = "." if str(relative_target) == "." else "./" + relative_target.as_posix()
+        return module_root, nested_target
+
+    build_attempts: list[dict[str, Any]] = []
+    build_source: dict[str, Any] | None = None
+    build_coverage: dict[str, Any] | None = None
+    go_build_target: str | None = None
+    go_build_cwd: Path | None = None
+    go_build_command_target: str | None = None
+    selected_go_executable: str | None = None
+    attempt_index = 0
+    for target in build_targets:
+        candidate_cwd, candidate_target = build_context(target)
+        label = re.sub(r"[^A-Za-z0-9_.-]+", "_", target).strip("_") or "root"
+        for go_executable in toolchain_executables:
+            attempt_index += 1
+            source_binary.unlink(missing_ok=True)
+            coverage_binary.unlink(missing_ok=True)
+            candidate_source = run_command(
+                [go_executable, "build", "-o", str(source_binary), candidate_target],
+                cwd=candidate_cwd,
+                timeout=900,
+                log_path=logs_dir / f"go_build_source_{attempt_index:02d}_{label}.json",
+            )
+            attempt: dict[str, Any] = {
+                "target": target,
+                "go_executable": go_executable,
+                "build_cwd": str(candidate_cwd),
+                "build_target": candidate_target,
+                "source": candidate_source,
+            }
+            if candidate_source["returncode"] != 0:
+                build_attempts.append(attempt)
+                continue
+            candidate_coverage = run_command(
+                [
+                    go_executable,
+                    "build",
+                    "-cover",
+                    f"-coverpkg={args.go_coverpkg}",
+                    "-o",
+                    str(coverage_binary),
+                    candidate_target,
+                ],
+                cwd=candidate_cwd,
+                timeout=900,
+                log_path=logs_dir / f"go_build_cover_{attempt_index:02d}_{label}.json",
+            )
+            attempt["coverage"] = candidate_coverage
+            build_attempts.append(attempt)
+            if candidate_coverage["returncode"] == 0:
+                go_build_target = target
+                go_build_cwd = candidate_cwd
+                go_build_command_target = candidate_target
+                selected_go_executable = go_executable
+                build_source = candidate_source
+                build_coverage = candidate_coverage
+                break
+        if selected_go_executable is not None:
+            break
+    go_build_package["attempts"] = build_attempts
+    go_build_package["selected"] = go_build_target
+    go_build_package["selected_build_cwd"] = str(go_build_cwd) if go_build_cwd else None
+    go_build_package["selected_build_target"] = go_build_command_target
+    go_build_package["selected_go_executable"] = selected_go_executable
+    if (
+        go_build_target is None
+        or go_build_cwd is None
+        or selected_go_executable is None
+        or build_source is None
+        or build_coverage is None
+    ):
+        final_attempt = build_attempts[-1] if build_attempts else {}
+        details = final_attempt.get("coverage") or final_attempt.get("source") or {}
+        raise RuntimeError(f"no discovered Go command built successfully: {details.get('stderr_tail', final_attempt)}")
+
+    selected_toolchain = run_command(
+        [selected_go_executable, "version"],
+        cwd=go_build_cwd,
+        timeout=300,
+        log_path=logs_dir / "go_selected_build_toolchain.json",
+        include_output=True,
+    )
+    toolchain_env = run_command(
+        [selected_go_executable, "env", "GOTOOLCHAIN", "GOVERSION", "GOROOT"],
+        cwd=go_build_cwd,
+        timeout=300,
+        log_path=logs_dir / "go_selected_build_toolchain_env.json",
+        include_output=True,
+    )
+    native = (
+        run_native_tests(go_build_cwd, logs_dir, args.go_coverpkg, selected_go_executable)
+        if args.run_native_tests
+        else None
+    )
 
     cleanroom_binary = work_dir / "executable_cleanroom"
     cleanroom = None
@@ -715,7 +1039,19 @@ def main() -> int:
         if cleanroom["returncode"] != 0:
             raise RuntimeError(f"cleanroom binary materialization failed: {cleanroom}")
 
-    python = install_pytest(work_dir / ".venv", logs_dir)
+    if args.pytest_python:
+        python = args.pytest_python.expanduser().absolute()
+        if not python.exists():
+            raise FileNotFoundError(f"pytest interpreter does not exist: {python}")
+    else:
+        dependency_check = run_command(
+            [sys.executable, "-c", "import pytest, pytest_timeout, xdist"],
+            timeout=60,
+            log_path=logs_dir / "pytest_dependency_check.json",
+        )
+        # Preserve a virtualenv symlink. Path.resolve() can jump to uv's base
+        # interpreter and silently lose the venv site-packages.
+        python = Path(sys.executable).absolute() if dependency_check["returncode"] == 0 else install_pytest(work_dir / ".venv", logs_dir)
     gocoverdir_alias = prepare_gocoverdir_alias(suite_cov_dir)
     branch_results: list[dict[str, Any]] = []
     for branch in selected_branches:
@@ -754,6 +1090,8 @@ def main() -> int:
                     timeout=args.pytest_timeout,
                     xdist=args.xdist,
                     ignored_tests=ignored_tests,
+                    workspace_alias=args.workspace_alias,
+                    deselected_tests=args.deselect_test,
                 )
             )
             binary_results.append(
@@ -768,6 +1106,8 @@ def main() -> int:
                     timeout=args.pytest_timeout,
                     xdist=args.xdist,
                     ignored_tests=ignored_tests,
+                    workspace_alias=args.workspace_alias,
+                    deselected_tests=args.deselect_test,
                 )
             )
         coverage_result = run_pytest_for_binary(
@@ -782,6 +1122,8 @@ def main() -> int:
             xdist=args.xdist,
             gocoverdir=suite_cov_dir,
             ignored_tests=ignored_tests,
+            workspace_alias=args.workspace_alias,
+            deselected_tests=args.deselect_test,
         )
         binary_results.append(coverage_result)
         branch_result = {
@@ -803,19 +1145,19 @@ def main() -> int:
 
     suite_profile = repo_dir / "coverage" / f"{run_label}_merged_profile.txt"
     cov_percent = run_command(
-        ["go", "tool", "covdata", "percent", "-i", str(suite_cov_dir)],
+        [selected_go_executable, "tool", "covdata", "percent", "-i", str(suite_cov_dir)],
         cwd=repo_dir,
         timeout=300,
         log_path=logs_dir / f"go_{run_label}_covdata_percent.json",
     )
     cov_textfmt = run_command(
-        ["go", "tool", "covdata", "textfmt", "-i", str(suite_cov_dir), "-o", str(suite_profile)],
+        [selected_go_executable, "tool", "covdata", "textfmt", "-i", str(suite_cov_dir), "-o", str(suite_profile)],
         cwd=repo_dir,
         timeout=300,
         log_path=logs_dir / f"go_{run_label}_covdata_textfmt.json",
     )
     cover_func = run_command(
-        ["go", "tool", "cover", "-func", str(suite_profile)],
+        [selected_go_executable, "tool", "cover", "-func", str(suite_profile)],
         cwd=repo_dir,
         timeout=300,
         log_path=logs_dir / f"go_{run_label}_cover_func.json",
@@ -842,6 +1184,7 @@ def main() -> int:
         "pytest_all_coverage_runs_passed": all_coverage_pytests_ok,
         "suite_count": len(selected_branches),
         "statement_coverage_percent": statement_coverage,
+        **parse_cover_profile_line_coverage(suite_profile),
         "coverage_percent_source": coverage_percent_source,
         "covdata_percent_returncode": cov_percent["returncode"],
         "covdata_textfmt_returncode": cov_textfmt["returncode"],
@@ -853,12 +1196,19 @@ def main() -> int:
         "repository": repository,
         "commit": commit,
         "language": meta.get("language"),
+        "go_toolchain": {
+            "selected_version": selected_toolchain.get("stdout", "").strip(),
+            "version_returncode": selected_toolchain.get("returncode"),
+            "environment": toolchain_env.get("stdout", "").splitlines(),
+            "environment_returncode": toolchain_env.get("returncode"),
+        },
         "go_build_package": go_build_package,
         "go_coverpkg": args.go_coverpkg,
         "selected_branches": selected_branches,
         "active_branch_count": len(all_active),
         "work_dir": str(work_dir),
         "compare_binaries": args.compare_binaries,
+        "pytest_python": str(python),
         "cleanroom_binary": cleanroom,
         "gocoverdir_alias": gocoverdir_alias,
         "test_suite": test_suite_summary,
@@ -889,7 +1239,9 @@ def main() -> int:
         f"- Branches/suites: `{', '.join(selected_branches)}`",
         f"- {suite_display} coverage metric: `{test_suite_summary['coverage_metric']}`",
         f"- {suite_display} statement coverage: `{test_suite_summary['statement_coverage_percent']}`",
+        f"- {suite_display} executable-line coverage: `{test_suite_summary['line_coverage_percent']}`",
         f"- Native-test statement coverage: `{native['statement_coverage_percent'] if native else None}`",
+        f"- Native-test executable-line coverage: `{native['line_coverage_percent'] if native else None}`",
         f"- Coverage pytest runs passed: `{all_coverage_pytests_ok}`",
         f"- Binary comparisons consistent: `{all_branch_comparisons_ok}`",
         f"- Work dir: `{work_dir}`",

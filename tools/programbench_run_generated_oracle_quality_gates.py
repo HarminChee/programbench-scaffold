@@ -10,6 +10,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import textwrap
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -110,7 +111,33 @@ def parse_junit(path: Path) -> dict[str, Any]:
         failures = int(float(root.attrib.get("failures", "0") or 0))
         errors = int(float(root.attrib.get("errors", "0") or 0))
         skipped = int(float(root.attrib.get("skipped", "0") or 0))
-    return {"exists": True, "tests": tests, "failures": failures, "errors": errors, "skipped": skipped}
+    passed_names: list[str] = []
+    failed_names: list[str] = []
+    error_names: list[str] = []
+    skipped_names: list[str] = []
+    for case in root.iter("testcase"):
+        classname = case.attrib.get("classname", "")
+        name = case.attrib.get("name", "")
+        qualified = f"{classname}.{name}" if classname else name
+        if case.find("failure") is not None:
+            failed_names.append(qualified)
+        elif case.find("error") is not None:
+            error_names.append(qualified)
+        elif case.find("skipped") is not None:
+            skipped_names.append(qualified)
+        else:
+            passed_names.append(qualified)
+    return {
+        "exists": True,
+        "tests": tests,
+        "failures": failures,
+        "errors": errors,
+        "skipped": skipped,
+        "passed_test_names": passed_names,
+        "failed_test_names": failed_names,
+        "error_test_names": error_names,
+        "skipped_test_names": skipped_names,
+    }
 
 
 def ensure_pytest(python: Path) -> bool:
@@ -214,11 +241,20 @@ def run_dummy_gates(
             timeout=timeout,
         )
         summary = run["junit_summary"]
+        passing_tests = summary.get("passed_test_names") or []
+        all_tests_rejected = (
+            summary.get("tests", 0) > 0
+            and not passing_tests
+            and summary.get("skipped", 0) == 0
+        )
         results.append(
             {
                 "kind": kind,
                 **run,
                 "rejected": run["pytest_returncode"] != 0 or summary.get("failures", 0) > 0 or summary.get("errors", 0) > 0,
+                "all_tests_rejected": all_tests_rejected,
+                "passing_test_count": len(passing_tests),
+                "passing_test_names": passing_tests,
             }
         )
     return results
@@ -258,7 +294,11 @@ def main() -> int:
     parser.add_argument("--oracle-material-root", type=Path, required=True)
     parser.add_argument("--output-json", type=Path, required=True)
     parser.add_argument("--work-root", type=Path, default=Path("/tmp/programbench_generated_oracle_quality_gates"))
-    parser.add_argument("--python", type=Path, help="Python executable with pytest installed. Defaults to an auto-created venv.")
+    parser.add_argument(
+        "--python",
+        type=Path,
+        help="Python executable with pytest installed. Defaults to the current interpreter, then an isolated venv fallback.",
+    )
     parser.add_argument("--dummy-kind", action="append", default=["true", "cat-stdin", "false", "empty-stderr"])
     parser.add_argument("--repeat-executable", type=Path)
     parser.add_argument("--repeat-gocoverdir", type=Path)
@@ -277,7 +317,9 @@ def main() -> int:
     logs_dir = work_root / "logs"
     logs_dir.mkdir(parents=True, exist_ok=True)
     if args.python is None:
-        python = install_pytest_venv(work_root / ".venv", logs_dir)
+        # Preserve a virtualenv symlink so pytest remains importable.
+        current_python = Path(sys.executable).absolute()
+        python = current_python if ensure_pytest(current_python) else install_pytest_venv(work_root / ".venv", logs_dir)
     else:
         python = args.python
         if not ensure_pytest(python):
@@ -306,11 +348,22 @@ def main() -> int:
             gocoverdir=args.repeat_gocoverdir,
         )
 
+    dummy_passing_tests = sorted(
+        {
+            name
+            for result in dummy_results
+            for name in result.get("passing_test_names") or []
+        }
+    )
+    all_tests_reject_all_dummies = all(item["all_tests_rejected"] for item in dummy_results)
     payload = {
         "oracle_material_root": str(oracle_root),
         "python": str(python),
         "dummy_reject": dummy_results,
-        "all_dummies_rejected": all(item["rejected"] for item in dummy_results),
+        "all_dummies_rejected": all_tests_reject_all_dummies,
+        "all_tests_reject_all_dummies": all_tests_reject_all_dummies,
+        "dummy_passing_test_count": len(dummy_passing_tests),
+        "dummy_passing_test_names": dummy_passing_tests,
         "source_leak_scan": leak,
         "assertion_lint": assertion_lint,
         "repeat_check": repeat,
@@ -324,7 +377,7 @@ def main() -> int:
         and repeat["junit_summary"].get("errors") == 0
     )
     lint_ok = assertion_lint is None or assertion_lint.get("passed", False)
-    return 0 if payload["all_dummies_rejected"] and leak["passed"] and lint_ok and repeat_ok else 1
+    return 0 if payload["all_tests_reject_all_dummies"] and leak["passed"] and lint_ok and repeat_ok else 1
 
 
 if __name__ == "__main__":

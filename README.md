@@ -1,5 +1,9 @@
 # ProgramBench Scaffolding Project
 
+> The current PB-style oracle-test gym, its coverage-guided loop, script map,
+> acceptance criteria, and reproduced Go results are documented in
+> [PROGRAMBENCH_GYM_README.md](PROGRAMBENCH_GYM_README.md).
+
 Working title:
 
 ```text

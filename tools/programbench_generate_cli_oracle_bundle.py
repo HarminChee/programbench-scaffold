@@ -9,18 +9,23 @@ binary, and materializes exact process observations as pytest fixtures.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import datetime as dt
 import hashlib
+import http.server
 import json
 import os
 import re
+import signal
 import shutil
 import stat
 import subprocess
+import tempfile
 import textwrap
+import threading
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -537,36 +542,111 @@ def load_cases_json(path: Path) -> tuple[str, list[dict[str, Any]], dict[str, An
     return profile, normalized, metadata
 
 
+@contextlib.contextmanager
+def case_runtime(case: dict[str, Any]) -> Iterator[tuple[Path, str]]:
+    with tempfile.TemporaryDirectory(prefix="programbench-case-") as temp:
+        cwd = Path(temp).resolve()
+        for relative, content in dict(case.get("files") or {}).items():
+            target = (cwd / str(relative)).resolve()
+            if cwd not in target.parents:
+                raise ValueError(f"unsafe case fixture path: {relative}")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(str(content), encoding="utf-8")
+        http_fixture = case.get("http") if isinstance(case.get("http"), dict) else None
+        server: http.server.ThreadingHTTPServer | None = None
+        thread: threading.Thread | None = None
+        url = ""
+        if http_fixture:
+            response = http_fixture
+
+            class Handler(http.server.BaseHTTPRequestHandler):
+                def do_GET(self) -> None:  # noqa: N802
+                    if self.path != str(response.get("path") or "/"):
+                        self.send_error(404)
+                        return
+                    body = str(response.get("body") or "").encode("utf-8")
+                    self.send_response(int(response.get("status", 200)))
+                    for key, value in dict(response.get("headers") or {}).items():
+                        self.send_header(str(key), str(value))
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+
+                def log_message(self, format: str, *args: object) -> None:
+                    return
+
+            server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            url = f"http://127.0.0.1:{server.server_port}{str(response.get('path') or '/')}"
+        try:
+            yield cwd, url
+        finally:
+            if server:
+                server.shutdown()
+                server.server_close()
+            if thread:
+                thread.join(timeout=2)
+
+
 def run_reference_case(reference_binary: Path, case: dict[str, Any], timeout: int) -> dict[str, Any]:
     env = os.environ.copy()
     env["TZ"] = "UTC"
-    env.update({str(k): str(v) for k, v in dict(case.get("env", {})).items()})
-    argv0 = case.get("argv0", "/workspace/executable")
-    try:
-        proc = subprocess.run(
-            [argv0, *map(str, case.get("args", []))],
-            executable=str(reference_binary),
-            input=str(case.get("stdin", "")).encode("utf-8"),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=timeout,
-            env=env,
+    with case_runtime(case) as (cwd, http_url):
+        env.update(
+            {str(k): str(v).replace("{http_url}", http_url) for k, v in dict(case.get("env", {})).items()}
         )
-        return {
-            "returncode": proc.returncode,
-            "stdout": proc.stdout,
-            "stderr": proc.stderr,
-            "timed_out": False,
-        }
-    except subprocess.TimeoutExpired as exc:
-        stdout = exc.stdout if isinstance(exc.stdout, bytes) else (exc.stdout or "").encode("utf-8", errors="replace")
-        stderr = exc.stderr if isinstance(exc.stderr, bytes) else (exc.stderr or "").encode("utf-8", errors="replace")
-        return {
-            "returncode": 124,
-            "stdout": stdout,
-            "stderr": stderr,
-            "timed_out": True,
-        }
+        argv0 = str(case.get("argv0", "/workspace/executable")).replace("{http_url}", http_url)
+        case_args = [str(item).replace("{http_url}", http_url) for item in case.get("args", [])]
+        stdin = str(case.get("stdin", "")).replace("{http_url}", http_url).encode("utf-8")
+        try:
+            proc = subprocess.Popen(
+                [argv0, *case_args],
+                executable=str(reference_binary),
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                cwd=cwd,
+                env=env,
+                start_new_session=os.name != "nt",
+            )
+        except (OSError, ValueError) as exc:
+            return {
+                "returncode": 127,
+                "stdout": b"",
+                "stderr": str(exc).encode("utf-8", errors="replace"),
+                "timed_out": False,
+                "launch_error": str(exc),
+            }
+        try:
+            stdout, stderr = proc.communicate(input=stdin, timeout=timeout)
+            return {
+                "returncode": proc.returncode,
+                "stdout": stdout,
+                "stderr": stderr,
+                "timed_out": False,
+            }
+        except subprocess.TimeoutExpired as exc:
+            if os.name != "nt":
+                try:
+                    os.killpg(proc.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            else:
+                proc.kill()
+            try:
+                final_stdout, final_stderr = proc.communicate(timeout=5)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                final_stdout, final_stderr = proc.communicate()
+            stdout = final_stdout or (exc.stdout if isinstance(exc.stdout, bytes) else (exc.stdout or "").encode("utf-8", errors="replace"))
+            stderr = final_stderr or (exc.stderr if isinstance(exc.stderr, bytes) else (exc.stderr or "").encode("utf-8", errors="replace"))
+            return {
+                "returncode": 124,
+                "stdout": stdout,
+                "stderr": stderr,
+                "timed_out": True,
+            }
 
 
 def observed_signature(observed: dict[str, Any]) -> tuple[int, bool, bytes, bytes]:
@@ -582,21 +662,21 @@ def has_volatile_output(observed: dict[str, Any]) -> bool:
     return bool(VOLATILE_OUTPUT_RE.search(observed["stdout"]) or VOLATILE_OUTPUT_RE.search(observed["stderr"]))
 
 
-def write_generated_pytest(bundle_root: Path, profile: str) -> None:
+def write_generated_pytest(bundle_root: Path, profile: str, cases: list[dict[str, Any]]) -> None:
     test_path = bundle_root / "eval" / "tests" / "test_generated_cli_oracle.py"
     test_path.parent.mkdir(parents=True, exist_ok=True)
-    test_path.write_text(
-        '''"""Generated black-box CLI oracle tests."""
+    header = '''"""Generated black-box CLI oracle tests."""
 
 from __future__ import annotations
 
+import contextlib
+import http.server
 import json
 import os
+import signal
 import subprocess
+import threading
 from pathlib import Path
-
-import pytest
-
 
 WORKSPACE = Path(__file__).resolve().parents[2]
 EVAL_DIR = Path(__file__).resolve().parents[1]
@@ -608,36 +688,111 @@ FIXTURE_DIR = EVAL_DIR / "fixtures" / MANIFEST.get("fixture_subdir", "generated_
 CASES = MANIFEST["cases"]
 
 
-@pytest.mark.parametrize("case", CASES, ids=[case["name"] for case in CASES])
-def test_generated_black_box_behavior(case: dict, tmp_path: Path) -> None:
-    executable = WORKSPACE / "executable"
-    assert executable.exists(), f"missing executable at {executable}"
+@contextlib.contextmanager
+def _case_runtime(case: dict, tmp_path: Path):
+    for relative, content in case.get("files", {}).items():
+        target = (tmp_path / relative).resolve()
+        if tmp_path.resolve() not in target.parents:
+            raise AssertionError(f"unsafe fixture path: {relative}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(content, encoding="utf-8")
+    response = case.get("http") or None
+    server = None
+    thread = None
+    url = ""
+    if response:
+        class Handler(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                if self.path != response.get("path", "/"):
+                    self.send_error(404)
+                    return
+                body = response.get("body", "").encode("utf-8")
+                self.send_response(response.get("status", 200))
+                for key, value in response.get("headers", {}).items():
+                    self.send_header(key, value)
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
 
-    stdin = (FIXTURE_DIR / case["stdin_file"]).read_bytes()
+            def log_message(self, format, *args):
+                return
+
+        server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        url = f"http://127.0.0.1:{server.server_port}{response.get('path', '/')}"
+    try:
+        yield url
+    finally:
+        if server:
+            server.shutdown()
+            server.server_close()
+        if thread:
+            thread.join(timeout=2)
+
+
+def _execute_case(index: int, tmp_path: Path) -> tuple[dict, Path, int, bytes, bytes, bytes, bytes]:
+    case = CASES[index]
+    executable = WORKSPACE / "executable"
+    if not executable.exists():
+        raise AssertionError(f"missing executable at {executable}")
+
+    stdin_template = (FIXTURE_DIR / case["stdin_file"]).read_bytes()
     expected_stdout = (FIXTURE_DIR / case["stdout_file"]).read_bytes()
     expected_stderr = (FIXTURE_DIR / case["stderr_file"]).read_bytes()
     env = os.environ.copy()
     env["TZ"] = "UTC"
-    env.update(case.get("env", {}))
+    with _case_runtime(case, tmp_path) as http_url:
+        env.update({key: value.replace("{http_url}", http_url) for key, value in case.get("env", {}).items()})
+        argv0 = case.get("argv0", "/workspace/executable").replace("{http_url}", http_url)
+        args = [item.replace("{http_url}", http_url) for item in case["args"]]
+        stdin = stdin_template.replace(b"{http_url}", http_url.encode("utf-8"))
+        proc = subprocess.Popen(
+            [argv0, *args],
+            executable=str(executable),
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=tmp_path,
+            env=env,
+            start_new_session=os.name != "nt",
+        )
+        try:
+            stdout, stderr = proc.communicate(input=stdin, timeout=case.get("timeout", 5))
+        except subprocess.TimeoutExpired:
+            if os.name != "nt":
+                with contextlib.suppress(ProcessLookupError):
+                    os.killpg(proc.pid, signal.SIGKILL)
+            else:
+                proc.kill()
+            proc.communicate()
+            raise
 
-    argv0 = case.get("argv0", "/workspace/executable")
-    proc = subprocess.run(
-        [argv0, *case["args"]],
-        executable=str(executable),
-        input=stdin,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        cwd=tmp_path,
-        env=env,
-        timeout=case.get("timeout", 5),
-    )
+    return case, executable, proc.returncode, stdout, stderr, expected_stdout, expected_stderr
 
-    assert proc.returncode == case["returncode"]
-    assert proc.stdout == expected_stdout
-    assert proc.stderr == expected_stderr
-''',
-        encoding="utf-8",
-    )
+
+def _assert_stdout(case: dict, stdout: bytes, expected_stdout: bytes) -> None:
+    if case.get("stdout_mode") == "lines_unordered":
+        assert sorted(stdout.splitlines()) == sorted(expected_stdout.splitlines())
+    else:
+        assert stdout == expected_stdout
+'''
+    functions: list[str] = []
+    for index, case in enumerate(cases):
+        name = slug(str(case.get("name") or f"case_{index:04d}"))
+        functions.append(
+            f'''
+
+def test_{index:04d}_{name}(tmp_path: Path) -> None:
+    """CATCHES: implementations whose exact exit status, stdout, or stderr differs from the reference behavior."""
+    case, executable, returncode, stdout, stderr, expected_stdout, expected_stderr = _execute_case({index}, tmp_path)
+    assert executable.exists(), f"missing executable at {{executable}}"
+    assert returncode == case["returncode"]
+    _assert_stdout(case, stdout, expected_stdout)
+    assert stderr == expected_stderr
+'''
+        )
+    test_path.write_text(header + "".join(functions), encoding="utf-8")
 
 
 def write_readme(bundle_root: Path, instance_id: str, profile: str, case_count: int) -> None:
@@ -722,6 +877,15 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
     for index, case in enumerate(cases):
         name = slug(case["name"])
         observed = run_reference_case(reference_binary, case, args.case_timeout)
+        if observed.get("launch_error"):
+            skipped_cases.append(
+                {
+                    "name": case["name"],
+                    "reason": "reference_launch_error",
+                    "error": observed["launch_error"],
+                }
+            )
+            continue
         if observed["timed_out"] and args.skip_timed_out_cases:
             skipped_cases.append(
                 {
@@ -788,6 +952,9 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
                 "args": list(case.get("args", [])),
                 "argv0": case.get("argv0", "/workspace/executable"),
                 "env": case.get("env", {}),
+                "files": case.get("files", {}),
+                "http": case.get("http", {}),
+                "stdout_mode": case.get("stdout_mode", "exact"),
                 "timeout": args.case_timeout,
                 "returncode": observed["returncode"],
                 "timed_out": observed["timed_out"],
@@ -821,7 +988,7 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
         "readme_copied": readme_result["returncode"] == 0,
         "cases": manifest_cases,
     }
-    write_generated_pytest(bundle_root, profile)
+    write_generated_pytest(bundle_root, profile, manifest_cases)
     write_readme(bundle_root, args.instance_id, profile, len(manifest_cases))
     write_json(bundle_root / "eval" / MANIFEST_NAME, manifest)
     if args.profile == "yj":

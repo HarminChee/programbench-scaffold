@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import os
 import re
@@ -15,9 +16,12 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+from programbench_agent_provider import run_claude_code
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TASKS_ROOTS = [
+    Path("/home/programbench/research/programbench/src/programbench/data/tasks"),
     Path("/home/harminchee/codex-workspaces/ProgramBench/src/programbench/data/tasks"),
     REPO_ROOT / "external/ProgramBench/src/programbench/data/tasks",
 ]
@@ -183,6 +187,9 @@ def materialize_one_shot_example(
         raise ValueError("example_instance_id must differ from target_instance_id")
     task_dir = tasks_root / example_instance_id
     task_yaml = parse_simple_yaml(task_dir / "task.yaml")
+    target_yaml = parse_simple_yaml(tasks_root / target_instance_id / "task.yaml")
+    if task_yaml.get("language") != target_yaml.get("language"):
+        raise ValueError("one-shot example and target must use the same language")
     branches = active_branches(task_dir)
     example_root = pack_root / "one_shot_example"
     example_root.mkdir(parents=True, exist_ok=True)
@@ -193,6 +200,10 @@ def materialize_one_shot_example(
         "language": task_yaml.get("language"),
         "active_branch_count": len(branches),
         "active_branches_sample": branches[:10],
+        "target_instance_id": target_instance_id,
+        "target_language": target_yaml.get("language"),
+        "example_separation_verified": True,
+        "ablation_label": f"oneshot_{example_instance_id}_for_{target_instance_id}",
         "policy": "Allowed only as a same-language one-shot example. Never use target official oracle tests.",
     }
     blob_dir = find_blob_dir(example_instance_id)
@@ -200,6 +211,8 @@ def materialize_one_shot_example(
     if blob_dir and branches:
         tar_path = blob_dir / "tests" / f"{branches[0]}.tar.gz"
         if tar_path.exists():
+            metadata["example_branch"] = branches[0]
+            metadata["example_archive_sha256"] = hashlib.sha256(tar_path.read_bytes()).hexdigest()
             extract_dir = pack_root / "_example_extract"
             if extract_dir.exists():
                 shutil.rmtree(extract_dir)
@@ -211,6 +224,9 @@ def materialize_one_shot_example(
                 dest.write_text(path.read_text(encoding="utf-8", errors="replace")[:30_000], encoding="utf-8")
                 copied.append(str(dest.relative_to(example_root)))
     metadata["oracle_excerpt_files"] = copied
+    metadata["oracle_excerpt_sha256"] = {
+        rel: hashlib.sha256((example_root / rel).read_bytes()).hexdigest() for rel in copied
+    }
     write_json(example_root / "metadata.json", metadata)
     return metadata
 
@@ -379,7 +395,8 @@ def call_agent(args: argparse.Namespace) -> int:
     pack_root = args.pack_root.expanduser().resolve()
     prompt = (pack_root / "prompts" / "agent_request.md").read_text(encoding="utf-8")
     system = (pack_root / "prompts" / "system.md").read_text(encoding="utf-8")
-    output = args.output or (pack_root / "agent_outputs" / f"{args.provider}_{args.model}.txt")
+    model = args.model or ("claude-sonnet-5[1m]" if args.provider == "claude-code" else "claude-sonnet-5")
+    output = args.output or (pack_root / "agent_outputs" / f"{args.provider}_{model}.txt")
     output.parent.mkdir(parents=True, exist_ok=True)
     if args.provider == "agent-maestro-anthropic":
         base = os.getenv("AGENT_MAESTRO_BASE_URL", "http://127.0.0.1:23333")
@@ -389,7 +406,7 @@ def call_agent(args: argparse.Namespace) -> int:
         if key:
             headers["x-api-key"] = key
         payload = {
-            "model": args.model,
+            "model": model,
             "max_tokens": args.max_tokens,
             "system": system,
             "messages": [{"role": "user", "content": prompt}],
@@ -401,7 +418,7 @@ def call_agent(args: argparse.Namespace) -> int:
                 output.with_suffix(".error.json"),
                 {
                     "provider": args.provider,
-                    "model": args.model,
+                    "model": model,
                     "url": url,
                     "error_type": exc.__class__.__name__,
                     "error": str(exc),
@@ -418,12 +435,19 @@ def call_agent(args: argparse.Namespace) -> int:
         exe = shutil.which("copilot")
         if not exe:
             raise FileNotFoundError("copilot CLI not found in PATH")
-        cmd = [exe, "-p", prompt, "--model", args.model, "--output-format", "text", "--max-ai-credits", str(args.max_ai_credits)]
+        cmd = [exe, "-p", prompt, "--model", model, "--output-format", "text", "--max-ai-credits", str(args.max_ai_credits)]
     elif args.provider == "claude-code":
-        exe = shutil.which("claude")
-        if not exe:
-            raise FileNotFoundError("claude CLI not found in PATH")
-        cmd = [exe, "-p", prompt]
+        run = run_claude_code(
+            prompt=f"{system}\n\n{prompt}",
+            cwd=pack_root,
+            output_root=output.parent / f"{output.stem}_run",
+            model=model,
+            max_turns=args.max_turns,
+            timeout=args.timeout,
+        )
+        output.write_text(run.result_text, encoding="utf-8")
+        print(str(output))
+        return run.returncode
     else:
         raise ValueError(f"unknown provider: {args.provider}")
     result = subprocess.run(cmd, cwd=pack_root, capture_output=True, text=True, timeout=args.timeout)
@@ -490,10 +514,11 @@ def main() -> int:
     p_call = sub.add_parser("call-agent")
     p_call.add_argument("--pack-root", type=Path, required=True)
     p_call.add_argument("--provider", choices=["agent-maestro-anthropic", "copilot-cli", "claude-code"], default="agent-maestro-anthropic")
-    p_call.add_argument("--model", default="claude-sonnet-5")
+    p_call.add_argument("--model")
     p_call.add_argument("--max-tokens", type=int, default=8192)
     p_call.add_argument("--max-ai-credits", type=int, default=30)
     p_call.add_argument("--timeout", type=int, default=900)
+    p_call.add_argument("--max-turns", type=int, default=24)
     p_call.add_argument("--output", type=Path)
     p_call.set_defaults(func=call_agent)
 
