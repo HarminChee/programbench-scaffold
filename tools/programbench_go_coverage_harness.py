@@ -9,9 +9,11 @@ import json
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tarfile
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
@@ -168,20 +170,43 @@ def run_command(
     env: dict[str, str] | None = None,
     log_path: Path | None = None,
     include_output: bool = False,
+    stdin_devnull: bool = False,
 ) -> dict[str, Any]:
-    started = dt.datetime.now(dt.UTC)
+    started = dt.datetime.now(dt.timezone.utc)
+    proc = subprocess.Popen(
+            cmd,
+            cwd=cwd,
+            env=env,
+            stdin=subprocess.DEVNULL if stdin_devnull else None,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            start_new_session=os.name != "nt",
+        )
     try:
-        proc = subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True, timeout=timeout)
+        stdout, stderr = proc.communicate(timeout=timeout)
         timed_out = False
         returncode = proc.returncode
-        stdout = proc.stdout
-        stderr = proc.stderr
     except subprocess.TimeoutExpired as exc:
+        # Killing only pytest (the direct child) leaves CLI subprocesses such
+        # as long-running servers or training jobs behind.  Every command gets
+        # its own POSIX process group so timeout cleanup is complete and later
+        # coverage runs are not slowed or contaminated by orphan processes.
+        if os.name != "nt":
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        else:
+            proc.kill()
+        final_stdout, final_stderr = proc.communicate()
         timed_out = True
         returncode = 124
-        stdout = exc.stdout if isinstance(exc.stdout, str) else (exc.stdout or b"").decode("utf-8", errors="replace")
-        stderr = exc.stderr if isinstance(exc.stderr, str) else (exc.stderr or b"").decode("utf-8", errors="replace")
-    ended = dt.datetime.now(dt.UTC)
+        partial_stdout = exc.stdout if isinstance(exc.stdout, str) else (exc.stdout or b"").decode("utf-8", errors="replace")
+        partial_stderr = exc.stderr if isinstance(exc.stderr, str) else (exc.stderr or b"").decode("utf-8", errors="replace")
+        stdout = final_stdout if final_stdout is not None else partial_stdout
+        stderr = final_stderr if final_stderr is not None else partial_stderr
+    ended = dt.datetime.now(dt.timezone.utc)
     payload = {
         "cmd": cmd,
         "cwd": str(cwd) if cwd else None,
@@ -215,21 +240,33 @@ def safe_extract(tar_path: Path, dest: Path) -> None:
 
 def copy_oracle_material(extract_dir: Path, repo_dir: Path) -> list[str]:
     copied: list[str] = []
-    # A branch is a cleanroom unit. Remove material left by the previous
-    # branch even when the new tarball does not contain the same directory.
-    for name in ORACLE_MATERIAL_DIRS:
-        target = repo_dir / name
-        if target.is_dir():
-            shutil.rmtree(target)
-        elif target.exists():
-            target.unlink()
-    for name in ORACLE_MATERIAL_DIRS:
-        source = extract_dir / name
-        if not source.exists():
+    # ProgramBench runs each branch in a fresh post-compile container, streams
+    # the complete branch tar over /workspace, and then restores the canonical
+    # executable. Reset this controlled template clone between branches so
+    # root-level helpers from one branch cannot leak into the next.
+    if (repo_dir / ".git").is_dir():
+        subprocess.run(["git", "reset", "--hard", "HEAD"], cwd=repo_dir, check=True, capture_output=True)
+        subprocess.run(["git", "clean", "-fdx"], cwd=repo_dir, check=True, capture_output=True)
+    else:
+        for name in ORACLE_MATERIAL_DIRS:
+            target = repo_dir / name
+            if target.is_dir() and not target.is_symlink():
+                shutil.rmtree(target)
+            elif target.exists() or target.is_symlink():
+                target.unlink()
+    for source in sorted(extract_dir.iterdir(), key=lambda path: path.name):
+        name = source.name
+        if name in {".git", "executable"}:
             continue
         target = repo_dir / name
+        if target.is_dir() and not target.is_symlink():
+            shutil.rmtree(target)
+        elif target.exists() or target.is_symlink():
+            target.unlink()
         if source.is_dir():
-            shutil.copytree(source, target, dirs_exist_ok=True)
+            # PB oracle fixtures may intentionally contain broken or circular
+            # symlinks. Preserve the link objects instead of following them.
+            shutil.copytree(source, target, dirs_exist_ok=True, symlinks=True)
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
@@ -513,7 +550,10 @@ def parse_junit(path: Path, *, ignored_tests: set[str] | None = None) -> dict[st
     error_names: set[str] = set()
     skipped_names: set[str] = set()
     failure_details: list[dict[str, str]] = []
-    ignored = ignored_tests or set()
+    # JUnit class names and tests.json metadata can disagree only by the
+    # leading ``eval.`` package.  Normalize both sides before filtering;
+    # otherwise PB ignored/dummy-passing tests are silently counted active.
+    ignored = {normalize_test_name(name) for name in (ignored_tests or set())}
     for suite in root.iter("testsuite"):
         tests += int(float(suite.attrib.get("tests", "0") or 0))
         failures += int(float(suite.attrib.get("failures", "0") or 0))
@@ -633,6 +673,32 @@ def install_pytest(venv_dir: Path, logs_dir: Path) -> Path:
     return python
 
 
+def normalize_official_run_script(
+    script_text: str,
+    *,
+    xdist: str,
+    pytest_timeout_override: int | None = None,
+) -> str:
+    script_text = script_text.replace("--timeout-method=thread", "--timeout-method=signal")
+    # Some official branches hard-code ``-n auto``.  On large hosts this can
+    # launch far more workers than the tiny oracle suite needs and can stall
+    # inside the cleanroom. Honour the harness-level worker budget without
+    # changing which tests run or what they assert.
+    replacement = "" if str(xdist).strip().lower() in {"0", "no", "false"} else f"-n {xdist}"
+    script_text = re.sub(r"(?<!\S)-n(?:\s+|=)auto(?=\s|$)", replacement, script_text)
+    if pytest_timeout_override is not None:
+        # Coverage instrumentation can make CPU-heavy programs several times
+        # slower.  Relax only pytest's process-level watchdog for the coverage
+        # binary; test assertions and any subprocess timeout in the oracle are
+        # deliberately left unchanged.
+        script_text = re.sub(
+            r"(?<!\S)--timeout(?:\s+|=)\d+(?=\s|$)",
+            f"--timeout={pytest_timeout_override}",
+            script_text,
+        )
+    return script_text
+
+
 def run_pytest_for_binary(
     *,
     python: Path,
@@ -648,17 +714,48 @@ def run_pytest_for_binary(
     ignored_tests: set[str] | None = None,
     workspace_alias: Path | None = None,
     deselected_tests: list[str] | None = None,
+    fixed_workspace: Path | None = None,
+    detach_tty: bool = False,
+    extra_env: dict[str, str] | None = None,
+    pytest_timeout_override: int | None = None,
 ) -> dict[str, Any]:
     # ProgramBench executes each branch in a fresh container. Mirror that
     # isolation for every binary so cache files, SQLite databases, fixtures,
     # and pytest side effects cannot leak between cleanroom/source/coverage
     # runs or across branches.
-    execution_dir = repo_dir.parent / "pytest_workspaces" / branch / label
-    if execution_dir.exists():
+    if fixed_workspace is not None and workspace_alias is not None:
+        raise ValueError("fixed_workspace and workspace_alias are mutually exclusive")
+    workspace_lock = None
+    if fixed_workspace is not None:
+        # All PB-compatible local runs intentionally use the literal
+        # /workspace path.  Different experiment processes may build in
+        # parallel, but their cleanroom executions must not replace this
+        # shared directory underneath one another.
+        import fcntl
+
+        workspace_lock = Path("/tmp/programbench-fixed-workspace.lock").open("a+")
+        fcntl.flock(workspace_lock.fileno(), fcntl.LOCK_EX)
+    execution_dir = fixed_workspace or (repo_dir.parent / "pytest_workspaces" / branch / label)
+    if fixed_workspace is not None:
+        fixed = fixed_workspace.resolve()
+        if str(fixed) in {"/", "/home", "/tmp", "/usr", "/var"}:
+            raise ValueError(f"unsafe fixed pytest workspace: {fixed}")
+    if execution_dir.exists() and fixed_workspace is not None:
+        # The PB-compatible /workspace directory can be user-owned while its
+        # parent / is not writable.  Clear children without removing the mount
+        # point itself.
+        for child in execution_dir.iterdir():
+            if child.is_dir() and not child.is_symlink():
+                shutil.rmtree(child)
+            else:
+                child.unlink()
+    elif execution_dir.exists():
         shutil.rmtree(execution_dir)
     shutil.copytree(
         repo_dir,
         execution_dir,
+        dirs_exist_ok=fixed_workspace is not None,
+        symlinks=True,
         ignore=shutil.ignore_patterns(".git", "coverage", "executable", "__pycache__", ".pytest_cache"),
     )
     executable = execution_dir / "executable"
@@ -667,22 +764,54 @@ def run_pytest_for_binary(
 
     junit = result_dir / f"{branch}.{label}.results.xml"
     timeout_method = "signal" if str(xdist).strip().lower() in {"0", "no", "false"} else "thread"
-    cmd = [
-        str(python),
-        "-m",
-        "pytest",
-        "eval/tests/",
-        f"--junitxml={junit}",
-        "--timeout=5",
-        f"--timeout-method={timeout_method}",
-        "-n",
-        xdist,
-        "-v",
-    ]
-    for node_id in sorted(set(deselected_tests or [])):
-        cmd.append(f"--deselect={node_id}")
+    run_script = execution_dir / "eval" / "run.sh"
+    uses_eval_run_sh = run_script.is_file() and not deselected_tests
+    if uses_eval_run_sh:
+        # PB evaluates each branch through its own run.sh. Besides pytest,
+        # branches can contain required setup (PATH aliases, locale, fixtures,
+        # etc.). Mirror that entrypoint. Local experiments are unprivileged, so
+        # redirect /usr/local/bin setup into an isolated PATH directory while
+        # preserving the branch script's intended command aliases.
+        script_text = normalize_official_run_script(
+            run_script.read_text(encoding="utf-8", errors="replace"),
+            xdist=xdist,
+            pytest_timeout_override=pytest_timeout_override,
+        )
+        script_text = script_text.replace("/usr/local/bin/", ".programbench-bin/")
+        run_script.write_text(script_text, encoding="utf-8")
+        (execution_dir / ".programbench-bin").mkdir(exist_ok=True)
+        # Official branches commonly declare Bash and use BASH_SOURCE while
+        # locating the repository root. Invoking them through POSIX ``sh``
+        # breaks that setup before pytest starts.
+        cmd = ["bash", "eval/run.sh"]
+    else:
+        cmd = [
+            str(python),
+            "-m",
+            "pytest",
+            "eval/tests/",
+            f"--junitxml={junit}",
+            f"--timeout={pytest_timeout_override or 5}",
+            f"--timeout-method={timeout_method}",
+            "-n",
+            xdist,
+            "-v",
+        ]
+        for node_id in sorted(set(deselected_tests or [])):
+            cmd.append(f"--deselect={node_id}")
+    if detach_tty:
+        # Codex/WSL supplies an outer 120-column controlling terminal even
+        # though pytest output is captured.  PB's Docker evaluator is
+        # non-interactive; detach so programs using TIOCGWINSZ take their
+        # normal no-TTY fallback unless a test explicitly creates a PTY.
+        cmd = ["setsid", *cmd]
     env = os.environ.copy()
     env["TZ"] = "UTC"
+    env.update(extra_env or {})
+    if uses_eval_run_sh:
+        env["PATH"] = f"{python.parent}:{execution_dir / '.programbench-bin'}:{env.get('PATH', '')}"
+        env["PYTEST_XDIST_AUTO_NUM_WORKERS"] = str(xdist)
+        env["PYTEST_ADDOPTS"] = "--max-worker-restart=4"
     if gocoverdir is not None:
         gocoverdir.mkdir(parents=True, exist_ok=True)
         env["GOCOVERDIR"] = str(gocoverdir)
@@ -701,11 +830,19 @@ def run_pytest_for_binary(
             env=env,
             timeout=timeout,
             log_path=logs_dir / f"pytest_{branch}_{label}.json",
+            stdin_devnull=True,
         )
+        if uses_eval_run_sh:
+            produced_junit = execution_dir / "eval" / "results.xml"
+            if not produced_junit.is_file():
+                produced_junit = execution_dir / "results.xml"
+            if produced_junit.is_file():
+                result_dir.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(produced_junit, junit)
     finally:
         if alias_executable is not None and alias_executable.is_symlink():
             alias_executable.unlink()
-    return {
+    payload = {
         "label": label,
         "branch": branch,
         "returncode": result["returncode"],
@@ -715,8 +852,18 @@ def run_pytest_for_binary(
         "log_path": result.get("log_path"),
         "execution_workspace": str(execution_dir),
         "workspace_alias": str(workspace_alias) if workspace_alias else None,
+        "fixed_workspace": str(fixed_workspace) if fixed_workspace else None,
+        "detached_tty": detach_tty,
+        "extra_env_keys": sorted((extra_env or {}).keys()),
         "deselected_tests": sorted(set(deselected_tests or [])),
+        "uses_eval_run_sh": uses_eval_run_sh,
+        "pytest_timeout_override": pytest_timeout_override,
+        "duration_seconds": result.get("duration_seconds"),
     }
+    if workspace_lock is not None:
+        fcntl.flock(workspace_lock.fileno(), fcntl.LOCK_UN)
+        workspace_lock.close()
+    return payload
 
 
 def run_native_tests(repo_dir: Path, logs_dir: Path, coverpkg: str, go_executable: str = "go") -> dict[str, Any]:
@@ -741,6 +888,16 @@ def run_native_tests(repo_dir: Path, logs_dir: Path, coverpkg: str, go_executabl
         "statement_coverage_percent": parse_total_statement_coverage(cover["stdout_tail"]),
         **parse_cover_profile_line_coverage(profile),
         "profile": str(profile),
+        "timing": {
+            "unit": "seconds",
+            "go_test_seconds": test.get("duration_seconds"),
+            "cover_func_seconds": cover.get("duration_seconds"),
+            "native_coverage_signal_seconds": round(
+                float(test.get("duration_seconds") or 0)
+                + float(cover.get("duration_seconds") or 0),
+                6,
+            ),
+        },
         "logs": {
             "go_test": test.get("log_path"),
             "go_cover_func": cover.get("log_path"),
@@ -782,6 +939,7 @@ def compare_binary_results(results: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def main() -> int:
+    harness_started = time.perf_counter()
     parser = argparse.ArgumentParser()
     parser.add_argument("instance_id")
     parser.add_argument("--tasks-root", type=Path, default=DEFAULT_TASKS_ROOT)
@@ -1191,6 +1349,36 @@ def main() -> int:
         "cover_func_returncode": cover_func["returncode"],
         "profile": str(suite_profile),
     }
+    coverage_pytest_seconds = sum(
+        float(result.get("duration_seconds") or 0)
+        for item in branch_results
+        for result in item["binary_results"]
+        if result["label"] == "coverage"
+    )
+    coverage_postprocess_seconds = sum(
+        float(item.get("duration_seconds") or 0)
+        for item in (cov_percent, cov_textfmt, cover_func)
+    )
+    timing = {
+        "unit": "seconds",
+        "total_harness_runtime_seconds": round(time.perf_counter() - harness_started, 6),
+        "coverage_pytest_seconds": round(coverage_pytest_seconds, 6),
+        "coverage_postprocess_seconds": round(coverage_postprocess_seconds, 6),
+        "statement_coverage_signal_seconds": round(
+            coverage_pytest_seconds + coverage_postprocess_seconds,
+            6,
+        ),
+        "native_coverage_signal_seconds": (
+            (native.get("timing") or {}).get("native_coverage_signal_seconds")
+            if native
+            else None
+        ),
+        "definition": (
+            "statement_coverage_signal_seconds is the instrumented coverage-binary pytest "
+            "runtime plus go covdata/textfmt/cover post-processing; it excludes clone, build, "
+            "native tests, and cleanroom/source consistency runs."
+        ),
+    }
     summary = {
         "instance_id": args.instance_id,
         "repository": repository,
@@ -1216,6 +1404,7 @@ def main() -> int:
         "branch_results": branch_results,
         "all_branch_binary_comparisons_consistent": all_branch_comparisons_ok,
         "logs_dir": str(logs_dir),
+        "timing": timing,
     }
     if suite_kind == "official":
         summary["blob_dir"] = str(blob_dir)
@@ -1244,6 +1433,8 @@ def main() -> int:
         f"- Native-test executable-line coverage: `{native['line_coverage_percent'] if native else None}`",
         f"- Coverage pytest runs passed: `{all_coverage_pytests_ok}`",
         f"- Binary comparisons consistent: `{all_branch_comparisons_ok}`",
+        f"- Statement coverage signal runtime (seconds): `{timing['statement_coverage_signal_seconds']}`",
+        f"- Total harness runtime (seconds): `{timing['total_harness_runtime_seconds']}`",
         f"- Work dir: `{work_dir}`",
         f"- Logs dir: `{logs_dir}`",
         "",

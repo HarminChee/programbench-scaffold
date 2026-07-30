@@ -1,0 +1,9 @@
+runs/
+smoke/
+audits/
+__pycache__/
+*.pyc
+*.log
+reports/*
+!reports/go10_v3_release_results.json
+!reports/go10_v3_quality_r2_runtime_metrics.json

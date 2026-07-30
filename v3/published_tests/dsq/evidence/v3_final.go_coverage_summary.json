@@ -1,0 +1,311 @@
+{
+  "active_branch_count": 10,
+  "all_branch_binary_comparisons_consistent": true,
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "v3_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/pytest_workspaces/v3_final/cleanroom",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source/coverage/junit/v3_final.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "2fae6aad9fb2338b6f83e26d9663000d54083b8c95e13731be12df3b017860d7",
+            "filtered_tests": 464,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "2fae6aad9fb2338b6f83e26d9663000d54083b8c95e13731be12df3b017860d7",
+            "tests": 464
+          },
+          "label": "cleanroom",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/pytest_v3_final_cleanroom.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v3_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/pytest_workspaces/v3_final/source",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source/coverage/junit/v3_final.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "2fae6aad9fb2338b6f83e26d9663000d54083b8c95e13731be12df3b017860d7",
+            "filtered_tests": 464,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "2fae6aad9fb2338b6f83e26d9663000d54083b8c95e13731be12df3b017860d7",
+            "tests": 464
+          },
+          "label": "source",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/pytest_v3_final_source.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v3_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/pytest_workspaces/v3_final/coverage",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source/coverage/junit/v3_final.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "2fae6aad9fb2338b6f83e26d9663000d54083b8c95e13731be12df3b017860d7",
+            "filtered_tests": 464,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "2fae6aad9fb2338b6f83e26d9663000d54083b8c95e13731be12df3b017860d7",
+            "tests": 464
+          },
+          "label": "coverage",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/pytest_v3_final_coverage.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        }
+      ],
+      "branch": "v3_final",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "README.md",
+        "eval"
+      ],
+      "oracle_material_root": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/final_coverage_material",
+      "tests_json": {
+        "active_count": null,
+        "expected_count": null,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "bec2796c38447423fc487e95cbd3388177d804ab2bf62086b12ff151892fa410",
+    "image": "programbench/multiprocessio_1776_dsq.c3ae0ba:task_cleanroom_v6",
+    "path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "c3ae0bafb0c3283e3c98cb250ada5a19e79ad58e",
+  "compare_binaries": true,
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 523,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 88.5,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/multiprocessio/dsq/main.go": {
+        "covered_executable_lines": 440,
+        "line_coverage_percent": 92.2,
+        "total_executable_lines": 477
+      },
+      "github.com/multiprocessio/dsq/sqlite.go": {
+        "covered_executable_lines": 83,
+        "line_coverage_percent": 72.8,
+        "total_executable_lines": 114
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 91.1,
+    "suite_count": 1,
+    "total_executable_lines": 591
+  },
+  "go_build_package": {
+    "attempts": [
+      {
+        "build_cwd": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source",
+        "build_target": ".",
+        "coverage": {
+          "cmd": [
+            "go",
+            "build",
+            "-cover",
+            "-coverpkg=./...",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/executable_coverage",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source",
+          "duration_seconds": 14.262349,
+          "ended_at": "2026-07-28T12:50:31.265099+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/go_build_cover_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-28T12:50:17.002750+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "go_executable": "go",
+        "source": {
+          "cmd": [
+            "go",
+            "build",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/executable_source",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source",
+          "duration_seconds": 10.205435,
+          "ended_at": "2026-07-28T12:50:17.002229+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/go_build_source_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-28T12:50:06.796794+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "target": "."
+      }
+    ],
+    "candidates": [
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source",
+        "discovered_by": [
+          "go_list",
+          "source_scan"
+        ],
+        "import_path": "github.com/multiprocessio/dsq",
+        "score": 190,
+        "target": "."
+      }
+    ],
+    "command_returncode": 0,
+    "fallback_used": false,
+    "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/go_list_packages.json",
+    "mode": "auto",
+    "selected": ".",
+    "selected_build_cwd": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source",
+    "selected_build_target": ".",
+    "selected_go_executable": "go"
+  },
+  "go_coverpkg": "./...",
+  "go_toolchain": {
+    "environment": [
+      "auto",
+      "go1.21.13",
+      "/usr/local/go1.21.13"
+    ],
+    "environment_returncode": 0,
+    "selected_version": "go version go1.21.13 linux/amd64",
+    "version_returncode": 0
+  },
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source/coverage/v3_final_merged_raw"
+  },
+  "instance_id": "multiprocessio__dsq.c3ae0ba",
+  "language": "go",
+  "logs_dir": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 0,
+    "go_test_package_coverage_percent": null,
+    "go_test_returncode": 0,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": null,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {},
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 0.0,
+    "total_executable_lines": 0
+  },
+  "oracle_material_root": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/final_coverage_material",
+  "pytest_python": "/usr/bin/python3",
+  "repository": "multiprocessio/dsq",
+  "selected_branches": [
+    "v3_final"
+  ],
+  "test_suite": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 523,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 88.5,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/multiprocessio/dsq/main.go": {
+        "covered_executable_lines": 440,
+        "line_coverage_percent": 92.2,
+        "total_executable_lines": 477
+      },
+      "github.com/multiprocessio/dsq/sqlite.go": {
+        "covered_executable_lines": 83,
+        "line_coverage_percent": 72.8,
+        "total_executable_lines": 114
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 91.1,
+    "suite_count": 1,
+    "total_executable_lines": 591
+  },
+  "work_dir": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final"
+}

@@ -1,0 +1,156 @@
+{
+  "schema": "programbench_oracle_gym_published_artifacts_v1",
+  "version": "v2",
+  "complete": true,
+  "suites": [
+    {
+      "repo": "yj",
+      "instance_id": "sclevine__yj.8016400",
+      "shard": "final",
+      "behavioral_cases": 855,
+      "archive": "published_tests/yj/oracle_tests.tar.gz",
+      "archive_bytes": 355520,
+      "archive_sha256": "60fa9c999243fec380f1c173d8f2af313aa6b138281152d3a821cf3b4053f50e",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/sclevine__yj.8016400/yj_v2_expansive_union/oracle_tests",
+      "evidence": [
+        "published_tests/yj/evidence/yj_v2_expansive_union.go_coverage_summary.json",
+        "published_tests/yj/evidence/evaluation_quality_report.json"
+      ]
+    },
+    {
+      "repo": "gron",
+      "instance_id": "tomnomnom__gron.88a6234",
+      "shard": "final",
+      "behavioral_cases": 640,
+      "archive": "published_tests/gron/oracle_tests.tar.gz",
+      "archive_bytes": 261612,
+      "archive_sha256": "65fb372913779aecdc078f9bc54584fdfecbc45d7461e834d302bd690cd3b15b",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/tomnomnom__gron.88a6234/v2_expansive_final/oracle_tests",
+      "evidence": [
+        "published_tests/gron/evidence/v2_expansive_final.go_coverage_summary.json",
+        "published_tests/gron/evidence/evaluation_quality_report.json",
+        "published_tests/gron/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "dsq",
+      "instance_id": "multiprocessio__dsq.c3ae0ba",
+      "shard": "final",
+      "behavioral_cases": 727,
+      "archive": "published_tests/dsq/oracle_tests.tar.gz",
+      "archive_bytes": 258682,
+      "archive_sha256": "0ff0190edfe0bbf3751f58c809f91b131e1b09df5ebdec140c5653b94dcd5fe9",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/multiprocessio__dsq.c3ae0ba/v2_expansive_final/oracle_tests",
+      "evidence": [
+        "published_tests/dsq/evidence/v2_expansive_final.go_coverage_summary.json",
+        "published_tests/dsq/evidence/evaluation_quality_report.json",
+        "published_tests/dsq/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "go-mod-outdated",
+      "instance_id": "psampaz__go-mod-outdated.bb79367",
+      "shard": "final",
+      "behavioral_cases": 473,
+      "archive": "published_tests/go-mod-outdated/oracle_tests.tar.gz",
+      "archive_bytes": 184825,
+      "archive_sha256": "704e0a6a81f24a485d60e547da838c382ab3d4545b304f9070a819f8f5310778",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/psampaz__go-mod-outdated.bb79367/v2_expansive_final/oracle_tests",
+      "evidence": [
+        "published_tests/go-mod-outdated/evidence/v2_expansive_final.go_coverage_summary.json",
+        "published_tests/go-mod-outdated/evidence/evaluation_quality_report.json",
+        "published_tests/go-mod-outdated/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "jplot",
+      "instance_id": "rs__jplot.2a54bcc",
+      "shard": "final",
+      "behavioral_cases": 1023,
+      "archive": "published_tests/jplot/oracle_tests.tar.gz",
+      "archive_bytes": 320374,
+      "archive_sha256": "cc8edb89c9bfdd845d7db438203241c6eb92e40e524801241fe0597f31a384be",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/rs__jplot.2a54bcc/v2_expansive_final/oracle_tests",
+      "evidence": [
+        "published_tests/jplot/evidence/v2_expansive_final.go_coverage_summary.json",
+        "published_tests/jplot/evidence/evaluation_quality_report.json",
+        "published_tests/jplot/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "dupl",
+      "instance_id": "mibk__dupl.1bf052b",
+      "shard": "final",
+      "behavioral_cases": 335,
+      "archive": "published_tests/dupl/oracle_tests.tar.gz",
+      "archive_bytes": 122479,
+      "archive_sha256": "6c4ccb881237744018bf9cb80facbfb3032f3eb09926580dde06df340e3ae26a",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/mibk__dupl.1bf052b/v2_expansive_final/oracle_tests",
+      "evidence": [
+        "published_tests/dupl/evidence/v2_expansive_final.go_coverage_summary.json",
+        "published_tests/dupl/evidence/evaluation_quality_report.json",
+        "published_tests/dupl/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "bat",
+      "instance_id": "astaxie__bat.17d1080",
+      "shard": "final",
+      "behavioral_cases": 399,
+      "archive": "published_tests/bat/oracle_tests.tar.gz",
+      "archive_bytes": 129345,
+      "archive_sha256": "d05a9a2e023051b2087e12b4758aa58b52888d9e183994ad529baa5df8c86e0a",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/astaxie__bat.17d1080/v2_expansive_final/oracle_tests",
+      "evidence": [
+        "published_tests/bat/evidence/v2_expansive_final.go_coverage_summary.json",
+        "published_tests/bat/evidence/evaluation_quality_report.json",
+        "published_tests/bat/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "cheat",
+      "instance_id": "cheat__cheat.b8098dc",
+      "shard": "final",
+      "behavioral_cases": 1023,
+      "archive": "published_tests/cheat/oracle_tests.tar.gz",
+      "archive_bytes": 935779,
+      "archive_sha256": "71b8fd41e69e222447809714951a4f551165348efa7c0377812ba049dbfee7c4",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/cheat__cheat.b8098dc/v2_expansive_final/oracle_tests",
+      "evidence": [
+        "published_tests/cheat/evidence/v2_expansive_final.go_coverage_summary.json",
+        "published_tests/cheat/evidence/evaluation_quality_report.json",
+        "published_tests/cheat/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "scc",
+      "instance_id": "boyter__scc.515f91c",
+      "shard": "final",
+      "behavioral_cases": 1024,
+      "archive": "published_tests/scc/oracle_tests.tar.gz",
+      "archive_bytes": 497635,
+      "archive_sha256": "e0d8f19afe3b996bf9acc64b85fdfe478d4bf43291c55444f40aa420aac165b4",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/boyter__scc.515f91c/v2_expansive_final/oracle_tests",
+      "evidence": [
+        "published_tests/scc/evidence/v2_expansive_final.go_coverage_summary.json",
+        "published_tests/scc/evidence/evaluation_quality_report.json",
+        "published_tests/scc/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "chroma",
+      "instance_id": "alecthomas__chroma.8d04def",
+      "shard": "final",
+      "behavioral_cases": 674,
+      "archive": "published_tests/chroma/oracle_tests.tar.gz",
+      "archive_bytes": 385921,
+      "archive_sha256": "6259b1c46423b7f8dbba40b0522d114fc07debcb28e6c623dfb9157c927bdd39",
+      "source_artifact": "v2/runs/go10_v2_expansive_r2/generated/alecthomas__chroma.8d04def/v2_expansive_final/oracle_tests",
+      "evidence": [
+        "published_tests/chroma/evidence/v2_expansive_final.go_coverage_summary.json",
+        "published_tests/chroma/evidence/evaluation_quality_report.json",
+        "published_tests/chroma/evidence/pipeline_summary.json"
+      ]
+    }
+  ]
+}

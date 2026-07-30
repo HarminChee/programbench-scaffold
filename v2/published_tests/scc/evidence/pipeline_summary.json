@@ -1,0 +1,225 @@
+{
+  "all_tests_passed": null,
+  "binary_consistent": true,
+  "cases_json": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/boyter__scc.515f91c/merged/v2_expansive_binary_repair_2.json",
+  "coverage_returncode": 0,
+  "coverage_summary_path": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/boyter__scc.515f91c/v2_expansive_final.go_coverage_summary.json",
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 2449,
+    "kind": "generated",
+    "label": "v2_expansive_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 66.6,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/boyter/scc/v3/main.go": {
+        "covered_executable_lines": 507,
+        "line_coverage_percent": 96.8,
+        "total_executable_lines": 524
+      },
+      "github.com/boyter/scc/v3/mcp.go": {
+        "covered_executable_lines": 58,
+        "line_coverage_percent": 20.6,
+        "total_executable_lines": 282
+      },
+      "github.com/boyter/scc/v3/processor/bloom.go": {
+        "covered_executable_lines": 27,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 27
+      },
+      "github.com/boyter/scc/v3/processor/cocomo.go": {
+        "covered_executable_lines": 10,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 10
+      },
+      "github.com/boyter/scc/v3/processor/detector.go": {
+        "covered_executable_lines": 137,
+        "line_coverage_percent": 92.6,
+        "total_executable_lines": 148
+      },
+      "github.com/boyter/scc/v3/processor/file.go": {
+        "covered_executable_lines": 90,
+        "line_coverage_percent": 76.9,
+        "total_executable_lines": 117
+      },
+      "github.com/boyter/scc/v3/processor/filereader.go": {
+        "covered_executable_lines": 19,
+        "line_coverage_percent": 76.0,
+        "total_executable_lines": 25
+      },
+      "github.com/boyter/scc/v3/processor/formatters.go": {
+        "covered_executable_lines": 731,
+        "line_coverage_percent": 58.9,
+        "total_executable_lines": 1242
+      },
+      "github.com/boyter/scc/v3/processor/helpers.go": {
+        "covered_executable_lines": 6,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 6
+      },
+      "github.com/boyter/scc/v3/processor/locomo.go": {
+        "covered_executable_lines": 84,
+        "line_coverage_percent": 95.5,
+        "total_executable_lines": 88
+      },
+      "github.com/boyter/scc/v3/processor/processor.go": {
+        "covered_executable_lines": 324,
+        "line_coverage_percent": 90.8,
+        "total_executable_lines": 357
+      },
+      "github.com/boyter/scc/v3/processor/result.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 96
+      },
+      "github.com/boyter/scc/v3/processor/similar_flags.go": {
+        "covered_executable_lines": 37,
+        "line_coverage_percent": 74.0,
+        "total_executable_lines": 50
+      },
+      "github.com/boyter/scc/v3/processor/structs.go": {
+        "covered_executable_lines": 51,
+        "line_coverage_percent": 72.9,
+        "total_executable_lines": 70
+      },
+      "github.com/boyter/scc/v3/processor/trace.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 16.0,
+        "total_executable_lines": 50
+      },
+      "github.com/boyter/scc/v3/processor/workers.go": {
+        "covered_executable_lines": 360,
+        "line_coverage_percent": 61.5,
+        "total_executable_lines": 585
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/boyter__scc.515f91c/coverage/boyter__scc.515f91c/v2_expansive_final/source/coverage/v2_expansive_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 64.6,
+    "suite_count": 1,
+    "total_executable_lines": 3677
+  },
+  "instance_id": "boyter__scc.515f91c",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 2996,
+    "go_test_package_coverage_percent": 57.0,
+    "go_test_returncode": 1,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 73.3,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/boyter__scc.515f91c/coverage/boyter__scc.515f91c/v2_expansive_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/boyter__scc.515f91c/coverage/boyter__scc.515f91c/v2_expansive_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {
+      "github.com/boyter/scc/v3/cmd/badges/main.go": {
+        "covered_executable_lines": 85,
+        "line_coverage_percent": 25.0,
+        "total_executable_lines": 340
+      },
+      "github.com/boyter/scc/v3/main.go": {
+        "covered_executable_lines": 501,
+        "line_coverage_percent": 95.6,
+        "total_executable_lines": 524
+      },
+      "github.com/boyter/scc/v3/mcp.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 282
+      },
+      "github.com/boyter/scc/v3/processor/bloom.go": {
+        "covered_executable_lines": 27,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 27
+      },
+      "github.com/boyter/scc/v3/processor/cocomo.go": {
+        "covered_executable_lines": 10,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 10
+      },
+      "github.com/boyter/scc/v3/processor/detector.go": {
+        "covered_executable_lines": 144,
+        "line_coverage_percent": 97.3,
+        "total_executable_lines": 148
+      },
+      "github.com/boyter/scc/v3/processor/file.go": {
+        "covered_executable_lines": 106,
+        "line_coverage_percent": 90.6,
+        "total_executable_lines": 117
+      },
+      "github.com/boyter/scc/v3/processor/filereader.go": {
+        "covered_executable_lines": 23,
+        "line_coverage_percent": 92.0,
+        "total_executable_lines": 25
+      },
+      "github.com/boyter/scc/v3/processor/formatters.go": {
+        "covered_executable_lines": 1011,
+        "line_coverage_percent": 81.4,
+        "total_executable_lines": 1242
+      },
+      "github.com/boyter/scc/v3/processor/helpers.go": {
+        "covered_executable_lines": 6,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 6
+      },
+      "github.com/boyter/scc/v3/processor/locomo.go": {
+        "covered_executable_lines": 80,
+        "line_coverage_percent": 90.9,
+        "total_executable_lines": 88
+      },
+      "github.com/boyter/scc/v3/processor/processor.go": {
+        "covered_executable_lines": 314,
+        "line_coverage_percent": 88.0,
+        "total_executable_lines": 357
+      },
+      "github.com/boyter/scc/v3/processor/result.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 96
+      },
+      "github.com/boyter/scc/v3/processor/similar_flags.go": {
+        "covered_executable_lines": 47,
+        "line_coverage_percent": 94.0,
+        "total_executable_lines": 50
+      },
+      "github.com/boyter/scc/v3/processor/structs.go": {
+        "covered_executable_lines": 70,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 70
+      },
+      "github.com/boyter/scc/v3/processor/trace.go": {
+        "covered_executable_lines": 50,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 50
+      },
+      "github.com/boyter/scc/v3/processor/workers.go": {
+        "covered_executable_lines": 522,
+        "line_coverage_percent": 89.2,
+        "total_executable_lines": 585
+      },
+      "github.com/boyter/scc/v3/scripts/include.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 68
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/boyter__scc.515f91c/coverage/boyter__scc.515f91c/v2_expansive_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 70.6,
+    "total_executable_lines": 4085
+  },
+  "quality": {
+    "all_dummies_rejected": true,
+    "assertion_lint_passed": true,
+    "source_leak_passed": true
+  },
+  "quality_report_path": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/boyter__scc.515f91c/v2_expansive_final/evaluation_quality_report.json",
+  "quality_returncode": 0,
+  "status": "passed",
+  "suite_label": "v2_expansive_final"
+}

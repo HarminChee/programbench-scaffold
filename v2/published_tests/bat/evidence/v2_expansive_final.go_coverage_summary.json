@@ -1,0 +1,377 @@
+{
+  "active_branch_count": 14,
+  "all_branch_binary_comparisons_consistent": true,
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "v2_expansive_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/pytest_workspaces/v2_expansive_final/cleanroom",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source/coverage/junit/v2_expansive_final.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "12c24313b0f3e7ce0dc8b68fb40022d4b5ca1c946f6c66a8b8a451a622b498e9",
+            "filtered_tests": 399,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "12c24313b0f3e7ce0dc8b68fb40022d4b5ca1c946f6c66a8b8a451a622b498e9",
+            "tests": 399
+          },
+          "label": "cleanroom",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/pytest_v2_expansive_final_cleanroom.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v2_expansive_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/pytest_workspaces/v2_expansive_final/source",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source/coverage/junit/v2_expansive_final.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "12c24313b0f3e7ce0dc8b68fb40022d4b5ca1c946f6c66a8b8a451a622b498e9",
+            "filtered_tests": 399,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "12c24313b0f3e7ce0dc8b68fb40022d4b5ca1c946f6c66a8b8a451a622b498e9",
+            "tests": 399
+          },
+          "label": "source",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/pytest_v2_expansive_final_source.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v2_expansive_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/pytest_workspaces/v2_expansive_final/coverage",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source/coverage/junit/v2_expansive_final.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "12c24313b0f3e7ce0dc8b68fb40022d4b5ca1c946f6c66a8b8a451a622b498e9",
+            "filtered_tests": 399,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "12c24313b0f3e7ce0dc8b68fb40022d4b5ca1c946f6c66a8b8a451a622b498e9",
+            "tests": 399
+          },
+          "label": "coverage",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/pytest_v2_expansive_final_coverage.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        }
+      ],
+      "branch": "v2_expansive_final",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "README.md",
+        "eval"
+      ],
+      "oracle_material_root": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/astaxie__bat.17d1080/v2_expansive_final/oracle_tests",
+      "tests_json": {
+        "active_count": null,
+        "expected_count": null,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "58d8e63da81484eb040436dec5e84a32ba1ba280769f5214e270420456dc308e",
+    "image": "programbench/astaxie_1776_bat.17d1080:task_cleanroom_v6",
+    "path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "17d108071a533d01ce6a8450c0e5b41a2f8405bb",
+  "compare_binaries": true,
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 418,
+    "kind": "generated",
+    "label": "v2_expansive_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 36.9,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/astaxie/bat/bat.go": {
+        "covered_executable_lines": 115,
+        "line_coverage_percent": 45.5,
+        "total_executable_lines": 253
+      },
+      "github.com/astaxie/bat/bench.go": {
+        "covered_executable_lines": 70,
+        "line_coverage_percent": 46.4,
+        "total_executable_lines": 151
+      },
+      "github.com/astaxie/bat/color.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 116
+      },
+      "github.com/astaxie/bat/filter.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 84.6,
+        "total_executable_lines": 26
+      },
+      "github.com/astaxie/bat/http.go": {
+        "covered_executable_lines": 54,
+        "line_coverage_percent": 62.1,
+        "total_executable_lines": 87
+      },
+      "github.com/astaxie/bat/httplib/httplib.go": {
+        "covered_executable_lines": 151,
+        "line_coverage_percent": 46.0,
+        "total_executable_lines": 328
+      },
+      "github.com/astaxie/bat/pb.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 115
+      },
+      "github.com/astaxie/bat/utils.go": {
+        "covered_executable_lines": 6,
+        "line_coverage_percent": 10.7,
+        "total_executable_lines": 56
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source/coverage/v2_expansive_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 37.2,
+    "suite_count": 1,
+    "total_executable_lines": 1132
+  },
+  "go_build_package": {
+    "attempts": [
+      {
+        "build_cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source",
+        "build_target": ".",
+        "coverage": {
+          "cmd": [
+            "go",
+            "build",
+            "-cover",
+            "-coverpkg=./...",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/executable_coverage",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source",
+          "duration_seconds": 0.723186,
+          "ended_at": "2026-07-27T13:36:21.073975+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/go_build_cover_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-27T13:36:20.350789+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "go_executable": "go",
+        "source": {
+          "cmd": [
+            "go",
+            "build",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/executable_source",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source",
+          "duration_seconds": 0.898926,
+          "ended_at": "2026-07-27T13:36:20.350468+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/go_build_source_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-27T13:36:19.451542+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "target": "."
+      }
+    ],
+    "candidates": [
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source",
+        "discovered_by": [
+          "go_list",
+          "source_scan"
+        ],
+        "import_path": "github.com/astaxie/bat",
+        "score": 190,
+        "target": "."
+      }
+    ],
+    "command_returncode": 0,
+    "fallback_used": false,
+    "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/go_list_packages.json",
+    "mode": "auto",
+    "selected": ".",
+    "selected_build_cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source",
+    "selected_build_target": ".",
+    "selected_go_executable": "go"
+  },
+  "go_coverpkg": "./...",
+  "go_toolchain": {
+    "environment": [
+      "auto",
+      "go1.21.13",
+      "/usr/local/go1.21.13"
+    ],
+    "environment_returncode": 0,
+    "selected_version": "go version go1.21.13 linux/amd64",
+    "version_returncode": 0
+  },
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source/coverage/v2_expansive_final_merged_raw"
+  },
+  "instance_id": "astaxie__bat.17d1080",
+  "language": "go",
+  "logs_dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 170,
+    "go_test_package_coverage_percent": 51.0,
+    "go_test_returncode": 1,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 51.8,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {
+      "github.com/astaxie/bat/httplib/httplib.go": {
+        "covered_executable_lines": 170,
+        "line_coverage_percent": 51.8,
+        "total_executable_lines": 328
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 51.0,
+    "total_executable_lines": 328
+  },
+  "oracle_material_root": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/astaxie__bat.17d1080/v2_expansive_final/oracle_tests",
+  "pytest_python": "/usr/bin/python3",
+  "repository": "astaxie/bat",
+  "selected_branches": [
+    "v2_expansive_final"
+  ],
+  "test_suite": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 418,
+    "kind": "generated",
+    "label": "v2_expansive_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 36.9,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/astaxie/bat/bat.go": {
+        "covered_executable_lines": 115,
+        "line_coverage_percent": 45.5,
+        "total_executable_lines": 253
+      },
+      "github.com/astaxie/bat/bench.go": {
+        "covered_executable_lines": 70,
+        "line_coverage_percent": 46.4,
+        "total_executable_lines": 151
+      },
+      "github.com/astaxie/bat/color.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 116
+      },
+      "github.com/astaxie/bat/filter.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 84.6,
+        "total_executable_lines": 26
+      },
+      "github.com/astaxie/bat/http.go": {
+        "covered_executable_lines": 54,
+        "line_coverage_percent": 62.1,
+        "total_executable_lines": 87
+      },
+      "github.com/astaxie/bat/httplib/httplib.go": {
+        "covered_executable_lines": 151,
+        "line_coverage_percent": 46.0,
+        "total_executable_lines": 328
+      },
+      "github.com/astaxie/bat/pb.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 115
+      },
+      "github.com/astaxie/bat/utils.go": {
+        "covered_executable_lines": 6,
+        "line_coverage_percent": 10.7,
+        "total_executable_lines": 56
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source/coverage/v2_expansive_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 37.2,
+    "suite_count": 1,
+    "total_executable_lines": 1132
+  },
+  "work_dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final"
+}

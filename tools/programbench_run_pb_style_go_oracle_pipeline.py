@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-"""Run the PB-style Go oracle reproduction pipeline for one ProgramBench task."""
+"""Run the PB-style oracle reproduction pipeline for Go, Rust, and C/C++."""
 
 from __future__ import annotations
 
 import argparse
 import datetime as dt
 import json
+import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+
+from programbench_go_coverage_harness import parse_simple_yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -23,7 +26,7 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
 
 
 def run_step(name: str, cmd: list[str], logs_dir: Path, *, cwd: Path = REPO_ROOT, timeout: int | None = None) -> dict[str, Any]:
-    started = dt.datetime.now(dt.UTC)
+    started = dt.datetime.now(dt.timezone.utc)
     try:
         proc = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
         returncode = proc.returncode
@@ -35,7 +38,7 @@ def run_step(name: str, cmd: list[str], logs_dir: Path, *, cwd: Path = REPO_ROOT
         stdout = exc.stdout if isinstance(exc.stdout, str) else (exc.stdout or b"").decode("utf-8", "replace")
         stderr = exc.stderr if isinstance(exc.stderr, str) else (exc.stderr or b"").decode("utf-8", "replace")
         timed_out = True
-    ended = dt.datetime.now(dt.UTC)
+    ended = dt.datetime.now(dt.timezone.utc)
     payload = {
         "name": name,
         "cmd": cmd,
@@ -56,10 +59,62 @@ def read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def scaled_quality_suite_timeout(case_count: int, pytest_timeout: int) -> int:
+    """Give whole-suite dummy/repeat runs time proportional to suite size."""
+
+    return max(int(pytest_timeout), min(1800, 60 + max(0, int(case_count))))
+
+
+def strict_capture_gate(oracle_root: Path) -> dict[str, Any]:
+    """Require every proposed case to survive deterministic gold capture."""
+
+    manifest_path = oracle_root / "eval" / "generated_cli_manifest.json"
+    if not manifest_path.is_file():
+        return {"passed": False, "manifest_path": str(manifest_path), "reason": "manifest_missing"}
+    manifest = read_json(manifest_path)
+    candidate_count = int(manifest.get("candidate_case_count") or 0)
+    captured_count = int(manifest.get("case_count") or 0)
+    skipped = manifest.get("skipped_cases") or []
+    return {
+        "passed": candidate_count == captured_count and not skipped,
+        "manifest_path": str(manifest_path),
+        "candidate_case_count": candidate_count,
+        "captured_case_count": captured_count,
+        "skipped_case_count": len(skipped),
+        "skipped_cases": skipped,
+    }
+
+
 def summary_from_coverage(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {"exists": False}
     data = read_json(path)
+    if data.get("language") in {"rs", "rust", "c", "cpp", "c++"}:
+        coverage = data.get("coverage") or {}
+        native = data.get("native") or {}
+        rust = data.get("language") in {"rs", "rust"}
+        generated_line = (coverage.get("lines") or {}).get("percent") if rust else coverage.get("line_percent")
+        native_line = (native.get("lines") or {}).get("percent") if rust else native.get("line_percent")
+        branch = (data.get("branch_results") or [{}])[0]
+        junit_summary = {}
+        for result in branch.get("binary_results") or []:
+            if result.get("label") == "coverage":
+                junit_summary = result.get("junit_summary") or {}
+                break
+        return {
+            "exists": True,
+            "repository": data.get("repository"),
+            "commit": data.get("commit"),
+            "language": data.get("language"),
+            "coverage_metric": "llvm executable-line" if rust else "gcov executable-line",
+            "generated_line_coverage": generated_line,
+            "native_line_coverage": native_line,
+            "per_file_coverage": coverage.get("files") or [],
+            "binary_behavior_consistent": data.get("all_branch_binary_comparisons_consistent"),
+            "all_filtered_tests_passed": data.get("all_filtered_tests_passed"),
+            "junit_summary": junit_summary,
+            "coverage_binary": data.get("coverage_binary"),
+        }
     branch = (data.get("branch_results") or [{}])[0]
     generated = data.get("generated_tests") or {}
     native = data.get("native_tests") or {}
@@ -134,11 +189,20 @@ def main() -> int:
     parser.add_argument("--case-timeout", type=int, default=4)
     parser.add_argument("--determinism-reruns", type=int, default=2)
     parser.add_argument("--xdist", default="1")
+    parser.add_argument(
+        "--coverage-xdist",
+        default="1",
+        help="Worker count for instrumented native binaries; keep at 1 to avoid concurrent gcda writes.",
+    )
     parser.add_argument("--pytest-timeout", type=int, default=900)
+    parser.add_argument("--binary-name", help="Override the repository-name default for C/C++ CLI builds.")
     parser.add_argument("--skip-native-tests", action="store_true")
     parser.add_argument("--skip-compare-binaries", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
+
+    task_meta = parse_simple_yaml(args.tasks_root / args.instance_id / "task.yaml")
+    language = str(task_meta.get("language") or "").lower()
 
     work_root = args.work_root.expanduser().resolve() / args.instance_id / args.suite_label
     if work_root.exists():
@@ -206,35 +270,103 @@ def main() -> int:
         return step["returncode"]
 
     oracle_root = (args.generated_output_root / args.instance_id / args.suite_label / "oracle_tests").resolve()
+    capture_gate = strict_capture_gate(oracle_root)
+    if not capture_gate["passed"]:
+        failed_step = {
+            "name": "require_all_candidate_cases_captured",
+            "returncode": 1,
+            "timed_out": False,
+            "capture_gate": capture_gate,
+        }
+        steps.append(failed_step)
+        write_json(
+            run_root / "pipeline_summary.json",
+            {
+                "status": "failed",
+                "instance_id": args.instance_id,
+                "suite_label": args.suite_label,
+                "cases_json": str(cases_json),
+                "capture_gate": capture_gate,
+                "failed_step": failed_step,
+                "steps": steps,
+            },
+        )
+        return 1
     coverage_work_root = work_root / "coverage"
-    cmd = [
-        sys.executable,
-        "tools/programbench_go_coverage_harness.py",
-        args.instance_id,
-        "--tasks-root",
-        str(args.tasks_root),
-        "--oracle-material-root",
-        str(oracle_root),
-        "--suite-label",
-        args.suite_label,
-        "--work-root",
-        str(coverage_work_root),
-        "--output-root",
-        str(args.coverage_output_root),
-        "--xdist",
-        str(args.xdist),
-        "--pytest-timeout",
-        str(args.pytest_timeout),
-        "--overwrite",
-    ]
-    if not args.skip_native_tests:
-        cmd.append("--run-native-tests")
-    if not args.skip_compare_binaries:
-        cmd.append("--compare-binaries")
-    coverage_summary = (
-        args.coverage_output_root / args.instance_id / f"{args.suite_label}.go_coverage_summary.json"
-    ).resolve()
-    step = run_step("run_go_coverage_harness", cmd, logs_dir, timeout=3600)
+    if language == "go":
+        cmd = [
+            sys.executable,
+            "tools/programbench_go_coverage_harness.py",
+            args.instance_id,
+            "--tasks-root",
+            str(args.tasks_root),
+            "--oracle-material-root",
+            str(oracle_root),
+            "--suite-label",
+            args.suite_label,
+            "--work-root",
+            str(coverage_work_root),
+            "--output-root",
+            str(args.coverage_output_root),
+            "--xdist",
+            str(args.xdist),
+            "--pytest-timeout",
+            str(args.pytest_timeout),
+            "--overwrite",
+        ]
+        if not args.skip_native_tests:
+            cmd.append("--run-native-tests")
+        if not args.skip_compare_binaries:
+            cmd.append("--compare-binaries")
+        coverage_summary = (
+            args.coverage_output_root / args.instance_id / f"{args.suite_label}.go_coverage_summary.json"
+        ).resolve()
+        coverage_step_name = "run_go_coverage_harness"
+    elif language in {"rs", "rust", "c", "cpp", "c++"}:
+        coverage_summary = (
+            args.coverage_output_root / args.instance_id / f"{args.suite_label}.native_coverage_summary.json"
+        ).resolve()
+        configured_cache = os.getenv("PROGRAMBENCH_NATIVE_BUILD_CACHE", "").strip()
+        build_cache = (
+            Path(configured_cache).expanduser().resolve()
+            if configured_cache
+            else (args.coverage_output_root / args.instance_id / "_native_build_cache").resolve()
+        )
+        cache_ready = (build_cache / "source_build").is_dir() and (build_cache / "coverage_build").is_dir()
+        native_work = coverage_work_root if cache_ready else build_cache
+        cmd = [
+            sys.executable,
+            "tools/programbench_native_coverage_harness.py",
+            args.instance_id,
+            "--tasks-root",
+            str(args.tasks_root),
+            "--oracle-material-root",
+            str(oracle_root),
+            "--suite-label",
+            args.suite_label,
+            "--work-root",
+            str(native_work),
+            "--output-json",
+            str(coverage_summary),
+            "--pytest-python",
+            sys.executable,
+            "--xdist",
+            str(args.xdist),
+            "--coverage-xdist",
+            str(args.coverage_xdist),
+            "--pytest-timeout",
+            str(args.pytest_timeout),
+            "--skip-native",
+            "--overwrite",
+        ]
+        if cache_ready:
+            cmd.extend(["--reuse-build-root", str(build_cache)])
+        if args.binary_name:
+            cmd.extend(["--binary-name", args.binary_name])
+        coverage_step_name = "run_native_coverage_harness"
+    else:
+        raise ValueError(f"unsupported ProgramBench language: {language!r}")
+    step = run_step(coverage_step_name, cmd, logs_dir, timeout=7200)
     steps.append(step)
     # The coverage harness returns non-zero when generated tests expose a
     # behavioral mismatch.  That is useful repair evidence, not necessarily
@@ -252,8 +384,15 @@ def main() -> int:
             },
         )
         return step["returncode"]
-    repeat_executable = coverage_work_root / args.instance_id / args.suite_label / "executable_coverage"
+    coverage_data = read_json(coverage_summary)
+    repeat_executable = (
+        coverage_work_root / args.instance_id / args.suite_label / "executable_coverage"
+        if language == "go"
+        else Path(str(coverage_data["coverage_binary"]))
+    )
     quality_json = args.generated_output_root / args.instance_id / args.suite_label / "evaluation_quality_report.json"
+    quality_case_count = len((read_json(cases_json).get("cases") or []))
+    quality_suite_timeout = scaled_quality_suite_timeout(quality_case_count, args.pytest_timeout)
     cmd = [
         sys.executable,
         "tools/programbench_run_generated_oracle_quality_gates.py",
@@ -265,12 +404,12 @@ def main() -> int:
         str(work_root / "quality_gates"),
         "--repeat-executable",
         str(repeat_executable),
-        "--repeat-gocoverdir",
-        str(work_root / "quality_gates" / "repeat_cov"),
         "--timeout",
-        str(args.pytest_timeout),
+        str(quality_suite_timeout),
         "--overwrite",
     ]
+    if language == "go":
+        cmd.extend(["--repeat-gocoverdir", str(work_root / "quality_gates" / "repeat_cov")])
     step = run_step("run_generated_oracle_quality_gates", cmd, logs_dir, timeout=2400)
     steps.append(step)
 
@@ -279,10 +418,11 @@ def main() -> int:
         "status": "passed" if all(item["returncode"] == 0 for item in steps) else "failed",
         "instance_id": args.instance_id,
         "suite_label": args.suite_label,
-        "generated_at": dt.datetime.now(dt.UTC).isoformat(),
+        "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "cases_json": str(cases_json),
         "case_count": len(cases_payload.get("cases") or []),
         "oracle_root": str(oracle_root),
+        "capture_gate": capture_gate,
         "coverage_summary_path": str(coverage_summary),
         "quality_report_path": str(quality_json),
         "coverage": summary_from_coverage(coverage_summary),

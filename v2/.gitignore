@@ -1,0 +1,8 @@
+runs/
+smoke/
+audits/
+__pycache__/
+*.pyc
+*.log
+reports/*
+!reports/go10_v2_release_results.json

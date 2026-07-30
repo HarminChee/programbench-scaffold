@@ -1,0 +1,124 @@
+{
+  "all_tests_passed": null,
+  "binary_consistent": true,
+  "cases_json": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/rs__jplot.2a54bcc/merged/v2_expansive_binary_repair_1.json",
+  "coverage_returncode": 0,
+  "coverage_summary_path": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/rs__jplot.2a54bcc/v2_expansive_final.go_coverage_summary.json",
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 238,
+    "kind": "generated",
+    "label": "v2_expansive_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 32.5,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/rs/jplot/data/http.go": {
+        "covered_executable_lines": 29,
+        "line_coverage_percent": 65.9,
+        "total_executable_lines": 44
+      },
+      "github.com/rs/jplot/data/point.go": {
+        "covered_executable_lines": 40,
+        "line_coverage_percent": 76.9,
+        "total_executable_lines": 52
+      },
+      "github.com/rs/jplot/data/spec.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 30
+      },
+      "github.com/rs/jplot/data/stdin.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 78.6,
+        "total_executable_lines": 14
+      },
+      "github.com/rs/jplot/graph/dash.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 17
+      },
+      "github.com/rs/jplot/graph/graph.go": {
+        "covered_executable_lines": 7,
+        "line_coverage_percent": 5.7,
+        "total_executable_lines": 122
+      },
+      "github.com/rs/jplot/graph/legend.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 99
+      },
+      "github.com/rs/jplot/main.go": {
+        "covered_executable_lines": 77,
+        "line_coverage_percent": 62.6,
+        "total_executable_lines": 123
+      },
+      "github.com/rs/jplot/term/common.go": {
+        "covered_executable_lines": 10,
+        "line_coverage_percent": 14.1,
+        "total_executable_lines": 71
+      },
+      "github.com/rs/jplot/term/go110.go": {
+        "covered_executable_lines": 3,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 3
+      },
+      "github.com/rs/jplot/term/iterm2.go": {
+        "covered_executable_lines": 5,
+        "line_coverage_percent": 27.8,
+        "total_executable_lines": 18
+      },
+      "github.com/rs/jplot/term/kitty.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 15.3,
+        "total_executable_lines": 59
+      },
+      "github.com/rs/jplot/term/sixel.go": {
+        "covered_executable_lines": 17,
+        "line_coverage_percent": 28.3,
+        "total_executable_lines": 60
+      },
+      "github.com/rs/jplot/term/std.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 21
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v2_expansive_final/source/coverage/v2_expansive_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 36.3,
+    "suite_count": 1,
+    "total_executable_lines": 733
+  },
+  "instance_id": "rs__jplot.2a54bcc",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 0,
+    "go_test_package_coverage_percent": null,
+    "go_test_returncode": 0,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": null,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v2_expansive_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v2_expansive_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {},
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v2_expansive_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 0.0,
+    "total_executable_lines": 0
+  },
+  "quality": {
+    "all_dummies_rejected": true,
+    "assertion_lint_passed": true,
+    "source_leak_passed": true
+  },
+  "quality_report_path": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/rs__jplot.2a54bcc/v2_expansive_final/evaluation_quality_report.json",
+  "quality_returncode": 0,
+  "status": "passed",
+  "suite_label": "v2_expansive_final"
+}

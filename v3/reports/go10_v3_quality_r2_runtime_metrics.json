@@ -1,0 +1,247 @@
+{
+  "rows": [
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/alecthomas__chroma.8d04def/final_logs/coverage_1.json",
+          "returncode": 1,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 21.279831
+        },
+        {
+          "attempt": 2,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/alecthomas__chroma.8d04def/final_logs/coverage_2.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 43.719627
+        }
+      ],
+      "coverage_postprocess_seconds": 2.313392,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 5.048565,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "alecthomas__chroma.8d04def",
+      "latest_total_harness_runtime_seconds": 43.719627,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/alecthomas__chroma.8d04def/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 7.361957,
+      "unit": "seconds"
+    },
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/astaxie__bat.17d1080/final_logs/coverage_1.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 34.087348
+        }
+      ],
+      "coverage_postprocess_seconds": 0.36454,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 5.756408,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "astaxie__bat.17d1080",
+      "latest_total_harness_runtime_seconds": 34.087348,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/astaxie__bat.17d1080/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 6.120948,
+      "unit": "seconds"
+    },
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/boyter__scc.515f91c/final_logs/coverage_1.json",
+          "returncode": 1,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 45.546581
+        },
+        {
+          "attempt": 2,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/boyter__scc.515f91c/final_logs/coverage_2.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 35.337185
+        }
+      ],
+      "coverage_postprocess_seconds": 1.519697,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 4.98694,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "boyter__scc.515f91c",
+      "latest_total_harness_runtime_seconds": 35.337185,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/boyter__scc.515f91c/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 6.506637,
+      "unit": "seconds"
+    },
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/cheat__cheat.b8098dc/final_logs/coverage_1.json",
+          "returncode": 1,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 107.042543
+        },
+        {
+          "attempt": 2,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/cheat__cheat.b8098dc/final_logs/coverage_2.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 82.913745
+        }
+      ],
+      "coverage_postprocess_seconds": 1.450237,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 19.839532,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "cheat__cheat.b8098dc",
+      "latest_total_harness_runtime_seconds": 82.913745,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/cheat__cheat.b8098dc/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 21.289769,
+      "unit": "seconds"
+    },
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/mibk__dupl.1bf052b/final_logs/coverage_1.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 12.300568
+        }
+      ],
+      "coverage_postprocess_seconds": 0.328137,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 2.267122,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "mibk__dupl.1bf052b",
+      "latest_total_harness_runtime_seconds": 12.300568,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/mibk__dupl.1bf052b/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 2.595259,
+      "unit": "seconds"
+    },
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/multiprocessio__dsq.c3ae0ba/final_logs/coverage_1.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 189.932957
+        }
+      ],
+      "coverage_postprocess_seconds": 9.516498,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 46.008738,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "multiprocessio__dsq.c3ae0ba",
+      "latest_total_harness_runtime_seconds": 189.932957,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/multiprocessio__dsq.c3ae0ba/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 55.525236,
+      "unit": "seconds"
+    },
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/psampaz__go-mod-outdated.bb79367/final_logs/coverage_1.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 23.031055
+        }
+      ],
+      "coverage_postprocess_seconds": 0.595048,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 5.119944,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "psampaz__go-mod-outdated.bb79367",
+      "latest_total_harness_runtime_seconds": 23.031055,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/psampaz__go-mod-outdated.bb79367/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 5.714992,
+      "unit": "seconds"
+    },
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/rs__jplot.2a54bcc/final_logs/coverage_1.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 21.281089
+        }
+      ],
+      "coverage_postprocess_seconds": 0.327633,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 4.24416,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "rs__jplot.2a54bcc",
+      "latest_total_harness_runtime_seconds": 21.281089,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/rs__jplot.2a54bcc/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 4.571793,
+      "unit": "seconds"
+    },
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/sclevine__yj.8016400/final_logs/coverage_1.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 53.51972
+        }
+      ],
+      "coverage_postprocess_seconds": 1.128047,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 9.853158,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "sclevine__yj.8016400",
+      "latest_total_harness_runtime_seconds": 53.51972,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/sclevine__yj.8016400/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 10.981205,
+      "unit": "seconds"
+    },
+    {
+      "coverage_harness_attempts": [
+        {
+          "attempt": 1,
+          "log": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/tomnomnom__gron.88a6234/final_logs/coverage_1.json",
+          "returncode": 0,
+          "timed_out": false,
+          "total_harness_runtime_seconds": 54.86771
+        }
+      ],
+      "coverage_postprocess_seconds": 2.241679,
+      "coverage_pytest_runs": 1,
+      "coverage_pytest_seconds": 8.869843,
+      "definition": "statement_coverage_signal_seconds is the coverage-instrumented pytest runtime plus covdata/textfmt/cover post-processing. Total harness time also includes clone, build, native tests, and binary consistency runs.",
+      "instance_id": "tomnomnom__gron.88a6234",
+      "latest_total_harness_runtime_seconds": 54.86771,
+      "missing_logs": [],
+      "native_coverage_signal_seconds": null,
+      "sidecar": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/tomnomnom__gron.88a6234/runtime_metrics.json",
+      "statement_coverage_signal_seconds": 11.111522,
+      "unit": "seconds"
+    }
+  ],
+  "schema": "programbench_oracle_gym_v3_runtime_metrics",
+  "unit": "seconds"
+}

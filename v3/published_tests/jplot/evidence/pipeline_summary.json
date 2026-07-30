@@ -1,0 +1,152 @@
+{
+  "binary_consistent": true,
+  "cases_json": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_runroot_20260729/rs__jplot.2a54bcc/merged/v3_binary_repair_5.json",
+  "coverage": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_runroot_20260729/coverage/rs__jplot.2a54bcc/v3_final.go_coverage_summary.json",
+  "coverage_timing": {
+    "coverage_postprocess_seconds": 0.638412,
+    "coverage_pytest_seconds": 53.674162,
+    "definition": "statement_coverage_signal_seconds is the instrumented coverage-binary pytest runtime plus go covdata/textfmt/cover post-processing; it excludes clone, build, native tests, and cleanroom/source consistency runs.",
+    "native_coverage_signal_seconds": 0.484714,
+    "statement_coverage_signal_seconds": 54.312574,
+    "total_harness_runtime_seconds": 198.808295,
+    "unit": "seconds"
+  },
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 532,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 72.6,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/rs/jplot/data/http.go": {
+        "covered_executable_lines": 34,
+        "line_coverage_percent": 77.3,
+        "total_executable_lines": 44
+      },
+      "github.com/rs/jplot/data/point.go": {
+        "covered_executable_lines": 49,
+        "line_coverage_percent": 94.2,
+        "total_executable_lines": 52
+      },
+      "github.com/rs/jplot/data/spec.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 30
+      },
+      "github.com/rs/jplot/data/stdin.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 78.6,
+        "total_executable_lines": 14
+      },
+      "github.com/rs/jplot/graph/dash.go": {
+        "covered_executable_lines": 15,
+        "line_coverage_percent": 88.2,
+        "total_executable_lines": 17
+      },
+      "github.com/rs/jplot/graph/graph.go": {
+        "covered_executable_lines": 96,
+        "line_coverage_percent": 78.7,
+        "total_executable_lines": 122
+      },
+      "github.com/rs/jplot/graph/legend.go": {
+        "covered_executable_lines": 97,
+        "line_coverage_percent": 98.0,
+        "total_executable_lines": 99
+      },
+      "github.com/rs/jplot/main.go": {
+        "covered_executable_lines": 108,
+        "line_coverage_percent": 87.8,
+        "total_executable_lines": 123
+      },
+      "github.com/rs/jplot/term/common.go": {
+        "covered_executable_lines": 36,
+        "line_coverage_percent": 50.7,
+        "total_executable_lines": 71
+      },
+      "github.com/rs/jplot/term/go110.go": {
+        "covered_executable_lines": 3,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 3
+      },
+      "github.com/rs/jplot/term/iterm2.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 18
+      },
+      "github.com/rs/jplot/term/kitty.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 15.3,
+        "total_executable_lines": 59
+      },
+      "github.com/rs/jplot/term/sixel.go": {
+        "covered_executable_lines": 17,
+        "line_coverage_percent": 28.3,
+        "total_executable_lines": 60
+      },
+      "github.com/rs/jplot/term/std.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 42.9,
+        "total_executable_lines": 21
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 77.9,
+    "suite_count": 1,
+    "total_executable_lines": 733
+  },
+  "instance_id": "rs__jplot.2a54bcc",
+  "manifest": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_runroot_20260729/generated/rs__jplot.2a54bcc/v3_final/oracle_tests/eval/generated_cli_manifest.json",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 0,
+    "go_test_package_coverage_percent": null,
+    "go_test_returncode": 0,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": null,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {},
+    "profile": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 0.0,
+    "timing": {
+      "cover_func_seconds": 0.135901,
+      "go_test_seconds": 0.348813,
+      "native_coverage_signal_seconds": 0.484714,
+      "unit": "seconds"
+    },
+    "total_executable_lines": 0
+  },
+  "quality": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_runroot_20260729/generated/rs__jplot.2a54bcc/v3_final/evaluation_quality_report.json",
+  "quality_returncode": 0,
+  "schema": "programbench_oracle_gym_v3_repo_summary",
+  "stop_gate": {
+    "checks": {
+      "all_dummies_rejected": true,
+      "assertion_lint": true,
+      "generated_tests_passed": true,
+      "minimum_primary": false,
+      "minimum_secondary": false,
+      "source_leak": true,
+      "stretch_primary": false,
+      "stretch_secondary": false,
+      "three_binary_consistent": true
+    },
+    "note": "saturation rounds and reachable-coverage audit are required before a final production stop",
+    "pb_baseline_used": false,
+    "primary_percent": 77.9,
+    "schema": "programbench_oracle_gym_v3_stop_gate",
+    "secondary_percent": 72.6,
+    "status": "refine"
+  },
+  "suite_label": "v3_final"
+}

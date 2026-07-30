@@ -1,0 +1,482 @@
+[
+  {
+    "instance_id": "sclevine__yj.8016400",
+    "status": "passed",
+    "suite_label": "yj_v2_expansive_union",
+    "generated_line_coverage": 89.3,
+    "generated_statement_coverage": 90.3,
+    "native_test_functions": 6,
+    "native_line_coverage": 75.9,
+    "native_statement_coverage": 76.2,
+    "pb_official_test_functions": 651,
+    "pb_official_line_coverage": 88.5,
+    "pb_official_statement_coverage": 88.8,
+    "pb_official_note": null,
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 855,
+      "exact": {
+        "duplicate_cases": 214,
+        "duplicate_percent": 25.0,
+        "unique_groups": 641
+      },
+      "structural": {
+        "duplicate_cases": 704,
+        "duplicate_percent": 82.3,
+        "unique_groups": 151
+      },
+      "invocation": {
+        "duplicate_cases": 214,
+        "duplicate_percent": 25.0,
+        "unique_groups": 641
+      },
+      "behavior": {
+        "duplicate_cases": 461,
+        "duplicate_percent": 53.9,
+        "unique_groups": 394
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/sclevine__yj.8016400/yj_v2_expansive_union/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/sclevine__yj.8016400/yj_v2_expansive_union.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/sclevine__yj.8016400/yj_v2_expansive_union/evaluation_quality_report.json"
+  },
+  {
+    "instance_id": "tomnomnom__gron.88a6234",
+    "status": "passed",
+    "suite_label": "v2_expansive_final",
+    "generated_line_coverage": 90.7,
+    "generated_statement_coverage": 91.1,
+    "native_test_functions": 23,
+    "native_line_coverage": 70.9,
+    "native_statement_coverage": 70.2,
+    "pb_official_test_functions": 224,
+    "pb_official_line_coverage": 92.9,
+    "pb_official_statement_coverage": 93.3,
+    "pb_official_note": null,
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 640,
+      "exact": {
+        "duplicate_cases": 126,
+        "duplicate_percent": 19.7,
+        "unique_groups": 514
+      },
+      "structural": {
+        "duplicate_cases": 525,
+        "duplicate_percent": 82.0,
+        "unique_groups": 115
+      },
+      "invocation": {
+        "duplicate_cases": 126,
+        "duplicate_percent": 19.7,
+        "unique_groups": 514
+      },
+      "behavior": {
+        "duplicate_cases": 311,
+        "duplicate_percent": 48.6,
+        "unique_groups": 329
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/tomnomnom__gron.88a6234/v2_expansive_final/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/tomnomnom__gron.88a6234/v2_expansive_final.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/tomnomnom__gron.88a6234/v2_expansive_final/evaluation_quality_report.json"
+  },
+  {
+    "instance_id": "multiprocessio__dsq.c3ae0ba",
+    "status": "passed",
+    "suite_label": "v2_expansive_final",
+    "generated_line_coverage": 89.0,
+    "generated_statement_coverage": 91.4,
+    "native_test_functions": 0,
+    "native_line_coverage": null,
+    "native_statement_coverage": 0.0,
+    "pb_official_test_functions": 507,
+    "pb_official_line_coverage": 88.3,
+    "pb_official_statement_coverage": 91.4,
+    "pb_official_note": null,
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 727,
+      "exact": {
+        "duplicate_cases": 145,
+        "duplicate_percent": 19.9,
+        "unique_groups": 582
+      },
+      "structural": {
+        "duplicate_cases": 538,
+        "duplicate_percent": 74.0,
+        "unique_groups": 189
+      },
+      "invocation": {
+        "duplicate_cases": 145,
+        "duplicate_percent": 19.9,
+        "unique_groups": 582
+      },
+      "behavior": {
+        "duplicate_cases": 444,
+        "duplicate_percent": 61.1,
+        "unique_groups": 283
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/multiprocessio__dsq.c3ae0ba/v2_expansive_final/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/multiprocessio__dsq.c3ae0ba/v2_expansive_final.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/multiprocessio__dsq.c3ae0ba/v2_expansive_final/evaluation_quality_report.json"
+  },
+  {
+    "instance_id": "psampaz__go-mod-outdated.bb79367",
+    "status": "passed",
+    "suite_label": "v2_expansive_final",
+    "generated_line_coverage": 97.4,
+    "generated_statement_coverage": 97.2,
+    "native_test_functions": 13,
+    "native_line_coverage": 100.0,
+    "native_statement_coverage": 100.0,
+    "pb_official_test_functions": 266,
+    "pb_official_line_coverage": 100.0,
+    "pb_official_statement_coverage": 100.0,
+    "pb_official_note": null,
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 473,
+      "exact": {
+        "duplicate_cases": 107,
+        "duplicate_percent": 22.6,
+        "unique_groups": 366
+      },
+      "structural": {
+        "duplicate_cases": 406,
+        "duplicate_percent": 85.8,
+        "unique_groups": 67
+      },
+      "invocation": {
+        "duplicate_cases": 107,
+        "duplicate_percent": 22.6,
+        "unique_groups": 366
+      },
+      "behavior": {
+        "duplicate_cases": 350,
+        "duplicate_percent": 74.0,
+        "unique_groups": 123
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/psampaz__go-mod-outdated.bb79367/v2_expansive_final/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/psampaz__go-mod-outdated.bb79367/v2_expansive_final.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/psampaz__go-mod-outdated.bb79367/v2_expansive_final/evaluation_quality_report.json"
+  },
+  {
+    "instance_id": "rs__jplot.2a54bcc",
+    "status": "passed",
+    "suite_label": "v2_expansive_final",
+    "generated_line_coverage": 32.5,
+    "generated_statement_coverage": 36.3,
+    "native_test_functions": 0,
+    "native_line_coverage": null,
+    "native_statement_coverage": 0.0,
+    "pb_official_test_functions": 546,
+    "pb_official_line_coverage": 77.9,
+    "pb_official_statement_coverage": 81.1,
+    "pb_official_note": null,
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 1023,
+      "exact": {
+        "duplicate_cases": 308,
+        "duplicate_percent": 30.1,
+        "unique_groups": 715
+      },
+      "structural": {
+        "duplicate_cases": 860,
+        "duplicate_percent": 84.1,
+        "unique_groups": 163
+      },
+      "invocation": {
+        "duplicate_cases": 308,
+        "duplicate_percent": 30.1,
+        "unique_groups": 715
+      },
+      "behavior": {
+        "duplicate_cases": 954,
+        "duplicate_percent": 93.3,
+        "unique_groups": 69
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/rs__jplot.2a54bcc/v2_expansive_final/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/rs__jplot.2a54bcc/v2_expansive_final.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/rs__jplot.2a54bcc/v2_expansive_final/evaluation_quality_report.json"
+  },
+  {
+    "instance_id": "mibk__dupl.1bf052b",
+    "status": "passed",
+    "suite_label": "v2_expansive_final",
+    "generated_line_coverage": 89.1,
+    "generated_statement_coverage": 90.0,
+    "native_test_functions": 10,
+    "native_line_coverage": 57.1,
+    "native_statement_coverage": 57.8,
+    "pb_official_test_functions": 360,
+    "pb_official_line_coverage": 93.8,
+    "pb_official_statement_coverage": 94.6,
+    "pb_official_note": null,
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 335,
+      "exact": {
+        "duplicate_cases": 70,
+        "duplicate_percent": 20.9,
+        "unique_groups": 265
+      },
+      "structural": {
+        "duplicate_cases": 214,
+        "duplicate_percent": 63.9,
+        "unique_groups": 121
+      },
+      "invocation": {
+        "duplicate_cases": 70,
+        "duplicate_percent": 20.9,
+        "unique_groups": 265
+      },
+      "behavior": {
+        "duplicate_cases": 209,
+        "duplicate_percent": 62.4,
+        "unique_groups": 126
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/mibk__dupl.1bf052b/v2_expansive_final/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/mibk__dupl.1bf052b/v2_expansive_final.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/mibk__dupl.1bf052b/v2_expansive_final/evaluation_quality_report.json"
+  },
+  {
+    "instance_id": "astaxie__bat.17d1080",
+    "status": "passed",
+    "suite_label": "v2_expansive_final",
+    "generated_line_coverage": 36.9,
+    "generated_statement_coverage": 37.2,
+    "native_test_functions": 12,
+    "native_line_coverage": 51.8,
+    "native_statement_coverage": 51.0,
+    "pb_official_test_functions": 946,
+    "pb_official_line_coverage": null,
+    "pb_official_statement_coverage": null,
+    "pb_official_note": "official baseline unreliable due external HTTP dependencies",
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 399,
+      "exact": {
+        "duplicate_cases": 123,
+        "duplicate_percent": 30.8,
+        "unique_groups": 276
+      },
+      "structural": {
+        "duplicate_cases": 278,
+        "duplicate_percent": 69.7,
+        "unique_groups": 121
+      },
+      "invocation": {
+        "duplicate_cases": 123,
+        "duplicate_percent": 30.8,
+        "unique_groups": 276
+      },
+      "behavior": {
+        "duplicate_cases": 371,
+        "duplicate_percent": 93.0,
+        "unique_groups": 28
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/astaxie__bat.17d1080/v2_expansive_final/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/astaxie__bat.17d1080/v2_expansive_final.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/astaxie__bat.17d1080/v2_expansive_final/evaluation_quality_report.json"
+  },
+  {
+    "instance_id": "cheat__cheat.b8098dc",
+    "status": "passed",
+    "suite_label": "v2_expansive_final",
+    "generated_line_coverage": 68.1,
+    "generated_statement_coverage": 69.8,
+    "native_test_functions": 106,
+    "native_line_coverage": 52.3,
+    "native_statement_coverage": 48.5,
+    "pb_official_test_functions": 289,
+    "pb_official_line_coverage": 79.9,
+    "pb_official_statement_coverage": 82.4,
+    "pb_official_note": "official suite contains a known cleanroom mismatch",
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 1023,
+      "exact": {
+        "duplicate_cases": 639,
+        "duplicate_percent": 62.5,
+        "unique_groups": 384
+      },
+      "structural": {
+        "duplicate_cases": 855,
+        "duplicate_percent": 83.6,
+        "unique_groups": 168
+      },
+      "invocation": {
+        "duplicate_cases": 639,
+        "duplicate_percent": 62.5,
+        "unique_groups": 384
+      },
+      "behavior": {
+        "duplicate_cases": 832,
+        "duplicate_percent": 81.3,
+        "unique_groups": 191
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/cheat__cheat.b8098dc/v2_expansive_final/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/cheat__cheat.b8098dc/v2_expansive_final.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/cheat__cheat.b8098dc/v2_expansive_final/evaluation_quality_report.json"
+  },
+  {
+    "instance_id": "boyter__scc.515f91c",
+    "status": "passed",
+    "suite_label": "v2_expansive_final",
+    "generated_line_coverage": 66.6,
+    "generated_statement_coverage": 64.6,
+    "native_test_functions": 257,
+    "native_line_coverage": 73.3,
+    "native_statement_coverage": 70.6,
+    "pb_official_test_functions": 464,
+    "pb_official_line_coverage": 92.0,
+    "pb_official_statement_coverage": 91.3,
+    "pb_official_note": "official suite contains known tie/golden mismatches",
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 1024,
+      "exact": {
+        "duplicate_cases": 405,
+        "duplicate_percent": 39.6,
+        "unique_groups": 619
+      },
+      "structural": {
+        "duplicate_cases": 675,
+        "duplicate_percent": 65.9,
+        "unique_groups": 349
+      },
+      "invocation": {
+        "duplicate_cases": 405,
+        "duplicate_percent": 39.6,
+        "unique_groups": 619
+      },
+      "behavior": {
+        "duplicate_cases": 789,
+        "duplicate_percent": 77.1,
+        "unique_groups": 235
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/boyter__scc.515f91c/v2_expansive_final/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/boyter__scc.515f91c/v2_expansive_final.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/boyter__scc.515f91c/v2_expansive_final/evaluation_quality_report.json"
+  },
+  {
+    "instance_id": "alecthomas__chroma.8d04def",
+    "status": "passed",
+    "suite_label": "v2_expansive_final",
+    "generated_line_coverage": 58.3,
+    "generated_statement_coverage": 54.9,
+    "native_test_functions": 63,
+    "native_line_coverage": null,
+    "native_statement_coverage": 0.0,
+    "pb_official_test_functions": 192,
+    "pb_official_line_coverage": 88.0,
+    "pb_official_statement_coverage": 88.8,
+    "pb_official_note": null,
+    "three_binary_consistent": true,
+    "quality": {
+      "all_dummies_rejected": true,
+      "dummy_passing_test_count": 0,
+      "assertion_lint_passed": true,
+      "source_leak_passed": true,
+      "repeat_passed": true
+    },
+    "duplicates": {
+      "cases": 674,
+      "exact": {
+        "duplicate_cases": 70,
+        "duplicate_percent": 10.4,
+        "unique_groups": 604
+      },
+      "structural": {
+        "duplicate_cases": 452,
+        "duplicate_percent": 67.1,
+        "unique_groups": 222
+      },
+      "invocation": {
+        "duplicate_cases": 70,
+        "duplicate_percent": 10.4,
+        "unique_groups": 604
+      },
+      "behavior": {
+        "duplicate_cases": 599,
+        "duplicate_percent": 88.9,
+        "unique_groups": 75
+      }
+    },
+    "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/alecthomas__chroma.8d04def/v2_expansive_final/oracle_tests/eval/generated_cli_manifest.json",
+    "coverage_summary": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/alecthomas__chroma.8d04def/v2_expansive_final.go_coverage_summary.json",
+    "quality_report": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/alecthomas__chroma.8d04def/v2_expansive_final/evaluation_quality_report.json"
+  }
+]

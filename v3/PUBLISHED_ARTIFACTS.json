@@ -1,0 +1,186 @@
+{
+  "schema": "programbench_oracle_gym_published_artifacts_v1",
+  "version": "v3",
+  "complete": true,
+  "suites": [
+    {
+      "repo": "yj",
+      "instance_id": "sclevine__yj.8016400",
+      "shard": "final",
+      "behavioral_cases": 723,
+      "archive": "published_tests/yj/oracle_tests.tar.gz",
+      "archive_bytes": 293853,
+      "archive_sha256": "a79e226912fca6e6c3cd704368d7bdfecc7491313055c3f91e246cf2f0a3f55b",
+      "source_artifact": "v3/runs/go10_v3_quality_r2/generated/sclevine__yj.8016400/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/yj/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/yj/evidence/evaluation_quality_report.json",
+        "published_tests/yj/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "gron",
+      "instance_id": "tomnomnom__gron.88a6234",
+      "shard": "final",
+      "behavioral_cases": 650,
+      "archive": "published_tests/gron/oracle_tests.tar.gz",
+      "archive_bytes": 259793,
+      "archive_sha256": "245ee8dc1fa34602ce8376ad94741ec9aab3b49d20be81cf877900a432e776a9",
+      "source_artifact": "v3/runs/go10_v3_quality_r2/generated/tomnomnom__gron.88a6234/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/gron/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/gron/evidence/evaluation_quality_report.json",
+        "published_tests/gron/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "dsq",
+      "instance_id": "multiprocessio__dsq.c3ae0ba",
+      "shard": "final",
+      "behavioral_cases": 464,
+      "archive": "published_tests/dsq/oracle_tests.tar.gz",
+      "archive_bytes": 166919,
+      "archive_sha256": "67e71cbb348b8957576ce683fcd15339190ce0ececfefd2acf39c5d96038aa1e",
+      "source_artifact": "v3/runs/go10_v3_quality_r2/generated/multiprocessio__dsq.c3ae0ba/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/dsq/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/dsq/evidence/evaluation_quality_report.json",
+        "published_tests/dsq/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "go-mod-outdated",
+      "instance_id": "psampaz__go-mod-outdated.bb79367",
+      "shard": "final",
+      "behavioral_cases": 440,
+      "archive": "published_tests/go-mod-outdated/oracle_tests.tar.gz",
+      "archive_bytes": 205669,
+      "archive_sha256": "6b30c2cddc02955051babb792a7d429365a99b9b7fbb8d2fbb1a9f796f5e8786",
+      "source_artifact": "v3/runs/go10_v3_quality_r2/generated/psampaz__go-mod-outdated.bb79367/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/go-mod-outdated/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/go-mod-outdated/evidence/evaluation_quality_report.json",
+        "published_tests/go-mod-outdated/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "dupl",
+      "instance_id": "mibk__dupl.1bf052b",
+      "shard": "final",
+      "behavioral_cases": 174,
+      "archive": "published_tests/dupl/oracle_tests.tar.gz",
+      "archive_bytes": 83808,
+      "archive_sha256": "6611e13b3327b9ddfbec3d68b0cf4c9852a48cff4756daac1572117061c98db7",
+      "source_artifact": "v3/runs/go10_v3_quality_r2/generated/mibk__dupl.1bf052b/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/dupl/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/dupl/evidence/evaluation_quality_report.json",
+        "published_tests/dupl/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "cheat",
+      "instance_id": "cheat__cheat.b8098dc",
+      "shard": "final",
+      "behavioral_cases": 382,
+      "archive": "published_tests/cheat/oracle_tests.tar.gz",
+      "archive_bytes": 326676,
+      "archive_sha256": "775ae43bb92fecb41bc6585d937f95070090ec4a94ff654a3094278c88bf6d8e",
+      "source_artifact": "v3/runs/go10_v3_quality_r2/generated/cheat__cheat.b8098dc/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/cheat/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/cheat/evidence/evaluation_quality_report.json",
+        "published_tests/cheat/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "jplot",
+      "instance_id": "rs__jplot.2a54bcc",
+      "shard": "final",
+      "behavioral_cases": 802,
+      "archive": "published_tests/jplot/oracle_tests.tar.gz",
+      "archive_bytes": 763466,
+      "archive_sha256": "4f49ec638afd079c1d3233587a8e4bceb8ff2da9a5408d3351abab2f230ca51a",
+      "source_artifact": "v3/runs/go4_v3_reachability_final_20260729/jplot/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/jplot/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/jplot/evidence/evaluation_quality_report.json",
+        "published_tests/jplot/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "bat",
+      "instance_id": "astaxie__bat.17d1080",
+      "shard": "final",
+      "behavioral_cases": 1252,
+      "archive": "published_tests/bat/oracle_tests.tar.gz",
+      "archive_bytes": 437456,
+      "archive_sha256": "8c9210bb99e444ef84a2a4ebf0e5d44374ea69aa2f8cd8c2c6af29fa3466f3ab",
+      "source_artifact": "v3/runs/go4_v3_reachability_final_20260729/bat/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/bat/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/bat/evidence/evaluation_quality_report.json",
+        "published_tests/bat/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "scc",
+      "instance_id": "boyter__scc.515f91c",
+      "shard": "final",
+      "behavioral_cases": 1428,
+      "archive": "published_tests/scc/oracle_tests.tar.gz",
+      "archive_bytes": 618988,
+      "archive_sha256": "1646d5c3091095fafd8f267c899b1f6733184d4808c6108d41bcb52239ca4de3",
+      "source_artifact": "v3/runs/go4_v3_reachability_final_20260729/scc/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/scc/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/scc/evidence/evaluation_quality_report.json",
+        "published_tests/scc/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "chroma",
+      "instance_id": "alecthomas__chroma.8d04def",
+      "shard": "r4",
+      "behavioral_cases": 1255,
+      "archive": "published_tests/chroma/r4/oracle_tests.tar.gz",
+      "archive_bytes": 4186173,
+      "archive_sha256": "8bca784728ac677319bc06155369f9550895312a187a1a16fed3aa8ac9902bb2",
+      "source_artifact": "v3/runs/go4_v3_reachability_final_20260729/chroma_r4/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/chroma/r4/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/chroma/r4/evidence/v3_final.go_coverage_summary.json",
+        "published_tests/chroma/r4/evidence/evaluation_quality_report.json",
+        "published_tests/chroma/r4/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "chroma",
+      "instance_id": "alecthomas__chroma.8d04def",
+      "shard": "r5",
+      "behavioral_cases": 59,
+      "archive": "published_tests/chroma/r5/oracle_tests.tar.gz",
+      "archive_bytes": 44777,
+      "archive_sha256": "1f751ad9980564a0ca81004126deac10d694362c10c540cfa95cfdd0311d09e1",
+      "source_artifact": "v3/runs/go4_v3_reachability_final_20260729/chroma_r5/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/chroma/r5/evidence/evaluation_quality_report.json",
+        "published_tests/chroma/r5/evidence/pipeline_summary.json"
+      ]
+    },
+    {
+      "repo": "chroma",
+      "instance_id": "alecthomas__chroma.8d04def",
+      "shard": "r6",
+      "behavioral_cases": 51,
+      "archive": "published_tests/chroma/r6/oracle_tests.tar.gz",
+      "archive_bytes": 220317,
+      "archive_sha256": "ddcfc054209a8327b6ed703f5f87a79a8398ec930fc4d707654651375ee78026",
+      "source_artifact": "v3/runs/go4_v3_reachability_final_20260729/chroma_r6/v3_final/oracle_tests",
+      "evidence": [
+        "published_tests/chroma/r6/evidence/evaluation_quality_report.json",
+        "published_tests/chroma/r6/evidence/pipeline_summary.json"
+      ]
+    }
+  ]
+}

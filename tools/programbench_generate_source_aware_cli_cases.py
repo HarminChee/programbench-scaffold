@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate source-aware candidate CLI cases for ProgramBench Go tasks.
+"""Generate source-aware candidate CLI cases for ProgramBench command-line tasks.
 
 This script proposes executable-level CLI cases from a private builder
 workspace. It may inspect the target source tree, docs, and native tests, but it
@@ -29,9 +29,17 @@ DEFAULT_TASKS_ROOTS = [
     REPO_ROOT / "external/ProgramBench/src/programbench/data/tasks",
 ]
 DOC_NAMES = {"README.md", "README.rst", "README.txt", "USAGE.md", "docs"}
-TEXT_SUFFIXES = {".md", ".rst", ".txt", ".go", ".sh", ".yaml", ".yml", ".toml", ".json"}
+TEXT_SUFFIXES = {
+    ".md", ".rst", ".txt", ".go", ".rs", ".c", ".cc", ".cpp", ".cxx",
+    ".h", ".hh", ".hpp", ".sh", ".yaml", ".yml", ".toml", ".json",
+}
 FLAG_RE = re.compile(r"(?<![A-Za-z0-9_])--?[A-Za-z][A-Za-z0-9_-]*")
 STRING_RE = re.compile(r'"((?:\\.|[^"\\])*)"')
+CLI_SOURCE_MARKERS = (
+    "getopt", "getopt_long", "argc", "argv", "clap::", "#[arg", "#[command",
+    "arg::", "args::", "argparse", "optionparser", "pflag", "flag.", "parse_args",
+)
+BUILD_ONLY_FLAGS = {"--build", "--config", "--install", "--parallel", "--target"}
 
 
 STDIN_SAMPLES = {
@@ -73,7 +81,7 @@ def resolve_tasks_root(explicit: Path | None) -> Path:
 
 
 def run_command(cmd: list[str], *, cwd: Path | None = None, timeout: int = 300) -> dict[str, Any]:
-    started = dt.datetime.now(dt.UTC)
+    started = dt.datetime.now(dt.timezone.utc)
     try:
         proc = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
         returncode = proc.returncode
@@ -85,7 +93,7 @@ def run_command(cmd: list[str], *, cwd: Path | None = None, timeout: int = 300) 
         stdout = exc.stdout if isinstance(exc.stdout, str) else (exc.stdout or b"").decode("utf-8", "replace")
         stderr = exc.stderr if isinstance(exc.stderr, str) else (exc.stderr or b"").decode("utf-8", "replace")
         timed_out = True
-    ended = dt.datetime.now(dt.UTC)
+    ended = dt.datetime.now(dt.timezone.utc)
     return {
         "cmd": cmd,
         "cwd": str(cwd) if cwd else None,
@@ -120,15 +128,23 @@ def iter_text_files(source_dir: Path, max_files: int = 600) -> list[Path]:
     files: list[Path] = []
     ignored_dirs = {".git", "vendor", "node_modules", ".venv", "dist", "build"}
     for path in source_dir.rglob("*"):
-        if len(files) >= max_files:
-            break
         if any(part in ignored_dirs for part in path.parts):
             continue
         if not path.is_file():
             continue
         if path.suffix.lower() in TEXT_SUFFIXES or path.name in DOC_NAMES or path.name.endswith("_test.go"):
             files.append(path)
-    return files
+    def priority(path: Path) -> tuple[int, str]:
+        parts = {part.casefold() for part in path.relative_to(source_dir).parts}
+        stem = path.stem.casefold()
+        if path.name in DOC_NAMES or stem in {"main", "cli", "args", "options", "command", "app"}:
+            return (0, str(path))
+        if parts & {"cmd", "tools", "tool", "cli"}:
+            return (1, str(path))
+        if path.suffix.lower() in {".c", ".cc", ".cpp", ".cxx", ".rs", ".go"}:
+            return (2, str(path))
+        return (3, str(path))
+    return sorted(files, key=priority)[:max_files]
 
 
 def safe_read(path: Path, limit: int = 200_000) -> str:
@@ -160,6 +176,7 @@ def extract_doc_commands(text: str, names: list[str]) -> list[list[str]]:
     name_set = set(names)
     for raw in text.splitlines():
         line = raw.strip()
+        prompted = line.startswith(("$ ", "> "))
         if not line:
             continue
         if line.startswith("$ "):
@@ -175,9 +192,94 @@ def extract_doc_commands(text: str, names: list[str]) -> list[list[str]]:
         if not parts:
             continue
         first = Path(parts[0]).name
-        if first in name_set:
+        # A prose sentence can begin with the project name ("Halite is ...").
+        # Treat it as a command only when it is shell-prompted or has a flag;
+        # the generic no-args seed already covers bare invocations.
+        if first in name_set and (prompted or any(item.startswith("-") for item in parts[1:])):
             commands.append(parts[1:])
     return commands
+
+
+def extract_runtime_flags(text_files: list[Path], docs: list[Path], names: list[str]) -> list[str]:
+    """Extract likely executable flags without treating build commands as CLI syntax."""
+
+    documented: set[str] = set()
+    for path in docs:
+        for command in extract_doc_commands(safe_read(path), names):
+            documented.update(item.split("=", 1)[0] for item in command if FLAG_RE.fullmatch(item.split("=", 1)[0]))
+
+    source_flags: set[str] = set()
+    source_suffixes = {".go", ".rs", ".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp"}
+    for path in text_files:
+        if path.suffix.lower() not in source_suffixes:
+            continue
+        lines = safe_read(path).splitlines()
+        path_hint = path.stem.lower() in {"main", "cli", "args", "options", "command", "app"} or {"cmd", "tools", "tool", "cli"} & {
+            part.lower() for part in path.parts
+        }
+        for index, line in enumerate(lines):
+            window = "\n".join(lines[max(0, index - 2): index + 3]).lower()
+            if not path_hint and not any(marker in window for marker in CLI_SOURCE_MARKERS):
+                continue
+            source_flags.update(FLAG_RE.findall(line))
+        if path.suffix.lower() == ".rs":
+            pending_attr = ""
+            for line in lines:
+                stripped = line.strip()
+                if stripped.startswith(("#[arg(", "#[clap(")):
+                    pending_attr = stripped
+                    continue
+                field_match = re.match(r"(?:pub\s+)?([A-Za-z][A-Za-z0-9_]*?)\s*:\s*[^:]", stripped)
+                if pending_attr and field_match:
+                    field = field_match.group(1)
+                    if re.search(r"(?:^|[, (])long(?:[, )=]|$)", pending_attr):
+                        source_flags.add("--" + field.replace("_", "-"))
+                    short_match = re.search(r"short\s*=\s*['\"]([A-Za-z0-9])", pending_attr)
+                    if short_match:
+                        source_flags.add("-" + short_match.group(1))
+                    elif re.search(r"(?:^|[, (])short(?:[, )]|$)", pending_attr):
+                        source_flags.add("-" + field[0])
+                    pending_attr = ""
+                elif stripped and not stripped.startswith("#"):
+                    pending_attr = ""
+        if path.suffix.lower() in {".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp"}:
+            for line in lines:
+                # TCLAP declares short and long names as the first two string
+                # arguments to SwitchArg/ValueArg/MultiArg constructors.
+                if "TCLAP::Unlabeled" in line:
+                    continue
+                match = re.search(
+                    r"TCLAP::\w*Arg[^;(]*\(\s*\"([^\"]*)\"\s*,\s*\"([^\"]+)\"",
+                    line,
+                )
+                if not match:
+                    continue
+                short_name, long_name = match.groups()
+                if re.fullmatch(r"[A-Za-z0-9]", short_name):
+                    source_flags.add("-" + short_name)
+                if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", long_name):
+                    source_flags.add("--" + long_name)
+
+    result = documented | source_flags
+    result = {
+        flag for flag in result
+        if flag not in {"--", "-"}
+        and not flag.startswith("---")
+        and not flag.startswith("-D")
+        and not flag.startswith("-W")
+        and (flag not in BUILD_ONLY_FLAGS or flag in documented)
+    }
+    return sorted(result)
+
+
+def extract_c_subcommands(text_files: list[Path]) -> list[str]:
+    commands: set[str] = set()
+    pattern = re.compile(r"strcmp\s*\(\s*argv\s*\[\s*1\s*\]\s*,\s*\"([A-Za-z0-9_-]+)\"\s*\)")
+    for path in text_files:
+        if path.suffix.lower() not in {".c", ".cc", ".cpp", ".cxx"}:
+            continue
+        commands.update(command for command in pattern.findall(safe_read(path)) if not command.startswith("-"))
+    return sorted(commands)
 
 
 def extract_native_test_command_args(text: str) -> list[list[str]]:
@@ -275,8 +377,8 @@ def propose_cases(repository: str, source_dir: Path, max_cases: int) -> tuple[li
     native_tests = [p for p in text_files if p.name.endswith("_test.go")]
     all_text_parts = [safe_read(p) for p in text_files]
     all_text = "\n".join(all_text_parts)
-    flags = sorted(set(FLAG_RE.findall(all_text)))
-    flags = [f for f in flags if f not in {"--", "-"} and not f.startswith("---")]
+    flags = extract_runtime_flags(text_files, docs, names)
+    subcommands = extract_c_subcommands(text_files)
     formats = detect_formats(all_text)
 
     cases: list[dict[str, Any]] = []
@@ -284,6 +386,8 @@ def propose_cases(repository: str, source_dir: Path, max_cases: int) -> tuple[li
     for flag in ["-h", "--help", "-help", "-v", "--version", "-version"]:
         cases.append(normalize_case(f"standard_{flag.strip('-')}", [flag], "", "help_version", "standard_cli_probe"))
     cases.append(normalize_case("invalid_flag_long", ["--programbench-invalid-flag"], "", "error_handling", "standard_cli_probe"))
+    for command in subcommands[:80]:
+        cases.append(normalize_case(f"subcommand_{command}_no_args", [command], "", "subcommand", "source_dispatch_scan"))
 
     for path in docs[:30]:
         for args in extract_doc_commands(safe_read(path), names):
@@ -299,7 +403,7 @@ def propose_cases(repository: str, source_dir: Path, max_cases: int) -> tuple[li
 
     value = "out"
     for flag in flags[:80]:
-        if flag in {"-o", "--output", "--out"}:
+        if flag in {"--output", "--out"} or (flag == "-o" and flag_needs_value(flag, all_text)):
             continue
         args = [flag, value] if flag_needs_value(flag, all_text) else [flag]
         cases.append(normalize_case(f"flag_{flag.strip('-')}", args, "", "flag_surface", "source_and_docs_flag_scan"))
@@ -319,11 +423,17 @@ def propose_cases(repository: str, source_dir: Path, max_cases: int) -> tuple[li
 
     deduped: list[dict[str, Any]] = []
     seen: set[tuple[tuple[str, ...], str]] = set()
+    name_counts: dict[str, int] = {}
     for case in cases:
         key = (tuple(map(str, case["args"])), str(case["stdin"]))
         if key in seen:
             continue
         seen.add(key)
+        base_name = str(case["name"])
+        name_counts[base_name] = name_counts.get(base_name, 0) + 1
+        if name_counts[base_name] > 1:
+            case = dict(case)
+            case["name"] = f"{base_name}_{name_counts[base_name]}"[:120]
         deduped.append(case)
         if len(deduped) >= max_cases:
             break
@@ -335,6 +445,7 @@ def propose_cases(repository: str, source_dir: Path, max_cases: int) -> tuple[li
         "native_test_files": [str(p.relative_to(source_dir)) for p in native_tests[:50]],
         "flag_count": len(flags),
         "sample_flags": flags[:80],
+        "sample_subcommands": subcommands[:80],
         "detected_formats": formats,
         "native_fixture_case_count": sum(1 for case in deduped if case.get("area") == "native_fixture_harvest"),
         "candidate_count_before_dedupe": len(cases),
@@ -370,7 +481,7 @@ def main() -> int:
     payload = {
         "profile": args.profile,
         "generator": "programbench_generate_source_aware_cli_cases.py",
-        "generated_at": dt.datetime.now(dt.UTC).isoformat(),
+        "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "instance_id": args.instance_id,
         "repository": repository,
         "commit": commit,

@@ -1,0 +1,435 @@
+{
+  "active_branch_count": 9,
+  "all_branch_binary_comparisons_consistent": true,
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "yj_v2_expansive_union",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/pytest_workspaces/yj_v2_expansive_union/cleanroom",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source/coverage/junit/yj_v2_expansive_union.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "b4949424a52dbb301819fd77bafca21362daecdbe7ea38576717ca7bc5bc98cc",
+            "filtered_tests": 855,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "b4949424a52dbb301819fd77bafca21362daecdbe7ea38576717ca7bc5bc98cc",
+            "tests": 855
+          },
+          "label": "cleanroom",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/logs/pytest_yj_v2_expansive_union_cleanroom.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "yj_v2_expansive_union",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/pytest_workspaces/yj_v2_expansive_union/source",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source/coverage/junit/yj_v2_expansive_union.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "b4949424a52dbb301819fd77bafca21362daecdbe7ea38576717ca7bc5bc98cc",
+            "filtered_tests": 855,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "b4949424a52dbb301819fd77bafca21362daecdbe7ea38576717ca7bc5bc98cc",
+            "tests": 855
+          },
+          "label": "source",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/logs/pytest_yj_v2_expansive_union_source.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "yj_v2_expansive_union",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/pytest_workspaces/yj_v2_expansive_union/coverage",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source/coverage/junit/yj_v2_expansive_union.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "b4949424a52dbb301819fd77bafca21362daecdbe7ea38576717ca7bc5bc98cc",
+            "filtered_tests": 855,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "b4949424a52dbb301819fd77bafca21362daecdbe7ea38576717ca7bc5bc98cc",
+            "tests": 855
+          },
+          "label": "coverage",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/logs/pytest_yj_v2_expansive_union_coverage.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        }
+      ],
+      "branch": "yj_v2_expansive_union",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "README.md",
+        "eval"
+      ],
+      "oracle_material_root": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/sclevine__yj.8016400/yj_v2_expansive_union/oracle_tests",
+      "tests_json": {
+        "active_count": null,
+        "expected_count": null,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "d0e6adbc5744a853c37ba0e1cf00bd5fd9a8ea363634b144ee74184faf31c510",
+    "image": "programbench/sclevine_1776_yj.8016400:task_cleanroom_v6",
+    "path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "80164002c0d7f88aa58fa5bec8a8cf4f1bb4e93b",
+  "compare_binaries": true,
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 766,
+    "kind": "generated",
+    "label": "yj_v2_expansive_union",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 89.3,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/sclevine/yj/v5/convert/encoding.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 88.9,
+        "total_executable_lines": 27
+      },
+      "github.com/sclevine/yj/v5/convert/hcl.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 75.0,
+        "total_executable_lines": 24
+      },
+      "github.com/sclevine/yj/v5/convert/json.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 85.7,
+        "total_executable_lines": 28
+      },
+      "github.com/sclevine/yj/v5/convert/toml.go": {
+        "covered_executable_lines": 28,
+        "line_coverage_percent": 93.3,
+        "total_executable_lines": 30
+      },
+      "github.com/sclevine/yj/v5/convert/yaml.go": {
+        "covered_executable_lines": 37,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 37
+      },
+      "github.com/sclevine/yj/v5/flags.go": {
+        "covered_executable_lines": 114,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 114
+      },
+      "github.com/sclevine/yj/v5/hcl/decoder.go": {
+        "covered_executable_lines": 80,
+        "line_coverage_percent": 93.0,
+        "total_executable_lines": 86
+      },
+      "github.com/sclevine/yj/v5/main.go": {
+        "covered_executable_lines": 29,
+        "line_coverage_percent": 93.5,
+        "total_executable_lines": 31
+      },
+      "github.com/sclevine/yj/v5/order/map.go": {
+        "covered_executable_lines": 71,
+        "line_coverage_percent": 84.5,
+        "total_executable_lines": 84
+      },
+      "github.com/sclevine/yj/v5/toml/decoder.go": {
+        "covered_executable_lines": 92,
+        "line_coverage_percent": 97.9,
+        "total_executable_lines": 94
+      },
+      "github.com/sclevine/yj/v5/toml/encoder.go": {
+        "covered_executable_lines": 31,
+        "line_coverage_percent": 91.2,
+        "total_executable_lines": 34
+      },
+      "github.com/sclevine/yj/v5/toml/util.go": {
+        "covered_executable_lines": 2,
+        "line_coverage_percent": 33.3,
+        "total_executable_lines": 6
+      },
+      "github.com/sclevine/yj/v5/yaml/decoder.go": {
+        "covered_executable_lines": 128,
+        "line_coverage_percent": 82.1,
+        "total_executable_lines": 156
+      },
+      "github.com/sclevine/yj/v5/yaml/encoder.go": {
+        "covered_executable_lines": 62,
+        "line_coverage_percent": 89.9,
+        "total_executable_lines": 69
+      },
+      "github.com/sclevine/yj/v5/yaml/json.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 68.8,
+        "total_executable_lines": 32
+      },
+      "github.com/sclevine/yj/v5/yaml/util.go": {
+        "covered_executable_lines": 4,
+        "line_coverage_percent": 66.7,
+        "total_executable_lines": 6
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source/coverage/yj_v2_expansive_union_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 90.3,
+    "suite_count": 1,
+    "total_executable_lines": 858
+  },
+  "go_build_package": {
+    "attempts": [
+      {
+        "build_cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source",
+        "build_target": ".",
+        "coverage": {
+          "cmd": [
+            "go",
+            "build",
+            "-cover",
+            "-coverpkg=./...",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/executable_coverage",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source",
+          "duration_seconds": 0.497049,
+          "ended_at": "2026-07-25T13:16:15.282750+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/logs/go_build_cover_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-25T13:16:14.785701+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "go_executable": "go",
+        "source": {
+          "cmd": [
+            "go",
+            "build",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/executable_source",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source",
+          "duration_seconds": 0.341666,
+          "ended_at": "2026-07-25T13:16:14.785395+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/logs/go_build_source_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-25T13:16:14.443729+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "target": "."
+      }
+    ],
+    "candidates": [
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source",
+        "discovered_by": [
+          "go_list",
+          "source_scan"
+        ],
+        "import_path": "github.com/sclevine/yj/v5",
+        "score": 190,
+        "target": "."
+      }
+    ],
+    "command_returncode": 0,
+    "fallback_used": false,
+    "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/logs/go_list_packages.json",
+    "mode": "auto",
+    "selected": ".",
+    "selected_build_cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source",
+    "selected_build_target": ".",
+    "selected_go_executable": "go"
+  },
+  "go_coverpkg": "./...",
+  "go_toolchain": {
+    "environment": [
+      "auto",
+      "go1.21.13",
+      "/usr/local/go1.21.13"
+    ],
+    "environment_returncode": 0,
+    "selected_version": "go version go1.21.13 linux/amd64",
+    "version_returncode": 0
+  },
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source/coverage/yj_v2_expansive_union_merged_raw"
+  },
+  "instance_id": "sclevine__yj.8016400",
+  "language": "go",
+  "logs_dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/logs",
+  "native_tests": null,
+  "oracle_material_root": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/sclevine__yj.8016400/yj_v2_expansive_union/oracle_tests",
+  "pytest_python": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/.venv/bin/python",
+  "repository": "sclevine/yj",
+  "selected_branches": [
+    "yj_v2_expansive_union"
+  ],
+  "test_suite": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 766,
+    "kind": "generated",
+    "label": "yj_v2_expansive_union",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 89.3,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/sclevine/yj/v5/convert/encoding.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 88.9,
+        "total_executable_lines": 27
+      },
+      "github.com/sclevine/yj/v5/convert/hcl.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 75.0,
+        "total_executable_lines": 24
+      },
+      "github.com/sclevine/yj/v5/convert/json.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 85.7,
+        "total_executable_lines": 28
+      },
+      "github.com/sclevine/yj/v5/convert/toml.go": {
+        "covered_executable_lines": 28,
+        "line_coverage_percent": 93.3,
+        "total_executable_lines": 30
+      },
+      "github.com/sclevine/yj/v5/convert/yaml.go": {
+        "covered_executable_lines": 37,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 37
+      },
+      "github.com/sclevine/yj/v5/flags.go": {
+        "covered_executable_lines": 114,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 114
+      },
+      "github.com/sclevine/yj/v5/hcl/decoder.go": {
+        "covered_executable_lines": 80,
+        "line_coverage_percent": 93.0,
+        "total_executable_lines": 86
+      },
+      "github.com/sclevine/yj/v5/main.go": {
+        "covered_executable_lines": 29,
+        "line_coverage_percent": 93.5,
+        "total_executable_lines": 31
+      },
+      "github.com/sclevine/yj/v5/order/map.go": {
+        "covered_executable_lines": 71,
+        "line_coverage_percent": 84.5,
+        "total_executable_lines": 84
+      },
+      "github.com/sclevine/yj/v5/toml/decoder.go": {
+        "covered_executable_lines": 92,
+        "line_coverage_percent": 97.9,
+        "total_executable_lines": 94
+      },
+      "github.com/sclevine/yj/v5/toml/encoder.go": {
+        "covered_executable_lines": 31,
+        "line_coverage_percent": 91.2,
+        "total_executable_lines": 34
+      },
+      "github.com/sclevine/yj/v5/toml/util.go": {
+        "covered_executable_lines": 2,
+        "line_coverage_percent": 33.3,
+        "total_executable_lines": 6
+      },
+      "github.com/sclevine/yj/v5/yaml/decoder.go": {
+        "covered_executable_lines": 128,
+        "line_coverage_percent": 82.1,
+        "total_executable_lines": 156
+      },
+      "github.com/sclevine/yj/v5/yaml/encoder.go": {
+        "covered_executable_lines": 62,
+        "line_coverage_percent": 89.9,
+        "total_executable_lines": 69
+      },
+      "github.com/sclevine/yj/v5/yaml/json.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 68.8,
+        "total_executable_lines": 32
+      },
+      "github.com/sclevine/yj/v5/yaml/util.go": {
+        "covered_executable_lines": 4,
+        "line_coverage_percent": 66.7,
+        "total_executable_lines": 6
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union/source/coverage/yj_v2_expansive_union_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 90.3,
+    "suite_count": 1,
+    "total_executable_lines": 858
+  },
+  "work_dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/sclevine__yj.8016400/union_coverage/sclevine__yj.8016400/yj_v2_expansive_union"
+}

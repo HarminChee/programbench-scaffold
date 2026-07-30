@@ -1,0 +1,87 @@
+{
+  "binary_consistent": true,
+  "cases_json": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_runroot_20260729/alecthomas__chroma.8d04def/merged/v3_low_value_filtered.json",
+  "coverage": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_runroot_20260729/coverage/alecthomas__chroma.8d04def/v3_final.go_coverage_summary.json",
+  "coverage_timing": {
+    "coverage_postprocess_seconds": 1.697252,
+    "coverage_pytest_seconds": 3.068841,
+    "definition": "statement_coverage_signal_seconds is the instrumented coverage-binary pytest runtime plus go covdata/textfmt/cover post-processing; it excludes clone, build, native tests, and cleanroom/source consistency runs.",
+    "native_coverage_signal_seconds": 1.336393,
+    "statement_coverage_signal_seconds": 4.766093,
+    "total_harness_runtime_seconds": 25.069883,
+    "unit": "seconds"
+  },
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 1,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "cover_profile_statement_blocks",
+    "covered_executable_lines": 206,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 68.7,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/alecthomas/chroma/v2/cmd/chroma/main.go": {
+        "covered_executable_lines": 206,
+        "line_coverage_percent": 68.7,
+        "total_executable_lines": 300
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_work_20260729/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 67.9,
+    "suite_count": 1,
+    "total_executable_lines": 300
+  },
+  "instance_id": "alecthomas__chroma.8d04def",
+  "manifest": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_runroot_20260729/generated/alecthomas__chroma.8d04def/v3_final/oracle_tests/eval/generated_cli_manifest.json",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 0,
+    "go_test_package_coverage_percent": null,
+    "go_test_returncode": 1,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": null,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_work_20260729/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v3_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_work_20260729/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v3_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {},
+    "profile": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_work_20260729/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v3_final/source/cmd/chroma/coverage/native_profile.txt",
+    "statement_coverage_percent": 0.0,
+    "timing": {
+      "cover_func_seconds": 0.519106,
+      "go_test_seconds": 0.817287,
+      "native_coverage_signal_seconds": 1.336393,
+      "unit": "seconds"
+    },
+    "total_executable_lines": 0
+  },
+  "quality": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_runroot_20260729/generated/alecthomas__chroma.8d04def/v3_final/evaluation_quality_report.json",
+  "quality_returncode": 0,
+  "schema": "programbench_oracle_gym_v3_repo_summary",
+  "stop_gate": {
+    "checks": {
+      "all_dummies_rejected": true,
+      "assertion_lint": true,
+      "generated_tests_passed": true,
+      "minimum_primary": false,
+      "minimum_secondary": false,
+      "source_leak": true,
+      "stretch_primary": false,
+      "stretch_secondary": false,
+      "three_binary_consistent": true
+    },
+    "note": "saturation rounds and reachable-coverage audit are required before a final production stop",
+    "pb_baseline_used": false,
+    "primary_percent": 67.9,
+    "schema": "programbench_oracle_gym_v3_stop_gate",
+    "secondary_percent": 68.7,
+    "status": "refine"
+  },
+  "suite_label": "v3_final"
+}

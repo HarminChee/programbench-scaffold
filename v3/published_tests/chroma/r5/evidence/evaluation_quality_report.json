@@ -1,0 +1,103 @@
+{
+  "all_dummies_rejected": true,
+  "all_tests_reject_all_dummies": true,
+  "assertion_lint": {
+    "files": [
+      {
+        "issues": [],
+        "path": "eval/tests/test_generated_cli_oracle.py",
+        "test_function_count": 59
+      }
+    ],
+    "high_count": 0,
+    "issue_count": 0,
+    "issues": [],
+    "low_count": 0,
+    "medium_count": 0,
+    "oracle_root": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_work_20260729/alecthomas__chroma.8d04def/final_coverage_material",
+    "passed": true,
+    "rule_reference": {
+      "high": [
+        "all_assertions_weak",
+        "assertion_disjunction",
+        "golden_docstring",
+        "golden_no_equality",
+        "golden_written_in_test",
+        "if_else_both_assert",
+        "if_no_else",
+        "no_assertions",
+        "pass_body",
+        "returncode_in_list",
+        "short_substring",
+        "sole_returncode",
+        "trivially_true",
+        "try_except_swallow"
+      ],
+      "low": [
+        "catches"
+      ],
+      "medium": [
+        "any_all_no_guard",
+        "file_exists_no_content",
+        "for_no_guard",
+        "only_negative_assertions",
+        "relative_length_assertion",
+        "weak_sole_assertion"
+      ],
+      "note": "ProgramBench Appendix A.3.5 Table 8 structural assertion rules, implemented as a conservative AST approximation."
+    },
+    "test_file_count": 1
+  },
+  "dummy_method": "exact simulation of standard dummy returncode/stdout/stderr and unchanged fixture state",
+  "dummy_passing_test_count": 0,
+  "dummy_passing_test_names": [],
+  "dummy_reject": [
+    {
+      "all_tests_rejected": true,
+      "kind": "true",
+      "method": "manifest_semantic_simulation",
+      "passing_test_count": 0,
+      "passing_test_names": []
+    },
+    {
+      "all_tests_rejected": true,
+      "kind": "cat-stdin",
+      "method": "manifest_semantic_simulation",
+      "passing_test_count": 0,
+      "passing_test_names": []
+    },
+    {
+      "all_tests_rejected": true,
+      "kind": "false",
+      "method": "manifest_semantic_simulation",
+      "passing_test_count": 0,
+      "passing_test_names": []
+    },
+    {
+      "all_tests_rejected": true,
+      "kind": "empty-stderr",
+      "method": "manifest_semantic_simulation",
+      "passing_test_count": 0,
+      "passing_test_names": []
+    }
+  ],
+  "oracle_material_root": "/home/programbench/research/oracle-workspace/v3/chroma_v3_r5_probe_work_20260729/alecthomas__chroma.8d04def/final_coverage_material",
+  "repeat_check": {
+    "junit_summary": {
+      "error_test_names": [],
+      "failed_test_names": []
+    },
+    "method": "gold_capture_determinism_plus_three_binary_runtime",
+    "passed": true
+  },
+  "schema": "programbench_oracle_gym_v3_fast_quality",
+  "source_leak_scan": {
+    "fixture_string_matches_ignored": [],
+    "passed": true,
+    "source_identifying_matches": [],
+    "source_identifying_string_matches": 0,
+    "source_like_file_matches": 0,
+    "source_like_files": [],
+    "total_files_scanned": 181
+  }
+}
