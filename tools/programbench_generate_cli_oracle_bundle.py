@@ -9,10 +9,12 @@ binary, and materializes exact process observations as pytest fixtures.
 from __future__ import annotations
 
 import argparse
+import base64
 import contextlib
 import datetime as dt
 import hashlib
 import http.server
+import inspect
 import json
 import os
 import re
@@ -66,7 +68,7 @@ def run_command(
     timeout: int | None = None,
     log_path: Path | None = None,
 ) -> dict[str, Any]:
-    started = dt.datetime.now(dt.UTC)
+    started = dt.datetime.now(dt.timezone.utc)
     try:
         proc = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
         timed_out = False
@@ -78,7 +80,7 @@ def run_command(
         returncode = 124
         stdout = exc.stdout if isinstance(exc.stdout, str) else (exc.stdout or b"").decode("utf-8", errors="replace")
         stderr = exc.stderr if isinstance(exc.stderr, str) else (exc.stderr or b"").decode("utf-8", errors="replace")
-    ended = dt.datetime.now(dt.UTC)
+    ended = dt.datetime.now(dt.timezone.utc)
     payload = {
         "cmd": cmd,
         "cwd": str(cwd) if cwd else None,
@@ -552,6 +554,73 @@ def case_runtime(case: dict[str, Any]) -> Iterator[tuple[Path, str]]:
                 raise ValueError(f"unsafe case fixture path: {relative}")
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(str(content), encoding="utf-8")
+        for relative, content in dict(case.get("executable_files") or {}).items():
+            target = (cwd / str(relative)).resolve()
+            if cwd not in target.parents:
+                raise ValueError(f"unsafe executable fixture path: {relative}")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(str(content), encoding="utf-8")
+            target.chmod(0o755)
+        for relative, content in dict(case.get("binary_files") or {}).items():
+            target = (cwd / str(relative)).resolve()
+            if cwd not in target.parents:
+                raise ValueError(f"unsafe binary fixture path: {relative}")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(base64.b64decode(str(content), validate=True))
+        for relative, spec in dict(case.get("repeat_files") or {}).items():
+            target = (cwd / str(relative)).resolve()
+            if cwd not in target.parents:
+                raise ValueError(f"unsafe repeated fixture path: {relative}")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            segments = spec.get("segments")
+            content = (
+                "".join(str(segment.get("row") or "") * int(segment.get("count") or 0) for segment in segments)
+                if isinstance(segments, list)
+                else str(spec.get("prefix") or "")
+                + str(spec.get("row") or "") * int(spec.get("count") or 0)
+                + str(spec.get("suffix") or "")
+            )
+            encoding = str(spec.get("encoding") or "utf-8").lower()
+            if encoding in {"latin-1", "latin1"}:
+                target.write_bytes(content.encode("latin-1"))
+            else:
+                target.write_text(content, encoding="utf-8")
+        git_fixture = case.get("git") if isinstance(case.get("git"), dict) else None
+        if git_fixture and git_fixture.get("init") is True:
+            git_env = {
+                **os.environ,
+                "GIT_AUTHOR_NAME": "ProgramBench",
+                "GIT_AUTHOR_EMAIL": "programbench@example.invalid",
+                "GIT_COMMITTER_NAME": "ProgramBench",
+                "GIT_COMMITTER_EMAIL": "programbench@example.invalid",
+                "GIT_AUTHOR_DATE": "2000-01-01T00:00:00Z",
+                "GIT_COMMITTER_DATE": "2000-01-01T00:00:00Z",
+            }
+            branch = str(git_fixture.get("branch") or "main")
+            subprocess.run(["git", "init", "-q", "-b", branch], cwd=cwd, env=git_env, check=True)
+            if git_fixture.get("commit_all") is not False:
+                subprocess.run(["git", "add", "-A"], cwd=cwd, env=git_env, check=True)
+                subprocess.run(
+                    ["git", "commit", "-q", "--allow-empty", "-m", "initial"],
+                    cwd=cwd,
+                    env=git_env,
+                    check=True,
+                )
+            for relative, content in dict(git_fixture.get("staged_files") or {}).items():
+                target = (cwd / str(relative)).resolve()
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(str(content), encoding="utf-8")
+            if git_fixture.get("staged_files"):
+                subprocess.run(["git", "add", "-A"], cwd=cwd, env=git_env, check=True)
+            for relative, content in dict(git_fixture.get("untracked_files") or {}).items():
+                target = (cwd / str(relative)).resolve()
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(str(content), encoding="utf-8")
+        for relative, mode in dict(case.get("file_modes") or {}).items():
+            target = (cwd / str(relative)).resolve()
+            if cwd not in target.parents or not target.exists():
+                raise ValueError(f"invalid file mode fixture path: {relative}")
+            target.chmod(int(mode) & 0o777)
         http_fixture = case.get("http") if isinstance(case.get("http"), dict) else None
         server: http.server.ThreadingHTTPServer | None = None
         thread: threading.Thread | None = None
@@ -565,15 +634,26 @@ def case_runtime(case: dict[str, Any]) -> Iterator[tuple[Path, str]]:
                         self.send_error(404)
                         return
                     body = str(response.get("body") or "").encode("utf-8")
-                    self.send_response(int(response.get("status", 200)))
+                    self.send_response_only(int(response.get("status", 200)))
                     for key, value in dict(response.get("headers") or {}).items():
                         self.send_header(str(key), str(value))
                     self.send_header("Content-Length", str(len(body)))
                     self.end_headers()
-                    self.wfile.write(body)
+                    if self.command != "HEAD":
+                        self.wfile.write(body)
+
+                do_POST = do_GET
+                do_PUT = do_GET
+                do_PATCH = do_GET
+                do_DELETE = do_GET
+                do_OPTIONS = do_GET
+                do_HEAD = do_GET
 
                 def log_message(self, format: str, *args: object) -> None:
                     return
+
+                def date_time_string(self, timestamp: float | None = None) -> str:
+                    return "Thu, 01 Jan 1970 00:00:00 GMT"
 
             server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
             thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -589,21 +669,131 @@ def case_runtime(case: dict[str, Any]) -> Iterator[tuple[Path, str]]:
                 thread.join(timeout=2)
 
 
+def capture_observed_files(cwd: Path, case: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Capture bounded post-execution filesystem behavior for strong silent-command oracles."""
+
+    observations: dict[str, dict[str, Any]] = {}
+    for relative in case.get("observe_files") or []:
+        target = cwd / str(relative)
+        if not target.exists() and not target.is_symlink():
+            observations[str(relative)] = {"exists": False}
+            continue
+        resolved = target.resolve()
+        if cwd != resolved and cwd not in resolved.parents:
+            raise ValueError(f"observed file escaped case workspace: {relative}")
+        if target.is_dir():
+            observations[str(relative)] = {"exists": True, "kind": "directory"}
+            continue
+        if not target.is_file():
+            observations[str(relative)] = {"exists": True, "kind": "other"}
+            continue
+        content = target.read_bytes()
+        if len(content) > 1_000_000:
+            raise ValueError(f"observed file exceeds 1 MB: {relative}")
+        observations[str(relative)] = {
+            "exists": True,
+            "kind": "file",
+            "content_base64": base64.b64encode(content).decode("ascii"),
+            "sha256": hashlib.sha256(content).hexdigest(),
+        }
+    return observations
+
+
+def attach_observed_files(observed: dict[str, Any], cwd: Path, case: dict[str, Any]) -> dict[str, Any]:
+    enriched = dict(observed)
+    # Every case runs in a fresh temporary directory. Programs that report an
+    # absolute form of their current directory would otherwise look
+    # nondeterministic even when their behavior is identical. Preserve the
+    # semantic fact that the program reported its work directory while
+    # removing the runner-assigned path.
+    encoded_cwd = str(cwd).encode("utf-8")
+    for stream in ("stdout", "stderr"):
+        enriched[stream] = bytes(enriched.get(stream) or b"").replace(
+            encoded_cwd, b"{workdir}"
+        )
+    enriched["observed_files"] = capture_observed_files(cwd, case)
+    return enriched
+
+
+@contextlib.contextmanager
+def fixed_workspace_reference_alias(reference_binary: Path) -> Iterator[None]:
+    """Serialize and materialize nested `/workspace/executable` probes."""
+
+    if os.name == "nt":
+        yield
+        return
+    import fcntl
+
+    lock = Path("/tmp/programbench-fixed-workspace.lock").open("a+")
+    fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+    alias = Path("/workspace/executable")
+    owns_alias = reference_binary.resolve() != alias.resolve()
+    try:
+        alias.parent.mkdir(parents=True, exist_ok=True)
+        if owns_alias:
+            if alias.is_dir() and not alias.is_symlink():
+                raise IsADirectoryError(alias)
+            if alias.exists() or alias.is_symlink():
+                alias.unlink()
+            shutil.copy2(reference_binary, alias)
+            alias.chmod(alias.stat().st_mode | 0o555)
+        yield
+    finally:
+        if owns_alias and (alias.exists() or alias.is_symlink()) and not alias.is_dir():
+            alias.unlink()
+        fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+        lock.close()
+
+
 def run_reference_case(reference_binary: Path, case: dict[str, Any], timeout: int) -> dict[str, Any]:
+    with fixed_workspace_reference_alias(reference_binary):
+        return _run_reference_case_unlocked(reference_binary, case, timeout)
+
+
+def _run_reference_case_unlocked(reference_binary: Path, case: dict[str, Any], timeout: int) -> dict[str, Any]:
     env = os.environ.copy()
     env["TZ"] = "UTC"
     with case_runtime(case) as (cwd, http_url):
+        if case.get("isolate_home_tmp") is True:
+            isolated_home = cwd / ".case-home"
+            isolated_tmp = cwd / ".case-tmp"
+            isolated_home.mkdir()
+            isolated_tmp.mkdir()
+            env.update({"HOME": str(isolated_home), "TMPDIR": str(isolated_tmp)})
         env.update(
             {str(k): str(v).replace("{http_url}", http_url) for k, v in dict(case.get("env", {})).items()}
         )
         argv0 = str(case.get("argv0", "/workspace/executable")).replace("{http_url}", http_url)
         case_args = [str(item).replace("{http_url}", http_url) for item in case.get("args", [])]
         stdin = str(case.get("stdin", "")).replace("{http_url}", http_url).encode("utf-8")
+        if case.get("terminal"):
+            return normalize_http_runtime_observation(
+                attach_observed_files(
+                    run_terminal_case(
+                        reference_binary=reference_binary,
+                        argv0=argv0,
+                        case_args=case_args,
+                        stdin=stdin,
+                        cwd=cwd,
+                        env=env,
+                        timeout=timeout,
+                        terminal=dict(case["terminal"]),
+                    ),
+                    cwd,
+                    case,
+                ),
+                http_url,
+            )
+        stdin_file = None
         try:
+            if case.get("stdin_regular_file") is True:
+                stdin_path = cwd / ".programbench-stdin"
+                stdin_path.write_bytes(stdin)
+                stdin_file = stdin_path.open("rb")
             proc = subprocess.Popen(
                 [argv0, *case_args],
                 executable=str(reference_binary),
-                stdin=subprocess.PIPE,
+                stdin=stdin_file if stdin_file is not None else subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 cwd=cwd,
@@ -611,22 +801,41 @@ def run_reference_case(reference_binary: Path, case: dict[str, Any], timeout: in
                 start_new_session=os.name != "nt",
             )
         except (OSError, ValueError) as exc:
-            return {
-                "returncode": 127,
-                "stdout": b"",
-                "stderr": str(exc).encode("utf-8", errors="replace"),
-                "timed_out": False,
-                "launch_error": str(exc),
-            }
+            if stdin_file is not None:
+                stdin_file.close()
+            return attach_observed_files(
+                {
+                    "returncode": 127,
+                    "stdout": b"",
+                    "stderr": str(exc).encode("utf-8", errors="replace"),
+                    "timed_out": False,
+                    "launch_error": str(exc),
+                },
+                cwd,
+                case,
+            )
         try:
-            stdout, stderr = proc.communicate(input=stdin, timeout=timeout)
-            return {
-                "returncode": proc.returncode,
-                "stdout": stdout,
-                "stderr": stderr,
-                "timed_out": False,
-            }
+            stdout, stderr = proc.communicate(
+                input=None if stdin_file is not None else stdin, timeout=timeout
+            )
+            if stdin_file is not None:
+                stdin_file.close()
+            return normalize_http_runtime_observation(
+                attach_observed_files(
+                    {
+                        "returncode": proc.returncode,
+                        "stdout": stdout,
+                        "stderr": stderr,
+                        "timed_out": False,
+                    },
+                    cwd,
+                    case,
+                ),
+                http_url,
+            )
         except subprocess.TimeoutExpired as exc:
+            if stdin_file is not None:
+                stdin_file.close()
             if os.name != "nt":
                 try:
                     os.killpg(proc.pid, signal.SIGKILL)
@@ -641,21 +850,416 @@ def run_reference_case(reference_binary: Path, case: dict[str, Any], timeout: in
                 final_stdout, final_stderr = proc.communicate()
             stdout = final_stdout or (exc.stdout if isinstance(exc.stdout, bytes) else (exc.stdout or "").encode("utf-8", errors="replace"))
             stderr = final_stderr or (exc.stderr if isinstance(exc.stderr, bytes) else (exc.stderr or "").encode("utf-8", errors="replace"))
-            return {
-                "returncode": 124,
-                "stdout": stdout,
-                "stderr": stderr,
-                "timed_out": True,
-            }
+            return normalize_http_runtime_observation(
+                attach_observed_files(
+                    {
+                        "returncode": 124,
+                        "stdout": stdout,
+                        "stderr": stderr,
+                        "timed_out": True,
+                    },
+                    cwd,
+                    case,
+                ),
+                http_url,
+            )
 
 
-def observed_signature(observed: dict[str, Any]) -> tuple[int, bool, bytes, bytes]:
+def normalize_http_runtime_observation(observed: dict[str, Any], http_url: str) -> dict[str, Any]:
+    if not http_url:
+        return observed
+    normalized = dict(observed)
+    encoded_url = http_url.encode("utf-8")
+    encoded_host = http_url.split("://", 1)[-1].split("/", 1)[0].encode("utf-8")
+    for stream in ("stdout", "stderr"):
+        data = bytes(observed.get(stream) or b"")
+        normalized[stream] = data.replace(encoded_url, b"{http_url}").replace(encoded_host, b"{http_host}")
+    return normalized
+
+
+def run_terminal_case(
+    *,
+    reference_binary: Path,
+    argv0: str,
+    case_args: list[str],
+    stdin: bytes,
+    cwd: Path,
+    env: dict[str, str],
+    timeout: int,
+    terminal: dict[str, Any],
+) -> dict[str, Any]:
+    """Run a CLI with stdout/stderr attached to a deterministic pseudo-terminal."""
+
+    if os.name == "nt":
+        raise RuntimeError("terminal cases require a Unix pseudo-terminal")
+    import fcntl
+    import pty
+    import select
+    import struct
+    import termios
+
+    kind = str(terminal.get("kind") or "generic")
+    if kind not in {"generic", "iterm2", "kitty", "sixel"}:
+        raise ValueError("terminal.kind must be generic, iterm2, kitty, or sixel")
+    rows = max(2, min(200, int(terminal.get("rows", 24))))
+    cols = max(2, min(400, int(terminal.get("cols", 80))))
+    cell_width = max(1, min(100, int(terminal.get("cell_width", 10))))
+    cell_height = max(1, min(100, int(terminal.get("cell_height", 20))))
+    max_output = max(1024, min(16 * 1024 * 1024, int(terminal.get("max_output_bytes", 4 * 1024 * 1024))))
+    stdin_delay = max(0.0, min(5.0, float(terminal.get("stdin_delay_seconds", 0))))
+    stdin_mode = "pipe" if terminal.get("stdin_mode") == "pipe" else "pty"
+    run_env = dict(env)
+    run_env.update({
+        "TERM_PROGRAM": "iTerm.app" if kind == "iterm2" else "ProgramBench",
+        "TERM": str(terminal.get("term") or "xterm-256color"),
+    })
+    master, slave = pty.openpty()
+    attrs = termios.tcgetattr(slave)
+    attrs[3] &= ~termios.ECHO
+    termios.tcsetattr(slave, termios.TCSANOW, attrs)
+    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", rows, cols, 0, 0))
+    proc = subprocess.Popen(
+        [argv0, *case_args],
+        executable=str(reference_binary),
+        stdin=subprocess.PIPE if stdin_mode == "pipe" else slave,
+        stdout=slave,
+        stderr=slave,
+        cwd=cwd,
+        env=run_env,
+        start_new_session=True,
+        close_fds=True,
+    )
+    os.close(slave)
+    def feed_stdin() -> None:
+        if stdin_delay:
+            time.sleep(stdin_delay)
+        with contextlib.suppress(BrokenPipeError, OSError):
+            if stdin_mode == "pipe":
+                if proc.stdin is not None:
+                    if stdin:
+                        proc.stdin.write(stdin)
+                    for event in terminal.get("input_events") or []:
+                        delay = max(0.0, min(5.0, float(event.get("after_seconds", 0))))
+                        if delay:
+                            time.sleep(delay)
+                        proc.stdin.write(str(event.get("data") or "").encode("utf-8"))
+                    proc.stdin.close()
+            else:
+                if stdin:
+                    os.write(master, stdin)
+                for event in terminal.get("input_events") or []:
+                    delay = max(0.0, min(5.0, float(event.get("after_seconds", 0))))
+                    if delay:
+                        time.sleep(delay)
+                    os.write(master, str(event.get("data") or "").encode("utf-8"))
+                if terminal.get("send_eof") is True:
+                    os.write(master, b"\x04")
+    feeder = threading.Thread(target=feed_stdin, daemon=True)
+    feeder.start()
+    output = bytearray()
+    responses = {b"\x1b[14t": f"\x1b[4;{rows * cell_height};{cols * cell_width}t".encode("ascii")}
+    if kind == "iterm2":
+        responses[b"\x1b]1337;ReportCellSize\x07"] = f"\x1b]1337;ReportCellSize={cell_height};{cell_width}\x1b\\".encode("ascii")
+    if kind == "kitty":
+        responses[b"\x1b_Gi=1,a=q,t=d,f=24\x1b\\"] = b"\x1b_Gi=1;OK\x1b\\"
+    if kind == "sixel":
+        responses[b"\x1b[c"] = b"\x1b[?62;4;c"
+    responded: set[bytes] = set()
+    deadline = time.monotonic() + timeout
+    timed_out = False
+    try:
+        while proc.poll() is None:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                timed_out = True
+                with contextlib.suppress(ProcessLookupError):
+                    os.killpg(proc.pid, signal.SIGKILL)
+                break
+            ready, _, _ = select.select([master], [], [], min(0.1, remaining))
+            if not ready:
+                continue
+            try:
+                chunk = os.read(master, 65536)
+            except OSError:
+                break
+            output.extend(chunk)
+            if len(output) > max_output:
+                with contextlib.suppress(ProcessLookupError):
+                    os.killpg(proc.pid, signal.SIGKILL)
+                raise RuntimeError("terminal case exceeded max_output_bytes")
+            for query, response in responses.items():
+                if query not in responded and query in output:
+                    os.write(master, response)
+                    responded.add(query)
+        proc.wait(timeout=5)
+        while True:
+            ready, _, _ = select.select([master], [], [], 0.02)
+            if not ready:
+                break
+            try:
+                chunk = os.read(master, 65536)
+            except OSError:
+                break
+            if not chunk:
+                break
+            output.extend(chunk)
+    finally:
+        feeder.join(timeout=6)
+        os.close(master)
+    return {
+        "returncode": 124 if timed_out else proc.returncode,
+        "stdout": bytes(output),
+        "stderr": b"",
+        "timed_out": timed_out,
+    }
+
+
+def observed_signature(
+    observed: dict[str, Any], stdout_mode: str = "exact"
+) -> tuple[int, bool, bytes, bytes, str]:
+    stdout = observed["stdout"]
+    if stdout_mode == "lines_unordered":
+        stdout = b"\n".join(sorted(stdout.splitlines()))
     return (
         int(observed["returncode"]),
         bool(observed["timed_out"]),
-        observed["stdout"],
+        stdout,
         observed["stderr"],
+        json.dumps(observed.get("observed_files") or {}, sort_keys=True, separators=(",", ":")),
     )
+
+
+GO_LOG_PREFIX_RE = re.compile(
+    rb"(?m)^\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}(?:\.\d+)?(?: [^ \r\n]+\.go:\d+:)? "
+)
+BENCH_DURATION_RE = re.compile(
+    rb"(?m)^(\s*(?:Total|Slowest|Fastest|Average):\s*)[0-9.]+(\s+secs\.)$"
+)
+BENCH_RATE_RE = re.compile(rb"(?m)^(\s*Requests/sec:\s*)[0-9.]+$")
+BENCH_HISTOGRAM_RE = re.compile(rb"(?m)^(\s*)[0-9.]+(\s+\[\d+\]\s*\|.*)$")
+BENCH_LATENCY_RE = re.compile(rb"(?m)^(\s*\d+% in\s*)[0-9.]+(\s+secs\.)$")
+SEVENZIP_BENCH_NUMBER_RE = re.compile(rb"(?<![A-Za-z])[+-]?\d+(?:\.\d+)?(?:[A-Za-z/%]+)?")
+
+
+EPOCH_NUMBER_RE = re.compile(rb"(?<!\d)[1-3]\d{9}(?!\d)")
+ANSI_ESCAPE_RE = re.compile(rb"\x1b(?:\[[0-?]*[ -/]*[@-~]|.)", re.DOTALL)
+NINJA_GRAPHVIZ_ID_RE = re.compile(rb"\b0x[0-9a-fA-F]+\b")
+NINJA_COMPDB_DIRECTORY_RE = re.compile(rb'("directory"\s*:\s*")[^"]*(")')
+NINJA_STATS_NUMBER_RE = re.compile(rb"(?<![A-Za-z])\d+(?:\.\d+)?")
+
+
+def normalize_ninja_graphviz_ids(value: bytes) -> bytes:
+    return NINJA_GRAPHVIZ_ID_RE.sub(b"0xNODE", value)
+
+
+def normalize_ninja_compdb_directory(value: bytes) -> bytes:
+    return NINJA_COMPDB_DIRECTORY_RE.sub(rb'\g<1><WORKDIR>\g<2>', value)
+
+
+def normalize_ninja_stats(value: bytes) -> bytes:
+    return NINJA_STATS_NUMBER_RE.sub(b"<N>", value)
+
+
+def normalize_terminal_control_tail(value: bytes) -> bytes:
+    """Drop only timing-dependent trailing ANSI controls after visible output."""
+
+    cursor = 0
+    last_visible_end = 0
+    for match in ANSI_ESCAPE_RE.finditer(value):
+        chunk = value[cursor:match.start()]
+        if chunk.strip():
+            last_visible_end = match.start()
+        cursor = match.end()
+    if value[cursor:].strip():
+        last_visible_end = len(value)
+    if not last_visible_end or last_visible_end == len(value):
+        return value
+    return value[:last_visible_end] + b"\n<TERMINAL_CONTROL_TAIL>\n"
+
+
+def normalize_terminal_final_screen(value: bytes, *, rows: int, cols: int) -> bytes:
+    """Reconstruct the final visible ANSI terminal screen for exact comparison."""
+
+    rows = max(2, min(200, int(rows)))
+    cols = max(2, min(400, int(cols)))
+    screen = [[" "] * cols for _ in range(rows)]
+    row = col = 0
+    saved = (0, 0)
+    last_screen: list[list[str]] | None = None
+    text = value.decode("utf-8", "replace")
+
+    def clear_all() -> None:
+        nonlocal screen
+        screen = [[" "] * cols for _ in range(rows)]
+
+    def snapshot() -> None:
+        nonlocal last_screen
+        last_screen = [line[:] for line in screen]
+
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if char == "\x1b":
+            if index + 1 < len(text) and text[index + 1] == "[":
+                match = re.match(r"\x1b\[([0-?]*)([ -/]*)([@-~])", text[index:])
+                if match:
+                    params, _, command = match.groups()
+                    index += len(match.group(0))
+                    private = params.startswith("?")
+                    raw_params = params[1:] if private else params
+                    numbers = [int(item) if item else 0 for item in raw_params.split(";")] if raw_params else []
+                    first = numbers[0] if numbers else 0
+                    if private and first == 1049 and command == "h":
+                        clear_all()
+                        row = col = 0
+                    elif private and first == 1049 and command == "l":
+                        snapshot()
+                    elif command in {"H", "f"}:
+                        row = max(0, min(rows - 1, (numbers[0] if numbers else 1) - 1))
+                        col = max(0, min(cols - 1, (numbers[1] if len(numbers) > 1 else 1) - 1))
+                    elif command == "A":
+                        row = max(0, row - (first or 1))
+                    elif command == "B":
+                        row = min(rows - 1, row + (first or 1))
+                    elif command == "C":
+                        col = min(cols - 1, col + (first or 1))
+                    elif command == "D":
+                        col = max(0, col - (first or 1))
+                    elif command == "E":
+                        row, col = min(rows - 1, row + (first or 1)), 0
+                    elif command == "F":
+                        row, col = max(0, row - (first or 1)), 0
+                    elif command in {"G", "`"}:
+                        col = max(0, min(cols - 1, (first or 1) - 1))
+                    elif command == "d":
+                        row = max(0, min(rows - 1, (first or 1) - 1))
+                    elif command == "J":
+                        if first in {2, 3}:
+                            clear_all()
+                        elif first == 0:
+                            screen[row][col:] = [" "] * (cols - col)
+                            for target in range(row + 1, rows):
+                                screen[target] = [" "] * cols
+                        elif first == 1:
+                            for target in range(row):
+                                screen[target] = [" "] * cols
+                            screen[row][: col + 1] = [" "] * (col + 1)
+                    elif command == "K":
+                        if first == 0:
+                            screen[row][col:] = [" "] * (cols - col)
+                        elif first == 1:
+                            screen[row][: col + 1] = [" "] * (col + 1)
+                        elif first == 2:
+                            screen[row] = [" "] * cols
+                    elif command == "s":
+                        saved = (row, col)
+                    elif command == "u":
+                        row, col = saved
+                    continue
+            if index + 1 < len(text) and text[index + 1] in {"7", "8"}:
+                if text[index + 1] == "7":
+                    saved = (row, col)
+                else:
+                    row, col = saved
+                index += 2
+                continue
+            if index + 1 < len(text) and text[index + 1] == "]":
+                end_bel = text.find("\x07", index + 2)
+                end_st = text.find("\x1b\\", index + 2)
+                endings = [item for item in (end_bel, end_st) if item >= 0]
+                index = (min(endings) + (2 if min(endings) == end_st else 1)) if endings else len(text)
+                continue
+            index += 2
+            continue
+        if char == "\r":
+            col = 0
+        elif char == "\n":
+            row = min(rows - 1, row + 1)
+        elif char == "\b":
+            col = max(0, col - 1)
+        elif char >= " " and char != "\x7f":
+            screen[row][col] = char
+            col += 1
+            if col >= cols:
+                col = 0
+                row = min(rows - 1, row + 1)
+        index += 1
+
+    selected = last_screen or screen
+    lines = ["".join(line).rstrip() for line in selected]
+    while lines and not lines[-1]:
+        lines.pop()
+    return ("<TERMINAL_FINAL_SCREEN>\n" + "\n".join(lines) + "\n").encode("utf-8")
+
+
+TUI_WPM_METRIC_RE = re.compile(rb"(\b(?:avg\.|last)\s*)-?\d+(?=WPM\b)")
+TUI_ACC_METRIC_RE = re.compile(rb"(\b(?:avg\.|last)\s*)-?\d+(?=% Acc\b)")
+
+
+def normalize_tui_metrics(value: bytes) -> bytes:
+    value = TUI_WPM_METRIC_RE.sub(rb"\g<1><WPM>", value)
+    return TUI_ACC_METRIC_RE.sub(rb"\g<1><ACC>", value)
+
+
+def normalize_benchmark_output(value: bytes) -> bytes:
+    value = BENCH_DURATION_RE.sub(rb"\g<1>0.0000\g<2>", value)
+    value = BENCH_RATE_RE.sub(rb"\g<1>0.0000", value)
+    value = BENCH_HISTOGRAM_RE.sub(rb"\g<1>0.000\g<2>", value)
+    value = BENCH_LATENCY_RE.sub(rb"\g<1>0.0000\g<2>", value)
+    if b"Compressing  |" not in value:
+        return value
+    lines = value.splitlines(keepends=True)
+    table_index = next(i for i, line in enumerate(lines) if b"Compressing  |" in line)
+    system_index = next(
+        (
+            i
+            for i, line in enumerate(lines[:table_index])
+            if line.strip().startswith((b"Compiler:", b"Linux :", b"PageSize:"))
+        ),
+        table_index,
+    )
+    # 7-Zip emits a variable number of host-calibration lines before the
+    # benchmark table.  Replacing each line independently is insufficient:
+    # the line count itself can change under transient scheduler load.
+    lines = lines[:system_index] + [b"<SYSTEM>\n", b"\n"] + lines[table_index:]
+    normalized: list[bytes] = []
+    in_table = False
+    for line in lines:
+        if b"Compressing  |" in line:
+            in_table = True
+        if in_table and any(48 <= byte <= 57 for byte in line):
+            line = SEVENZIP_BENCH_NUMBER_RE.sub(b"<N>", line)
+            line = b" ".join(line.split()) + b"\n"
+        normalized.append(line)
+    return b"".join(normalized)
+
+
+def normalize_observed(case: dict[str, Any], observed: dict[str, Any]) -> dict[str, Any]:
+    normalized = dict(observed)
+    if case.get("normalize_go_log_prefix") is True:
+        normalized["stderr"] = GO_LOG_PREFIX_RE.sub(b"", bytes(observed.get("stderr") or b""))
+    if case.get("normalize_benchmark_output") is True:
+        normalized["stdout"] = normalize_benchmark_output(bytes(observed.get("stdout") or b""))
+        normalized["stderr"] = normalize_benchmark_output(bytes(normalized.get("stderr") or b""))
+    if case.get("normalize_epoch_numbers") is True:
+        normalized["stdout"] = EPOCH_NUMBER_RE.sub(b"<EPOCH>", bytes(normalized.get("stdout") or b""))
+        normalized["stderr"] = EPOCH_NUMBER_RE.sub(b"<EPOCH>", bytes(normalized.get("stderr") or b""))
+    if (case.get("terminal") or {}).get("output_mode") == "control_tail_trim":
+        normalized["stdout"] = normalize_terminal_control_tail(bytes(normalized.get("stdout") or b""))
+    if (case.get("terminal") or {}).get("output_mode") == "final_screen":
+        terminal = case.get("terminal") or {}
+        normalized["stdout"] = normalize_terminal_final_screen(
+            bytes(normalized.get("stdout") or b""), rows=int(terminal.get("rows", 24)), cols=int(terminal.get("cols", 80))
+        )
+    if case.get("normalize_tui_metrics") is True:
+        normalized["stdout"] = normalize_tui_metrics(bytes(normalized.get("stdout") or b""))
+    if case.get("normalize_ninja_graphviz_ids") is True:
+        normalized["stdout"] = normalize_ninja_graphviz_ids(bytes(normalized.get("stdout") or b""))
+    if case.get("normalize_ninja_compdb_directory") is True:
+        normalized["stdout"] = normalize_ninja_compdb_directory(bytes(normalized.get("stdout") or b""))
+    if case.get("normalize_ninja_stats") is True:
+        normalized["stdout"] = normalize_ninja_stats(bytes(normalized.get("stdout") or b""))
+    return normalized
 
 
 def has_volatile_output(observed: dict[str, Any]) -> bool:
@@ -670,12 +1274,15 @@ def write_generated_pytest(bundle_root: Path, profile: str, cases: list[dict[str
 from __future__ import annotations
 
 import contextlib
+import base64
 import http.server
 import json
 import os
+import re
 import signal
 import subprocess
 import threading
+import time
 from pathlib import Path
 
 WORKSPACE = Path(__file__).resolve().parents[2]
@@ -696,6 +1303,65 @@ def _case_runtime(case: dict, tmp_path: Path):
             raise AssertionError(f"unsafe fixture path: {relative}")
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(content, encoding="utf-8")
+    for relative, content in case.get("executable_files", {}).items():
+        target = (tmp_path / relative).resolve()
+        if tmp_path.resolve() not in target.parents:
+            raise AssertionError(f"unsafe executable fixture path: {relative}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(content, encoding="utf-8")
+        target.chmod(0o755)
+    for relative, content in case.get("binary_files", {}).items():
+        target = (tmp_path / relative).resolve()
+        if tmp_path.resolve() not in target.parents:
+            raise AssertionError(f"unsafe binary fixture path: {relative}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(base64.b64decode(content, validate=True))
+    for relative, spec in case.get("repeat_files", {}).items():
+        target = (tmp_path / relative).resolve()
+        if tmp_path.resolve() not in target.parents:
+            raise AssertionError(f"unsafe repeated fixture path: {relative}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        segments = spec.get("segments")
+        content = (
+            "".join(segment.get("row", "") * int(segment.get("count", 0)) for segment in segments)
+            if isinstance(segments, list)
+            else spec.get("prefix", "") + spec.get("row", "") * int(spec.get("count", 0)) + spec.get("suffix", "")
+        )
+        encoding = str(spec.get("encoding") or "utf-8").lower()
+        if encoding in {"latin-1", "latin1"}:
+            target.write_bytes(content.encode("latin-1"))
+        else:
+            target.write_text(content, encoding="utf-8")
+    git_fixture = case.get("git") or None
+    if git_fixture and git_fixture.get("init") is True:
+        git_env = {
+            **os.environ,
+            "GIT_AUTHOR_NAME": "ProgramBench",
+            "GIT_AUTHOR_EMAIL": "programbench@example.invalid",
+            "GIT_COMMITTER_NAME": "ProgramBench",
+            "GIT_COMMITTER_EMAIL": "programbench@example.invalid",
+            "GIT_AUTHOR_DATE": "2000-01-01T00:00:00Z",
+            "GIT_COMMITTER_DATE": "2000-01-01T00:00:00Z",
+        }
+        subprocess.run(["git", "init", "-q", "-b", git_fixture.get("branch", "main")], cwd=tmp_path, env=git_env, check=True)
+        if git_fixture.get("commit_all") is not False:
+            subprocess.run(["git", "add", "-A"], cwd=tmp_path, env=git_env, check=True)
+            subprocess.run(["git", "commit", "-q", "--allow-empty", "-m", "initial"], cwd=tmp_path, env=git_env, check=True)
+        for relative, content in git_fixture.get("staged_files", {}).items():
+            target = (tmp_path / relative).resolve()
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(content, encoding="utf-8")
+        if git_fixture.get("staged_files"):
+            subprocess.run(["git", "add", "-A"], cwd=tmp_path, env=git_env, check=True)
+        for relative, content in git_fixture.get("untracked_files", {}).items():
+            target = (tmp_path / relative).resolve()
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(content, encoding="utf-8")
+    for relative, mode in case.get("file_modes", {}).items():
+        target = (tmp_path / relative).resolve()
+        if tmp_path.resolve() not in target.parents or not target.exists():
+            raise AssertionError(f"invalid file mode fixture path: {relative}")
+        target.chmod(int(mode) & 0o777)
     response = case.get("http") or None
     server = None
     thread = None
@@ -707,15 +1373,26 @@ def _case_runtime(case: dict, tmp_path: Path):
                     self.send_error(404)
                     return
                 body = response.get("body", "").encode("utf-8")
-                self.send_response(response.get("status", 200))
+                self.send_response_only(response.get("status", 200))
                 for key, value in response.get("headers", {}).items():
                     self.send_header(key, value)
                 self.send_header("Content-Length", str(len(body)))
                 self.end_headers()
-                self.wfile.write(body)
+                if self.command != "HEAD":
+                    self.wfile.write(body)
+
+            do_POST = do_GET
+            do_PUT = do_GET
+            do_PATCH = do_GET
+            do_DELETE = do_GET
+            do_OPTIONS = do_GET
+            do_HEAD = do_GET
 
             def log_message(self, format, *args):
                 return
+
+            def date_time_string(self, timestamp=None):
+                return "Thu, 01 Jan 1970 00:00:00 GMT"
 
         server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -731,6 +1408,14 @@ def _case_runtime(case: dict, tmp_path: Path):
             thread.join(timeout=2)
 
 
+def _case_timeout(case: dict) -> float:
+    timeout = float(case.get("timeout", 5))
+    cap = os.environ.get("PROGRAMBENCH_CASE_TIMEOUT_CAP", "").strip()
+    if cap:
+        timeout = min(timeout, max(0.1, float(cap)))
+    return timeout
+
+
 def _execute_case(index: int, tmp_path: Path) -> tuple[dict, Path, int, bytes, bytes, bytes, bytes]:
     case = CASES[index]
     executable = WORKSPACE / "executable"
@@ -743,32 +1428,270 @@ def _execute_case(index: int, tmp_path: Path) -> tuple[dict, Path, int, bytes, b
     env = os.environ.copy()
     env["TZ"] = "UTC"
     with _case_runtime(case, tmp_path) as http_url:
+        if case.get("isolate_home_tmp") is True:
+            isolated_home = tmp_path / ".case-home"
+            isolated_tmp = tmp_path / ".case-tmp"
+            isolated_home.mkdir(exist_ok=True)
+            isolated_tmp.mkdir(exist_ok=True)
+            env.update({"HOME": str(isolated_home), "TMPDIR": str(isolated_tmp)})
         env.update({key: value.replace("{http_url}", http_url) for key, value in case.get("env", {}).items()})
         argv0 = case.get("argv0", "/workspace/executable").replace("{http_url}", http_url)
         args = [item.replace("{http_url}", http_url) for item in case["args"]]
         stdin = stdin_template.replace(b"{http_url}", http_url.encode("utf-8"))
-        proc = subprocess.Popen(
-            [argv0, *args],
-            executable=str(executable),
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            cwd=tmp_path,
-            env=env,
-            start_new_session=os.name != "nt",
-        )
-        try:
-            stdout, stderr = proc.communicate(input=stdin, timeout=case.get("timeout", 5))
-        except subprocess.TimeoutExpired:
-            if os.name != "nt":
+        if case.get("terminal"):
+            returncode, stdout, stderr = _run_terminal(
+                executable=executable,
+                argv0=argv0,
+                args=args,
+                stdin=stdin,
+                cwd=tmp_path,
+                env=env,
+                timeout=_case_timeout(case),
+                terminal=case["terminal"],
+            )
+        else:
+            stdin_file = None
+            if case.get("stdin_regular_file") is True:
+                stdin_path = tmp_path / ".programbench-stdin"
+                stdin_path.write_bytes(stdin)
+                stdin_file = stdin_path.open("rb")
+            proc = subprocess.Popen(
+                [argv0, *args],
+                executable=str(executable),
+                stdin=stdin_file if stdin_file is not None else subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                cwd=tmp_path,
+                env=env,
+                start_new_session=os.name != "nt",
+            )
+            try:
+                stdout, stderr = proc.communicate(
+                    input=None if stdin_file is not None else stdin,
+                    timeout=_case_timeout(case),
+                )
+                if stdin_file is not None:
+                    stdin_file.close()
+            except subprocess.TimeoutExpired:
+                if stdin_file is not None:
+                    stdin_file.close()
+                if os.name != "nt":
+                    with contextlib.suppress(ProcessLookupError):
+                        os.killpg(proc.pid, signal.SIGKILL)
+                else:
+                    proc.kill()
+                proc.communicate()
+                raise
+            returncode = proc.returncode
+        if http_url:
+            encoded_url = http_url.encode("utf-8")
+            encoded_host = http_url.split("://", 1)[-1].split("/", 1)[0].encode("utf-8")
+            stdout = stdout.replace(encoded_url, b"{http_url}").replace(encoded_host, b"{http_host}")
+            stderr = stderr.replace(encoded_url, b"{http_url}").replace(encoded_host, b"{http_host}")
+        encoded_workdir = str(tmp_path).encode("utf-8")
+        stdout = stdout.replace(encoded_workdir, b"{workdir}")
+        stderr = stderr.replace(encoded_workdir, b"{workdir}")
+
+    return case, executable, returncode, stdout, stderr, expected_stdout, expected_stderr
+
+
+def _run_terminal(*, executable: Path, argv0: str, args: list[str], stdin: bytes, cwd: Path,
+                  env: dict[str, str], timeout: int, terminal: dict) -> tuple[int, bytes, bytes]:
+    if os.name == "nt":
+        raise RuntimeError("terminal cases require a Unix pseudo-terminal")
+    import fcntl
+    import pty
+    import select
+    import struct
+    import termios
+
+    kind = str(terminal.get("kind") or "generic")
+    if kind not in {"generic", "iterm2", "kitty", "sixel"}:
+        raise ValueError("terminal.kind must be generic, iterm2, kitty, or sixel")
+    rows = max(2, min(200, int(terminal.get("rows", 24))))
+    cols = max(2, min(400, int(terminal.get("cols", 80))))
+    cell_width = max(1, min(100, int(terminal.get("cell_width", 10))))
+    cell_height = max(1, min(100, int(terminal.get("cell_height", 20))))
+    max_output = max(1024, min(16 * 1024 * 1024, int(terminal.get("max_output_bytes", 4 * 1024 * 1024))))
+    stdin_delay = max(0.0, min(5.0, float(terminal.get("stdin_delay_seconds", 0))))
+    stdin_mode = "pipe" if terminal.get("stdin_mode") == "pipe" else "pty"
+    run_env = dict(env)
+    run_env.update({
+        "TERM_PROGRAM": "iTerm.app" if kind == "iterm2" else "ProgramBench",
+        "TERM": str(terminal.get("term") or "xterm-256color"),
+    })
+    master, slave = pty.openpty()
+    attrs = termios.tcgetattr(slave)
+    attrs[3] &= ~termios.ECHO
+    termios.tcsetattr(slave, termios.TCSANOW, attrs)
+    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", rows, cols, 0, 0))
+    proc = subprocess.Popen(
+        [argv0, *args], executable=str(executable),
+        stdin=subprocess.PIPE if stdin_mode == "pipe" else slave, stdout=slave, stderr=slave,
+        cwd=cwd, env=run_env, start_new_session=True, close_fds=True,
+    )
+    os.close(slave)
+    def feed_stdin() -> None:
+        if stdin_delay:
+            time.sleep(stdin_delay)
+        with contextlib.suppress(BrokenPipeError, OSError):
+            if stdin_mode == "pipe":
+                if proc.stdin is not None:
+                    if stdin:
+                        proc.stdin.write(stdin)
+                    for event in terminal.get("input_events") or []:
+                        delay = max(0.0, min(5.0, float(event.get("after_seconds", 0))))
+                        if delay:
+                            time.sleep(delay)
+                        proc.stdin.write(str(event.get("data") or "").encode("utf-8"))
+                    proc.stdin.close()
+            else:
+                if stdin:
+                    os.write(master, stdin)
+                for event in terminal.get("input_events") or []:
+                    delay = max(0.0, min(5.0, float(event.get("after_seconds", 0))))
+                    if delay:
+                        time.sleep(delay)
+                    os.write(master, str(event.get("data") or "").encode("utf-8"))
+                if terminal.get("send_eof") is True:
+                    os.write(master, b"\\x04")
+    feeder = threading.Thread(target=feed_stdin, daemon=True)
+    feeder.start()
+    output = bytearray()
+    responses = {b"\\x1b[14t": f"\\x1b[4;{rows * cell_height};{cols * cell_width}t".encode("ascii")}
+    if kind == "iterm2":
+        responses[b"\\x1b]1337;ReportCellSize\\x07"] = f"\\x1b]1337;ReportCellSize={cell_height};{cell_width}\\x1b\\\\".encode("ascii")
+    if kind == "kitty":
+        responses[b"\\x1b_Gi=1,a=q,t=d,f=24\\x1b\\\\"] = b"\\x1b_Gi=1;OK\\x1b\\\\"
+    if kind == "sixel":
+        responses[b"\\x1b[c"] = b"\\x1b[?62;4;c"
+    responded: set[bytes] = set()
+    deadline = time.monotonic() + timeout
+    try:
+        while proc.poll() is None:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
                 with contextlib.suppress(ProcessLookupError):
                     os.killpg(proc.pid, signal.SIGKILL)
-            else:
-                proc.kill()
-            proc.communicate()
-            raise
+                proc.wait(timeout=5)
+                raise subprocess.TimeoutExpired([argv0, *args], timeout, output=bytes(output))
+            ready, _, _ = select.select([master], [], [], min(0.1, remaining))
+            if not ready:
+                continue
+            try:
+                chunk = os.read(master, 65536)
+            except OSError:
+                break
+            output.extend(chunk)
+            if len(output) > max_output:
+                with contextlib.suppress(ProcessLookupError):
+                    os.killpg(proc.pid, signal.SIGKILL)
+                raise RuntimeError("terminal case exceeded max_output_bytes")
+            for query, response in responses.items():
+                if query not in responded and query in output:
+                    os.write(master, response)
+                    responded.add(query)
+        proc.wait(timeout=5)
+        while True:
+            ready, _, _ = select.select([master], [], [], 0.02)
+            if not ready:
+                break
+            try:
+                chunk = os.read(master, 65536)
+            except OSError:
+                break
+            if not chunk:
+                break
+            output.extend(chunk)
+    finally:
+        feeder.join(timeout=6)
+        os.close(master)
+    return proc.returncode, bytes(output), b""
 
-    return case, executable, proc.returncode, stdout, stderr, expected_stdout, expected_stderr
+
+GO_LOG_PREFIX_RE = re.compile(
+    rb"(?m)^\\d{4}/\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?: [^ \\r\\n]+\\.go:\\d+:)? "
+)
+BENCH_DURATION_RE = re.compile(
+    rb"(?m)^(\\s*(?:Total|Slowest|Fastest|Average):\\s*)[0-9.]+(\\s+secs\\.)$"
+)
+BENCH_RATE_RE = re.compile(rb"(?m)^(\\s*Requests/sec:\\s*)[0-9.]+$")
+BENCH_HISTOGRAM_RE = re.compile(rb"(?m)^(\\s*)[0-9.]+(\\s+\\[\\d+\\]\\s*\\|.*)$")
+BENCH_LATENCY_RE = re.compile(rb"(?m)^(\\s*\\d+% in\\s*)[0-9.]+(\\s+secs\\.)$")
+SEVENZIP_BENCH_NUMBER_RE = re.compile(rb"(?<![A-Za-z])[+-]?\\d+(?:\\.\\d+)?(?:[A-Za-z/%]+)?")
+
+
+EPOCH_NUMBER_RE = re.compile(rb"(?<!\\d)[1-3]\\d{9}(?!\\d)")
+ANSI_ESCAPE_RE = re.compile(rb"\\x1b(?:\\[[0-?]*[ -/]*[@-~]|.)", re.DOTALL)
+NINJA_GRAPHVIZ_ID_RE = re.compile(rb"\\b0x[0-9a-fA-F]+\\b")
+NINJA_COMPDB_DIRECTORY_RE = re.compile(rb'("directory"\\s*:\\s*")[^"]*(")')
+NINJA_STATS_NUMBER_RE = re.compile(rb"(?<![A-Za-z])\\d+(?:\\.\\d+)?")
+
+
+def _normalize_ninja_graphviz_ids(value: bytes) -> bytes:
+    return NINJA_GRAPHVIZ_ID_RE.sub(b"0xNODE", value)
+
+
+def _normalize_ninja_compdb_directory(value: bytes) -> bytes:
+    return NINJA_COMPDB_DIRECTORY_RE.sub(rb'\\g<1><WORKDIR>\\g<2>', value)
+
+
+def _normalize_ninja_stats(value: bytes) -> bytes:
+    return NINJA_STATS_NUMBER_RE.sub(b"<N>", value)
+
+
+def _normalize_terminal_control_tail(value: bytes) -> bytes:
+    cursor = 0
+    last_visible_end = 0
+    for match in ANSI_ESCAPE_RE.finditer(value):
+        chunk = value[cursor:match.start()]
+        if chunk.strip():
+            last_visible_end = match.start()
+        cursor = match.end()
+    if value[cursor:].strip():
+        last_visible_end = len(value)
+    if not last_visible_end or last_visible_end == len(value):
+        return value
+    return value[:last_visible_end] + b"\\n<TERMINAL_CONTROL_TAIL>\\n"
+
+
+def _normalize_benchmark_output(value: bytes) -> bytes:
+    value = BENCH_DURATION_RE.sub(rb"\\g<1>0.0000\\g<2>", value)
+    value = BENCH_RATE_RE.sub(rb"\\g<1>0.0000", value)
+    value = BENCH_HISTOGRAM_RE.sub(rb"\\g<1>0.000\\g<2>", value)
+    value = BENCH_LATENCY_RE.sub(rb"\\g<1>0.0000\\g<2>", value)
+    if b"Compressing  |" not in value:
+        return value
+    lines = value.splitlines(keepends=True)
+    table_index = next(i for i, line in enumerate(lines) if b"Compressing  |" in line)
+    system_index = next(
+        (
+            i
+            for i, line in enumerate(lines[:table_index])
+            if line.strip().startswith((b"Compiler:", b"Linux :", b"PageSize:"))
+        ),
+        table_index,
+    )
+    lines = lines[:system_index] + [b"<SYSTEM>\\n", b"\\n"] + lines[table_index:]
+    normalized = []
+    in_table = False
+    for line in lines:
+        if b"Compressing  |" in line:
+            in_table = True
+        if in_table and any(48 <= byte <= 57 for byte in line):
+            line = SEVENZIP_BENCH_NUMBER_RE.sub(b"<N>", line)
+            line = b" ".join(line.split()) + b"\\n"
+        normalized.append(line)
+    return b"".join(normalized)
+
+
+TUI_WPM_METRIC_RE = re.compile(rb"(\\b(?:avg\\.|last)\\s*)-?\\d+(?=WPM\\b)")
+TUI_ACC_METRIC_RE = re.compile(rb"(\\b(?:avg\\.|last)\\s*)-?\\d+(?=% Acc\\b)")
+
+
+def _normalize_tui_metrics(value: bytes) -> bytes:
+    value = TUI_WPM_METRIC_RE.sub(rb"\\g<1><WPM>", value)
+    return TUI_ACC_METRIC_RE.sub(rb"\\g<1><ACC>", value)
 
 
 def _assert_stdout(case: dict, stdout: bytes, expected_stdout: bytes) -> None:
@@ -776,7 +1699,29 @@ def _assert_stdout(case: dict, stdout: bytes, expected_stdout: bytes) -> None:
         assert sorted(stdout.splitlines()) == sorted(expected_stdout.splitlines())
     else:
         assert stdout == expected_stdout
+
+
+def _assert_observed_files(case: dict, tmp_path: Path) -> None:
+    root = tmp_path.resolve()
+    for relative, expected in case.get("observed_files", {}).items():
+        target = tmp_path / relative
+        exists = target.exists() or target.is_symlink()
+        assert exists is bool(expected.get("exists")), f"post-run existence mismatch: {relative}"
+        if not exists:
+            continue
+        resolved = target.resolve()
+        assert resolved == root or root in resolved.parents, f"post-run path escaped workspace: {relative}"
+        kind = expected.get("kind")
+        if kind == "directory":
+            assert target.is_dir(), f"expected post-run directory: {relative}"
+        elif kind == "file":
+            assert target.is_file(), f"expected post-run file: {relative}"
+            expected_bytes = base64.b64decode(expected.get("content_base64", ""), validate=True)
+            assert target.read_bytes() == expected_bytes, f"post-run bytes mismatch: {relative}"
 '''
+    header += "\n\n" + inspect.getsource(normalize_terminal_final_screen).replace(
+        "def normalize_terminal_final_screen", "def _normalize_terminal_final_screen", 1
+    )
     functions: list[str] = []
     for index, case in enumerate(cases):
         name = slug(str(case.get("name") or f"case_{index:04d}"))
@@ -788,8 +1733,32 @@ def test_{index:04d}_{name}(tmp_path: Path) -> None:
     case, executable, returncode, stdout, stderr, expected_stdout, expected_stderr = _execute_case({index}, tmp_path)
     assert executable.exists(), f"missing executable at {{executable}}"
     assert returncode == case["returncode"]
+    if case.get("normalize_benchmark_output") is True:
+        stdout = _normalize_benchmark_output(stdout)
+        stderr = _normalize_benchmark_output(stderr)
+    if case.get("normalize_epoch_numbers") is True:
+        stdout = EPOCH_NUMBER_RE.sub(b"<EPOCH>", stdout)
+        stderr = EPOCH_NUMBER_RE.sub(b"<EPOCH>", stderr)
+    if (case.get("terminal") or {{}}).get("output_mode") == "control_tail_trim":
+        stdout = _normalize_terminal_control_tail(stdout)
+    if (case.get("terminal") or {{}}).get("output_mode") == "final_screen":
+        terminal = case.get("terminal") or {{}}
+        stdout = _normalize_terminal_final_screen(
+            stdout, rows=int(terminal.get("rows", 24)), cols=int(terminal.get("cols", 80))
+        )
+    if case.get("normalize_tui_metrics") is True:
+        stdout = _normalize_tui_metrics(stdout)
+    if case.get("normalize_ninja_graphviz_ids") is True:
+        stdout = _normalize_ninja_graphviz_ids(stdout)
+    if case.get("normalize_ninja_compdb_directory") is True:
+        stdout = _normalize_ninja_compdb_directory(stdout)
+    if case.get("normalize_ninja_stats") is True:
+        stdout = _normalize_ninja_stats(stdout)
     _assert_stdout(case, stdout, expected_stdout)
+    if case.get("normalize_go_log_prefix") is True:
+        stderr = GO_LOG_PREFIX_RE.sub(b"", stderr)
     assert stderr == expected_stderr
+    _assert_observed_files(case, tmp_path)
 '''
         )
     test_path.write_text(header + "".join(functions), encoding="utf-8")
@@ -849,7 +1818,10 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
     )
     if binary_result["returncode"] != 0:
         raise RuntimeError(f"cleanroom executable materialization failed: {binary_result}")
-    reference_binary.chmod(reference_binary.stat().st_mode | stat.S_IXUSR)
+    # Docker preserves the PB cleanroom executable's execute-only mode. The
+    # fixed-workspace alias must be copied, so grant the owning experiment
+    # process read permission without broadening group/other access.
+    reference_binary.chmod(reference_binary.stat().st_mode | stat.S_IRUSR | stat.S_IXUSR)
 
     readme_result = materialize_cleanroom_file(
         image=image,
@@ -876,7 +1848,8 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
     skipped_cases: list[dict[str, Any]] = []
     for index, case in enumerate(cases):
         name = slug(case["name"])
-        observed = run_reference_case(reference_binary, case, args.case_timeout)
+        case_timeout = max(1, min(60, int(case.get("timeout_seconds", args.case_timeout))))
+        observed = normalize_observed(case, run_reference_case(reference_binary, case, case_timeout))
         if observed.get("launch_error"):
             skipped_cases.append(
                 {
@@ -893,7 +1866,7 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
                     "area": case.get("area", "unknown"),
                     "args": list(case.get("args", [])),
                     "reason": "reference_timeout",
-                    "timeout": args.case_timeout,
+                    "timeout": case_timeout,
                     "stdout_sha256": sha256_bytes(observed["stdout"]),
                     "stderr_sha256": sha256_bytes(observed["stderr"]),
                 }
@@ -906,7 +1879,7 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
                     "area": case.get("area", "unknown"),
                     "args": list(case.get("args", [])),
                     "reason": "volatile_reference_output",
-                    "timeout": args.case_timeout,
+                    "timeout": case_timeout,
                     "stdout_sha256": sha256_bytes(observed["stdout"]),
                     "stderr_sha256": sha256_bytes(observed["stderr"]),
                 }
@@ -917,8 +1890,9 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
         for rerun_index in range(args.determinism_reruns):
             if args.determinism_rerun_delay > 0:
                 time.sleep(args.determinism_rerun_delay)
-            rerun = run_reference_case(reference_binary, case, args.case_timeout)
-            if observed_signature(rerun) != observed_signature(observed):
+            rerun = normalize_observed(case, run_reference_case(reference_binary, case, case_timeout))
+            stdout_mode = str(case.get("stdout_mode") or "exact")
+            if observed_signature(rerun, stdout_mode) != observed_signature(observed, stdout_mode):
                 deterministic = False
                 mismatch_index = rerun_index
                 break
@@ -930,7 +1904,7 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
                     "args": list(case.get("args", [])),
                     "reason": "nondeterministic_reference_output",
                     "rerun_index": mismatch_index,
-                    "timeout": args.case_timeout,
+                    "timeout": case_timeout,
                     "stdout_sha256": sha256_bytes(observed["stdout"]),
                     "stderr_sha256": sha256_bytes(observed["stderr"]),
                 }
@@ -953,9 +1927,26 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
                 "argv0": case.get("argv0", "/workspace/executable"),
                 "env": case.get("env", {}),
                 "files": case.get("files", {}),
+                "executable_files": case.get("executable_files", {}),
+                "binary_files": case.get("binary_files", {}),
+                "repeat_files": case.get("repeat_files", {}),
+                "observe_files": case.get("observe_files", []),
+                "observed_files": observed.get("observed_files", {}),
+                "file_modes": case.get("file_modes", {}),
+                "git": case.get("git", {}),
                 "http": case.get("http", {}),
+                "terminal": case.get("terminal", {}),
+                "isolate_home_tmp": case.get("isolate_home_tmp") is True,
+                "stdin_regular_file": case.get("stdin_regular_file") is True,
+                "normalize_go_log_prefix": case.get("normalize_go_log_prefix") is True,
+                "normalize_benchmark_output": case.get("normalize_benchmark_output") is True,
+                "normalize_epoch_numbers": case.get("normalize_epoch_numbers") is True,
+                "normalize_tui_metrics": case.get("normalize_tui_metrics") is True,
+                "normalize_ninja_graphviz_ids": case.get("normalize_ninja_graphviz_ids") is True,
+                "normalize_ninja_compdb_directory": case.get("normalize_ninja_compdb_directory") is True,
+                "normalize_ninja_stats": case.get("normalize_ninja_stats") is True,
                 "stdout_mode": case.get("stdout_mode", "exact"),
-                "timeout": args.case_timeout,
+                "timeout": case_timeout,
                 "returncode": observed["returncode"],
                 "timed_out": observed["timed_out"],
                 "stdin_file": stdin_name,
@@ -974,7 +1965,7 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
         "profile": profile,
         "suite_label": suite_label,
         "method": "cleanroom_reference_binary_black_box_capture",
-        "generated_at": dt.datetime.now(dt.UTC).isoformat(),
+        "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "image": image,
         "case_source": case_source,
         "case_spec_path": str(case_spec_path) if case_spec_path else None,

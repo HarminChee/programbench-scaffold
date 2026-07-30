@@ -1,0 +1,192 @@
+{
+  "all_dummies_rejected": true,
+  "all_tests_reject_all_dummies": true,
+  "assertion_lint": {
+    "files": [
+      {
+        "issues": [],
+        "path": "eval/tests/test_generated_cli_oracle.py",
+        "test_function_count": 440
+      }
+    ],
+    "high_count": 0,
+    "issue_count": 0,
+    "issues": [],
+    "low_count": 0,
+    "medium_count": 0,
+    "oracle_root": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/psampaz__go-mod-outdated.bb79367/final_coverage_material",
+    "passed": true,
+    "rule_reference": {
+      "high": [
+        "all_assertions_weak",
+        "assertion_disjunction",
+        "golden_docstring",
+        "golden_no_equality",
+        "golden_written_in_test",
+        "if_else_both_assert",
+        "if_no_else",
+        "no_assertions",
+        "pass_body",
+        "returncode_in_list",
+        "short_substring",
+        "sole_returncode",
+        "trivially_true",
+        "try_except_swallow"
+      ],
+      "low": [
+        "catches"
+      ],
+      "medium": [
+        "any_all_no_guard",
+        "file_exists_no_content",
+        "for_no_guard",
+        "only_negative_assertions",
+        "relative_length_assertion",
+        "weak_sole_assertion"
+      ],
+      "note": "ProgramBench Appendix A.3.5 Table 8 structural assertion rules, implemented as a conservative AST approximation."
+    },
+    "test_file_count": 1
+  },
+  "dummy_method": "exact simulation of standard dummy returncode/stdout/stderr and unchanged fixture state",
+  "dummy_passing_test_count": 0,
+  "dummy_passing_test_names": [],
+  "dummy_reject": [
+    {
+      "all_tests_rejected": true,
+      "kind": "true",
+      "method": "manifest_semantic_simulation",
+      "passing_test_count": 0,
+      "passing_test_names": []
+    },
+    {
+      "all_tests_rejected": true,
+      "kind": "cat-stdin",
+      "method": "manifest_semantic_simulation",
+      "passing_test_count": 0,
+      "passing_test_names": []
+    },
+    {
+      "all_tests_rejected": true,
+      "kind": "false",
+      "method": "manifest_semantic_simulation",
+      "passing_test_count": 0,
+      "passing_test_names": []
+    },
+    {
+      "all_tests_rejected": true,
+      "kind": "empty-stderr",
+      "method": "manifest_semantic_simulation",
+      "passing_test_count": 0,
+      "passing_test_names": []
+    }
+  ],
+  "oracle_material_root": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/psampaz__go-mod-outdated.bb79367/final_coverage_material",
+  "repeat_check": {
+    "junit_summary": {
+      "error_test_names": [],
+      "failed_test_names": []
+    },
+    "method": "gold_capture_determinism_plus_three_binary_runtime",
+    "passed": true
+  },
+  "schema": "programbench_oracle_gym_v3_fast_quality",
+  "source_leak_scan": {
+    "fixture_string_matches_ignored": [
+      {
+        "line": 2,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/417_batch_20_cartesian_expansion_0015_valid_timestamp_module_shown_true.stdin"
+      },
+      {
+        "line": 5,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/394_batch_19_blackbox_and_boundaries_0027_multiple_json_objects_pipe_style.stdout"
+      },
+      {
+        "line": 1,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/413_batch_19_blackbox_and_boundaries_0052_stdin_regular_file_pipe_simulation.stdin"
+      },
+      {
+        "line": 2,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/394_batch_19_blackbox_and_boundaries_0027_multiple_json_objects_pipe_style.stdin"
+      },
+      {
+        "line": 14,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/222_batch_11_source_and_entrypoints_0000_stdin_default_style_full_table.stdin"
+      },
+      {
+        "line": 15,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/395_batch_19_blackbox_and_boundaries_0028_large_module_list_full_fixture.stdin"
+      },
+      {
+        "line": 5,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/333_batch_16_source_and_entrypoints_0033_three_modules_stream_default_style.stdout"
+      },
+      {
+        "line": 4,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/413_batch_19_blackbox_and_boundaries_0052_stdin_regular_file_pipe_simulation.stdout"
+      },
+      {
+        "line": 5,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/222_batch_11_source_and_entrypoints_0000_stdin_default_style_full_table.stdout"
+      },
+      {
+        "line": 5,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/201_batch_09_blackbox_and_boundaries_0039_large_batch_mixed_direct_indirect_updates.stdout"
+      },
+      {
+        "line": 2,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/334_batch_16_source_and_entrypoints_0034_markdown_multi_module_table.stdin"
+      },
+      {
+        "line": 2,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/416_batch_20_cartesian_expansion_0008_ci_flag_exits_nonzero_on_outdated.stdin"
+      },
+      {
+        "line": 7,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/120_batch_05_cartesian_expansion_0006_ci_flag_with_outdated.stdin"
+      },
+      {
+        "line": 4,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/334_batch_16_source_and_entrypoints_0034_markdown_multi_module_table.stdout"
+      },
+      {
+        "line": 4,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/416_batch_20_cartesian_expansion_0008_ci_flag_exits_nonzero_on_outdated.stdout"
+      },
+      {
+        "line": 4,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/120_batch_05_cartesian_expansion_0006_ci_flag_with_outdated.stdout"
+      },
+      {
+        "line": 1,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/010_batch_01_source_and_entrypoints_0012_rendering_valid_timestamp_column_true.stdin"
+      },
+      {
+        "line": 4,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/417_batch_20_cartesian_expansion_0015_valid_timestamp_module_shown_true.stdout"
+      },
+      {
+        "line": 5,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/395_batch_19_blackbox_and_boundaries_0028_large_module_list_full_fixture.stdout"
+      },
+      {
+        "line": 2,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/333_batch_16_source_and_entrypoints_0033_three_modules_stream_default_style.stdin"
+      },
+      {
+        "line": 3,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/201_batch_09_blackbox_and_boundaries_0039_large_batch_mixed_direct_indirect_updates.stdin"
+      },
+      {
+        "line": 4,
+        "path": "eval/fixtures/programbench-oracle-gym-v3-quality-filtered/010_batch_01_source_and_entrypoints_0012_rendering_valid_timestamp_column_true.stdout"
+      }
+    ],
+    "passed": true,
+    "source_identifying_matches": [],
+    "source_identifying_string_matches": 0,
+    "source_like_file_matches": 0,
+    "source_like_files": [],
+    "total_files_scanned": 1324
+  }
+}

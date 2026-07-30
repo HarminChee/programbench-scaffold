@@ -1,0 +1,28 @@
+{
+  "schema": "programbench_oracle_gym_v3_coverage_profiles",
+  "go": {
+    "primary": "statement",
+    "minimum_primary_percent": 90.0,
+    "stretch_primary_percent": 95.0,
+    "secondary": "executable_line",
+    "minimum_secondary_percent": 88.0,
+    "stretch_secondary_percent": 93.0,
+    "reachable_target_percent": 98.0,
+    "saturation_rounds": 2,
+    "maximum_saturation_delta_pp": 0.5
+  },
+  "rust": {
+    "primary": "llvm_line",
+    "minimum_primary_percent": 90.0,
+    "stretch_primary_percent": 93.0,
+    "secondary": "llvm_region",
+    "minimum_secondary_percent": 85.0
+  },
+  "c_cpp": {
+    "primary": "line",
+    "minimum_primary_percent": 90.0,
+    "stretch_primary_percent": 93.0,
+    "secondary": "branch",
+    "minimum_secondary_percent": 80.0
+  }
+}

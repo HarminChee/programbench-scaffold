@@ -1,0 +1,148 @@
+{
+  "binary_consistent": true,
+  "cases_json": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/mibk__dupl.1bf052b/merged/v3_low_value_filtered.json",
+  "coverage": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/coverage/mibk__dupl.1bf052b/v3_final.go_coverage_summary.json",
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 796,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 86.9,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/mibk/dupl/job/buildtree.go": {
+        "covered_executable_lines": 12,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 12
+      },
+      "github.com/mibk/dupl/job/parse.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 90.0,
+        "total_executable_lines": 20
+      },
+      "github.com/mibk/dupl/main.go": {
+        "covered_executable_lines": 138,
+        "line_coverage_percent": 89.6,
+        "total_executable_lines": 154
+      },
+      "github.com/mibk/dupl/printer/html.go": {
+        "covered_executable_lines": 73,
+        "line_coverage_percent": 89.0,
+        "total_executable_lines": 82
+      },
+      "github.com/mibk/dupl/printer/plumbing.go": {
+        "covered_executable_lines": 15,
+        "line_coverage_percent": 88.2,
+        "total_executable_lines": 17
+      },
+      "github.com/mibk/dupl/printer/text.go": {
+        "covered_executable_lines": 53,
+        "line_coverage_percent": 91.4,
+        "total_executable_lines": 58
+      },
+      "github.com/mibk/dupl/suffixtree/dupl.go": {
+        "covered_executable_lines": 64,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 64
+      },
+      "github.com/mibk/dupl/suffixtree/suffixtree.go": {
+        "covered_executable_lines": 101,
+        "line_coverage_percent": 81.5,
+        "total_executable_lines": 124
+      },
+      "github.com/mibk/dupl/syntax/golang/golang.go": {
+        "covered_executable_lines": 207,
+        "line_coverage_percent": 77.8,
+        "total_executable_lines": 266
+      },
+      "github.com/mibk/dupl/syntax/syntax.go": {
+        "covered_executable_lines": 115,
+        "line_coverage_percent": 96.6,
+        "total_executable_lines": 119
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/mibk__dupl.1bf052b/coverage/mibk__dupl.1bf052b/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 88.0,
+    "suite_count": 1,
+    "total_executable_lines": 916
+  },
+  "instance_id": "mibk__dupl.1bf052b",
+  "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/generated/mibk__dupl.1bf052b/v3_final/oracle_tests/eval/generated_cli_manifest.json",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 265,
+    "go_test_package_coverage_percent": 22.5,
+    "go_test_returncode": 0,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 57.1,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/mibk__dupl.1bf052b/coverage/mibk__dupl.1bf052b/v3_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/mibk__dupl.1bf052b/coverage/mibk__dupl.1bf052b/v3_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {
+      "github.com/mibk/dupl/printer/html.go": {
+        "covered_executable_lines": 28,
+        "line_coverage_percent": 34.1,
+        "total_executable_lines": 82
+      },
+      "github.com/mibk/dupl/printer/plumbing.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 17
+      },
+      "github.com/mibk/dupl/printer/text.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 58
+      },
+      "github.com/mibk/dupl/suffixtree/dupl.go": {
+        "covered_executable_lines": 64,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 64
+      },
+      "github.com/mibk/dupl/suffixtree/suffixtree.go": {
+        "covered_executable_lines": 106,
+        "line_coverage_percent": 85.5,
+        "total_executable_lines": 124
+      },
+      "github.com/mibk/dupl/syntax/syntax.go": {
+        "covered_executable_lines": 67,
+        "line_coverage_percent": 56.3,
+        "total_executable_lines": 119
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/mibk__dupl.1bf052b/coverage/mibk__dupl.1bf052b/v3_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 57.8,
+    "total_executable_lines": 464
+  },
+  "quality": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/generated/mibk__dupl.1bf052b/v3_final/evaluation_quality_report.json",
+  "quality_returncode": 0,
+  "schema": "programbench_oracle_gym_v3_repo_summary",
+  "stop_gate": {
+    "checks": {
+      "all_dummies_rejected": true,
+      "assertion_lint": true,
+      "generated_tests_passed": true,
+      "minimum_primary": false,
+      "minimum_secondary": false,
+      "source_leak": true,
+      "stretch_primary": false,
+      "stretch_secondary": false,
+      "three_binary_consistent": true
+    },
+    "note": "saturation rounds and reachable-coverage audit are required before a final production stop",
+    "pb_baseline_used": false,
+    "primary_percent": 88.0,
+    "schema": "programbench_oracle_gym_v3_stop_gate",
+    "secondary_percent": 86.9,
+    "status": "refine"
+  },
+  "suite_label": "v3_final"
+}

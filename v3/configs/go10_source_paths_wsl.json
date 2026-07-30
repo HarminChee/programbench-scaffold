@@ -1,0 +1,12 @@
+{
+  "sclevine__yj.8016400": "/home/programbench/research/oracle-workspace/pilots/yj_pb_groundtruth_20260714_v22/experiments/runs/sclevine__yj.8016400/agent_workspace/pack_work/sclevine__yj.8016400/agent_loop_v2/target_source",
+  "tomnomnom__gron.88a6234": "/home/programbench/research/oracle-workspace/pilots/gron_agent_20260714_v6_reject_fix/experiments/runs/tomnomnom__gron.88a6234/agent_workspace/pack_work/tomnomnom__gron.88a6234/agent_loop_v2/target_source",
+  "multiprocessio__dsq.c3ae0ba": "/home/programbench/research/oracle-workspace/pilots/dsq_final49_review_20260715_v1/experiments/runs/multiprocessio__dsq.c3ae0ba/agent_workspace/pack_work/multiprocessio__dsq.c3ae0ba/agent_loop_v2/target_source",
+  "psampaz__go-mod-outdated.bb79367": "/home/programbench/research/oracle-workspace/pilots/go_mod_outdated_final_review_20260715_v1/experiments/runs/psampaz__go-mod-outdated.bb79367/agent_workspace/pack_work/psampaz__go-mod-outdated.bb79367/agent_loop_v2/target_source",
+  "rs__jplot.2a54bcc": "/home/programbench/research/oracle-workspace/pilots/jplot_final_review_20260715_v1/experiments/runs/rs__jplot.2a54bcc/agent_workspace/pack_work/rs__jplot.2a54bcc/agent_loop_v2/target_source",
+  "mibk__dupl.1bf052b": "/home/programbench/research/oracle-workspace/pilots/dupl_final_review_20260715_v1/experiments/runs/mibk__dupl.1bf052b/agent_workspace/pack_work/mibk__dupl.1bf052b/agent_loop_v2/target_source",
+  "astaxie__bat.17d1080": "/home/programbench/research/oracle-workspace/pilots/bat_final_review_20260715_v1/experiments/runs/astaxie__bat.17d1080/agent_workspace/pack_work/astaxie__bat.17d1080/agent_loop_v2/target_source",
+  "cheat__cheat.b8098dc": "/home/programbench/research/oracle-workspace/pilots/cheat_final_20260715_v1/experiments/runs/cheat__cheat.b8098dc/agent_workspace/pack_work/cheat__cheat.b8098dc/agent_loop_v2/target_source",
+  "boyter__scc.515f91c": "/home/programbench/research/oracle-workspace/pilots/scc_final_20260715_v2_leakfix/experiments/runs/boyter__scc.515f91c/agent_workspace/pack_work/boyter__scc.515f91c/agent_loop_v2/target_source",
+  "alecthomas__chroma.8d04def": "/home/programbench/research/oracle-workspace/pilots/chroma_agent_loop_20260715_v2_symlinkfix/experiments/runs/alecthomas__chroma.8d04def/agent_workspace/pack_work/alecthomas__chroma.8d04def/agent_loop_v2/target_source"
+}

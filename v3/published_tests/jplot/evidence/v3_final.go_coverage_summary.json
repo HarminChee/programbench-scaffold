@@ -1,0 +1,459 @@
+{
+  "active_branch_count": 8,
+  "all_branch_binary_comparisons_consistent": true,
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "v3_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "duration_seconds": 48.696656,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/pytest_workspaces/v3_final/cleanroom",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/coverage/junit/v3_final.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "a784e5d6561e6dbd65b1e3fc6d6e42746a5aab914d5489952a5fa84811e693b8",
+            "filtered_tests": 802,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "a784e5d6561e6dbd65b1e3fc6d6e42746a5aab914d5489952a5fa84811e693b8",
+            "tests": 802
+          },
+          "label": "cleanroom",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/pytest_v3_final_cleanroom.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v3_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "duration_seconds": 50.130964,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/pytest_workspaces/v3_final/source",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/coverage/junit/v3_final.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "a784e5d6561e6dbd65b1e3fc6d6e42746a5aab914d5489952a5fa84811e693b8",
+            "filtered_tests": 802,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "a784e5d6561e6dbd65b1e3fc6d6e42746a5aab914d5489952a5fa84811e693b8",
+            "tests": 802
+          },
+          "label": "source",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/pytest_v3_final_source.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v3_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "duration_seconds": 53.674162,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/pytest_workspaces/v3_final/coverage",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/coverage/junit/v3_final.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "a784e5d6561e6dbd65b1e3fc6d6e42746a5aab914d5489952a5fa84811e693b8",
+            "filtered_tests": 802,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "a784e5d6561e6dbd65b1e3fc6d6e42746a5aab914d5489952a5fa84811e693b8",
+            "tests": 802
+          },
+          "label": "coverage",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/pytest_v3_final_coverage.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        }
+      ],
+      "branch": "v3_final",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "README.md",
+        "eval"
+      ],
+      "oracle_material_root": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/final_coverage_material",
+      "tests_json": {
+        "active_count": null,
+        "expected_count": null,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "f31efe2b3396255216e0f78ab83cc5a79291acb9a555391f12c909f437fc414c",
+    "image": "programbench/rs_1776_jplot.2a54bcc:task_cleanroom_v6",
+    "path": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "2a54bccf26d9cb644ec987994123cf20683fa75b",
+  "compare_binaries": true,
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 532,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 72.6,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/rs/jplot/data/http.go": {
+        "covered_executable_lines": 34,
+        "line_coverage_percent": 77.3,
+        "total_executable_lines": 44
+      },
+      "github.com/rs/jplot/data/point.go": {
+        "covered_executable_lines": 49,
+        "line_coverage_percent": 94.2,
+        "total_executable_lines": 52
+      },
+      "github.com/rs/jplot/data/spec.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 30
+      },
+      "github.com/rs/jplot/data/stdin.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 78.6,
+        "total_executable_lines": 14
+      },
+      "github.com/rs/jplot/graph/dash.go": {
+        "covered_executable_lines": 15,
+        "line_coverage_percent": 88.2,
+        "total_executable_lines": 17
+      },
+      "github.com/rs/jplot/graph/graph.go": {
+        "covered_executable_lines": 96,
+        "line_coverage_percent": 78.7,
+        "total_executable_lines": 122
+      },
+      "github.com/rs/jplot/graph/legend.go": {
+        "covered_executable_lines": 97,
+        "line_coverage_percent": 98.0,
+        "total_executable_lines": 99
+      },
+      "github.com/rs/jplot/main.go": {
+        "covered_executable_lines": 108,
+        "line_coverage_percent": 87.8,
+        "total_executable_lines": 123
+      },
+      "github.com/rs/jplot/term/common.go": {
+        "covered_executable_lines": 36,
+        "line_coverage_percent": 50.7,
+        "total_executable_lines": 71
+      },
+      "github.com/rs/jplot/term/go110.go": {
+        "covered_executable_lines": 3,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 3
+      },
+      "github.com/rs/jplot/term/iterm2.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 18
+      },
+      "github.com/rs/jplot/term/kitty.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 15.3,
+        "total_executable_lines": 59
+      },
+      "github.com/rs/jplot/term/sixel.go": {
+        "covered_executable_lines": 17,
+        "line_coverage_percent": 28.3,
+        "total_executable_lines": 60
+      },
+      "github.com/rs/jplot/term/std.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 42.9,
+        "total_executable_lines": 21
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 77.9,
+    "suite_count": 1,
+    "total_executable_lines": 733
+  },
+  "go_build_package": {
+    "attempts": [
+      {
+        "build_cwd": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source",
+        "build_target": ".",
+        "coverage": {
+          "cmd": [
+            "go",
+            "build",
+            "-cover",
+            "-coverpkg=./...",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/executable_coverage",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source",
+          "duration_seconds": 0.560215,
+          "ended_at": "2026-07-29T14:36:40.260900+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/go_build_cover_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-29T14:36:39.700685+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "go_executable": "go",
+        "source": {
+          "cmd": [
+            "go",
+            "build",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/executable_source",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source",
+          "duration_seconds": 0.5614,
+          "ended_at": "2026-07-29T14:36:39.700321+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/go_build_source_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-29T14:36:39.138921+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "target": "."
+      }
+    ],
+    "candidates": [
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source",
+        "discovered_by": [
+          "go_list",
+          "source_scan"
+        ],
+        "import_path": "github.com/rs/jplot",
+        "score": 190,
+        "target": "."
+      },
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/doc",
+        "discovered_by": [
+          "go_list",
+          "source_scan"
+        ],
+        "import_path": "github.com/rs/jplot/doc",
+        "score": -1,
+        "target": "./doc"
+      }
+    ],
+    "command_returncode": 0,
+    "fallback_used": false,
+    "log_path": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/go_list_packages.json",
+    "mode": "auto",
+    "selected": ".",
+    "selected_build_cwd": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source",
+    "selected_build_target": ".",
+    "selected_go_executable": "go"
+  },
+  "go_coverpkg": "./...",
+  "go_toolchain": {
+    "environment": [
+      "auto",
+      "go1.21.13",
+      "/usr/local/go1.21.13"
+    ],
+    "environment_returncode": 0,
+    "selected_version": "go version go1.21.13 linux/amd64",
+    "version_returncode": 0
+  },
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/coverage/v3_final_merged_raw"
+  },
+  "instance_id": "rs__jplot.2a54bcc",
+  "language": "go",
+  "logs_dir": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 0,
+    "go_test_package_coverage_percent": null,
+    "go_test_returncode": 0,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": null,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {},
+    "profile": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 0.0,
+    "timing": {
+      "cover_func_seconds": 0.135901,
+      "go_test_seconds": 0.348813,
+      "native_coverage_signal_seconds": 0.484714,
+      "unit": "seconds"
+    },
+    "total_executable_lines": 0
+  },
+  "oracle_material_root": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/final_coverage_material",
+  "pytest_python": "/usr/bin/python3",
+  "repository": "rs/jplot",
+  "selected_branches": [
+    "v3_final"
+  ],
+  "test_suite": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 532,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 72.6,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/rs/jplot/data/http.go": {
+        "covered_executable_lines": 34,
+        "line_coverage_percent": 77.3,
+        "total_executable_lines": 44
+      },
+      "github.com/rs/jplot/data/point.go": {
+        "covered_executable_lines": 49,
+        "line_coverage_percent": 94.2,
+        "total_executable_lines": 52
+      },
+      "github.com/rs/jplot/data/spec.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 30
+      },
+      "github.com/rs/jplot/data/stdin.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 78.6,
+        "total_executable_lines": 14
+      },
+      "github.com/rs/jplot/graph/dash.go": {
+        "covered_executable_lines": 15,
+        "line_coverage_percent": 88.2,
+        "total_executable_lines": 17
+      },
+      "github.com/rs/jplot/graph/graph.go": {
+        "covered_executable_lines": 96,
+        "line_coverage_percent": 78.7,
+        "total_executable_lines": 122
+      },
+      "github.com/rs/jplot/graph/legend.go": {
+        "covered_executable_lines": 97,
+        "line_coverage_percent": 98.0,
+        "total_executable_lines": 99
+      },
+      "github.com/rs/jplot/main.go": {
+        "covered_executable_lines": 108,
+        "line_coverage_percent": 87.8,
+        "total_executable_lines": 123
+      },
+      "github.com/rs/jplot/term/common.go": {
+        "covered_executable_lines": 36,
+        "line_coverage_percent": 50.7,
+        "total_executable_lines": 71
+      },
+      "github.com/rs/jplot/term/go110.go": {
+        "covered_executable_lines": 3,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 3
+      },
+      "github.com/rs/jplot/term/iterm2.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 18
+      },
+      "github.com/rs/jplot/term/kitty.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 15.3,
+        "total_executable_lines": 59
+      },
+      "github.com/rs/jplot/term/sixel.go": {
+        "covered_executable_lines": 17,
+        "line_coverage_percent": 28.3,
+        "total_executable_lines": 60
+      },
+      "github.com/rs/jplot/term/std.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 42.9,
+        "total_executable_lines": 21
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 77.9,
+    "suite_count": 1,
+    "total_executable_lines": 733
+  },
+  "timing": {
+    "coverage_postprocess_seconds": 0.638412,
+    "coverage_pytest_seconds": 53.674162,
+    "definition": "statement_coverage_signal_seconds is the instrumented coverage-binary pytest runtime plus go covdata/textfmt/cover post-processing; it excludes clone, build, native tests, and cleanroom/source consistency runs.",
+    "native_coverage_signal_seconds": 0.484714,
+    "statement_coverage_signal_seconds": 54.312574,
+    "total_harness_runtime_seconds": 198.808295,
+    "unit": "seconds"
+  },
+  "work_dir": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/jplot/rs__jplot.2a54bcc/coverage/rs__jplot.2a54bcc/v3_final"
+}

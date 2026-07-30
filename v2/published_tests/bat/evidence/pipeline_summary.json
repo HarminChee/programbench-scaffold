@@ -1,0 +1,100 @@
+{
+  "all_tests_passed": null,
+  "binary_consistent": true,
+  "cases_json": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/astaxie__bat.17d1080/merged/v2_expansive_final_capture_repair_1_2.json",
+  "coverage_returncode": 0,
+  "coverage_summary_path": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/coverage/astaxie__bat.17d1080/v2_expansive_final.go_coverage_summary.json",
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 418,
+    "kind": "generated",
+    "label": "v2_expansive_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 36.9,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/astaxie/bat/bat.go": {
+        "covered_executable_lines": 115,
+        "line_coverage_percent": 45.5,
+        "total_executable_lines": 253
+      },
+      "github.com/astaxie/bat/bench.go": {
+        "covered_executable_lines": 70,
+        "line_coverage_percent": 46.4,
+        "total_executable_lines": 151
+      },
+      "github.com/astaxie/bat/color.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 116
+      },
+      "github.com/astaxie/bat/filter.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 84.6,
+        "total_executable_lines": 26
+      },
+      "github.com/astaxie/bat/http.go": {
+        "covered_executable_lines": 54,
+        "line_coverage_percent": 62.1,
+        "total_executable_lines": 87
+      },
+      "github.com/astaxie/bat/httplib/httplib.go": {
+        "covered_executable_lines": 151,
+        "line_coverage_percent": 46.0,
+        "total_executable_lines": 328
+      },
+      "github.com/astaxie/bat/pb.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 115
+      },
+      "github.com/astaxie/bat/utils.go": {
+        "covered_executable_lines": 6,
+        "line_coverage_percent": 10.7,
+        "total_executable_lines": 56
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source/coverage/v2_expansive_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 37.2,
+    "suite_count": 1,
+    "total_executable_lines": 1132
+  },
+  "instance_id": "astaxie__bat.17d1080",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 170,
+    "go_test_package_coverage_percent": 51.0,
+    "go_test_returncode": 1,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 51.8,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {
+      "github.com/astaxie/bat/httplib/httplib.go": {
+        "covered_executable_lines": 170,
+        "line_coverage_percent": 51.8,
+        "total_executable_lines": 328
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_repair/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v2_expansive_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 51.0,
+    "total_executable_lines": 328
+  },
+  "quality": {
+    "all_dummies_rejected": true,
+    "assertion_lint_passed": true,
+    "source_leak_passed": true
+  },
+  "quality_report_path": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/astaxie__bat.17d1080/v2_expansive_final/evaluation_quality_report.json",
+  "quality_returncode": 0,
+  "status": "passed",
+  "suite_label": "v2_expansive_final"
+}
