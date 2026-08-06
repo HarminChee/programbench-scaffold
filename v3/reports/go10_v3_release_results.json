@@ -1,0 +1,432 @@
+{
+  "schema": "programbench_oracle_gym_v3_release_results_v1",
+  "pb_role": "held-out baseline only; never generation input",
+  "test_count_units": {
+    "native": "static Go Test* functions",
+    "v3": "manifest behavioral cases, each materialized as one parametrized pytest execution",
+    "pb": "static pytest test functions across active PB branches"
+  },
+  "coverage_order": "executable-line / Go statement",
+  "rows": [
+    {
+      "repo": "yj",
+      "instance_id": "sclevine__yj.8016400",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 723,
+      "v3_line_coverage_percent": 86.6,
+      "v3_statement_coverage_percent": 87.4,
+      "native_go_test_functions": 6,
+      "native_line_coverage_percent": 75.9,
+      "native_statement_coverage_percent": 76.2,
+      "pb_static_pytest_functions": 651,
+      "pb_line_coverage_percent": 88.5,
+      "pb_statement_coverage_percent": 88.8,
+      "pb_note": null,
+      "statement_coverage_signal_seconds": 10.981205,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 723,
+        "exact": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 723
+        },
+        "structural": {
+          "duplicate_cases": 578,
+          "duplicate_percent": 79.9,
+          "unique_groups": 145
+        },
+        "invocation": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 723
+        },
+        "behavior": {
+          "duplicate_cases": 381,
+          "duplicate_percent": 52.7,
+          "unique_groups": 342
+        }
+      },
+      "published_tests": "published_tests/yj"
+    },
+    {
+      "repo": "gron",
+      "instance_id": "tomnomnom__gron.88a6234",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 650,
+      "v3_line_coverage_percent": 88.5,
+      "v3_statement_coverage_percent": 89.1,
+      "native_go_test_functions": 23,
+      "native_line_coverage_percent": 70.9,
+      "native_statement_coverage_percent": 70.2,
+      "pb_static_pytest_functions": 224,
+      "pb_line_coverage_percent": 92.9,
+      "pb_statement_coverage_percent": 93.3,
+      "pb_note": null,
+      "statement_coverage_signal_seconds": 11.111522,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 650,
+        "exact": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 650
+        },
+        "structural": {
+          "duplicate_cases": 519,
+          "duplicate_percent": 79.8,
+          "unique_groups": 131
+        },
+        "invocation": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 650
+        },
+        "behavior": {
+          "duplicate_cases": 257,
+          "duplicate_percent": 39.5,
+          "unique_groups": 393
+        }
+      },
+      "published_tests": "published_tests/gron"
+    },
+    {
+      "repo": "dsq",
+      "instance_id": "multiprocessio__dsq.c3ae0ba",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 464,
+      "v3_line_coverage_percent": 88.5,
+      "v3_statement_coverage_percent": 91.1,
+      "native_go_test_functions": 0,
+      "native_line_coverage_percent": null,
+      "native_statement_coverage_percent": 0.0,
+      "pb_static_pytest_functions": 507,
+      "pb_line_coverage_percent": 88.3,
+      "pb_statement_coverage_percent": 91.4,
+      "pb_note": null,
+      "statement_coverage_signal_seconds": 55.525236,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 464,
+        "exact": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 464
+        },
+        "structural": {
+          "duplicate_cases": 288,
+          "duplicate_percent": 62.1,
+          "unique_groups": 176
+        },
+        "invocation": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 464
+        },
+        "behavior": {
+          "duplicate_cases": 280,
+          "duplicate_percent": 60.3,
+          "unique_groups": 184
+        }
+      },
+      "published_tests": "published_tests/dsq"
+    },
+    {
+      "repo": "go-mod-outdated",
+      "instance_id": "psampaz__go-mod-outdated.bb79367",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 440,
+      "v3_line_coverage_percent": 97.4,
+      "v3_statement_coverage_percent": 97.2,
+      "native_go_test_functions": 13,
+      "native_line_coverage_percent": 100.0,
+      "native_statement_coverage_percent": 100.0,
+      "pb_static_pytest_functions": 266,
+      "pb_line_coverage_percent": 100.0,
+      "pb_statement_coverage_percent": 100.0,
+      "pb_note": null,
+      "statement_coverage_signal_seconds": 5.714992,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 440,
+        "exact": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 440
+        },
+        "structural": {
+          "duplicate_cases": 393,
+          "duplicate_percent": 89.3,
+          "unique_groups": 47
+        },
+        "invocation": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 440
+        },
+        "behavior": {
+          "duplicate_cases": 200,
+          "duplicate_percent": 45.5,
+          "unique_groups": 240
+        }
+      },
+      "published_tests": "published_tests/go-mod-outdated"
+    },
+    {
+      "repo": "jplot",
+      "instance_id": "rs__jplot.2a54bcc",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 802,
+      "v3_line_coverage_percent": 72.6,
+      "v3_statement_coverage_percent": 77.9,
+      "native_go_test_functions": 0,
+      "native_line_coverage_percent": null,
+      "native_statement_coverage_percent": 0.0,
+      "pb_static_pytest_functions": 546,
+      "pb_line_coverage_percent": 77.9,
+      "pb_statement_coverage_percent": 81.1,
+      "pb_note": null,
+      "statement_coverage_signal_seconds": 54.312574,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 802,
+        "exact": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 802
+        },
+        "structural": {
+          "duplicate_cases": 628,
+          "duplicate_percent": 78.3,
+          "unique_groups": 174
+        },
+        "invocation": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 802
+        },
+        "behavior": {
+          "duplicate_cases": 644,
+          "duplicate_percent": 80.3,
+          "unique_groups": 158
+        }
+      },
+      "published_tests": "published_tests/jplot"
+    },
+    {
+      "repo": "dupl",
+      "instance_id": "mibk__dupl.1bf052b",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 174,
+      "v3_line_coverage_percent": 86.9,
+      "v3_statement_coverage_percent": 88.0,
+      "native_go_test_functions": 10,
+      "native_line_coverage_percent": 57.1,
+      "native_statement_coverage_percent": 57.8,
+      "pb_static_pytest_functions": 360,
+      "pb_line_coverage_percent": 93.8,
+      "pb_statement_coverage_percent": 94.6,
+      "pb_note": null,
+      "statement_coverage_signal_seconds": 2.595259,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 174,
+        "exact": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 174
+        },
+        "structural": {
+          "duplicate_cases": 114,
+          "duplicate_percent": 65.5,
+          "unique_groups": 60
+        },
+        "invocation": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 174
+        },
+        "behavior": {
+          "duplicate_cases": 46,
+          "duplicate_percent": 26.4,
+          "unique_groups": 128
+        }
+      },
+      "published_tests": "published_tests/dupl"
+    },
+    {
+      "repo": "bat",
+      "instance_id": "astaxie__bat.17d1080",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 1252,
+      "v3_line_coverage_percent": 56.4,
+      "v3_statement_coverage_percent": 59.5,
+      "native_go_test_functions": 12,
+      "native_line_coverage_percent": 51.8,
+      "native_statement_coverage_percent": 51.0,
+      "pb_static_pytest_functions": 946,
+      "pb_line_coverage_percent": null,
+      "pb_statement_coverage_percent": null,
+      "pb_note": "Official baseline is unreliable because tests depend on external HTTP services.",
+      "statement_coverage_signal_seconds": 244.295074,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 1252,
+        "exact": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 1252
+        },
+        "structural": {
+          "duplicate_cases": 915,
+          "duplicate_percent": 73.1,
+          "unique_groups": 337
+        },
+        "invocation": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 1252
+        },
+        "behavior": {
+          "duplicate_cases": 1066,
+          "duplicate_percent": 85.1,
+          "unique_groups": 186
+        }
+      },
+      "published_tests": "published_tests/bat"
+    },
+    {
+      "repo": "cheat",
+      "instance_id": "cheat__cheat.b8098dc",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 382,
+      "v3_line_coverage_percent": 75.9,
+      "v3_statement_coverage_percent": 78.6,
+      "native_go_test_functions": 106,
+      "native_line_coverage_percent": 52.3,
+      "native_statement_coverage_percent": 48.5,
+      "pb_static_pytest_functions": 289,
+      "pb_line_coverage_percent": 79.9,
+      "pb_statement_coverage_percent": 82.4,
+      "pb_note": "official suite contains a known cleanroom mismatch",
+      "statement_coverage_signal_seconds": 21.289769,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 382,
+        "exact": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 382
+        },
+        "structural": {
+          "duplicate_cases": 175,
+          "duplicate_percent": 45.8,
+          "unique_groups": 207
+        },
+        "invocation": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 382
+        },
+        "behavior": {
+          "duplicate_cases": 166,
+          "duplicate_percent": 43.5,
+          "unique_groups": 216
+        }
+      },
+      "published_tests": "published_tests/cheat"
+    },
+    {
+      "repo": "scc",
+      "instance_id": "boyter__scc.515f91c",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 1428,
+      "v3_line_coverage_percent": 82.3,
+      "v3_statement_coverage_percent": 82.9,
+      "native_go_test_functions": 257,
+      "native_line_coverage_percent": 73.3,
+      "native_statement_coverage_percent": 70.6,
+      "pb_static_pytest_functions": 464,
+      "pb_line_coverage_percent": 92.0,
+      "pb_statement_coverage_percent": 91.3,
+      "pb_note": "Official suite contains known tie and golden-output mismatches.",
+      "statement_coverage_signal_seconds": 25.020971,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 1428,
+        "exact": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 1428
+        },
+        "structural": {
+          "duplicate_cases": 796,
+          "duplicate_percent": 55.7,
+          "unique_groups": 632
+        },
+        "invocation": {
+          "duplicate_cases": 0,
+          "duplicate_percent": 0.0,
+          "unique_groups": 1428
+        },
+        "behavior": {
+          "duplicate_cases": 718,
+          "duplicate_percent": 50.3,
+          "unique_groups": 710
+        }
+      },
+      "published_tests": "published_tests/scc"
+    },
+    {
+      "repo": "chroma",
+      "instance_id": "alecthomas__chroma.8d04def",
+      "status": "passed_quality_gates",
+      "v3_behavioral_cases": 1365,
+      "v3_line_coverage_percent": 75.3,
+      "v3_statement_coverage_percent": 73.5,
+      "native_go_test_functions": 63,
+      "native_line_coverage_percent": null,
+      "native_statement_coverage_percent": 0.0,
+      "pb_static_pytest_functions": 192,
+      "pb_line_coverage_percent": 88.0,
+      "pb_statement_coverage_percent": 88.8,
+      "pb_note": null,
+      "statement_coverage_signal_seconds": 42.263167,
+      "three_binary_consistent": true,
+      "quality_passed": true,
+      "duplicates": {
+        "cases": 1365,
+        "exact": {
+          "duplicate_cases": 47,
+          "duplicate_percent": 3.4,
+          "unique_groups": 1318
+        },
+        "structural": {
+          "duplicate_cases": 1028,
+          "duplicate_percent": 75.3,
+          "unique_groups": 337
+        },
+        "invocation": {
+          "duplicate_cases": 47,
+          "duplicate_percent": 3.4,
+          "unique_groups": 1318
+        },
+        "behavior": {
+          "duplicate_cases": 932,
+          "duplicate_percent": 68.3,
+          "unique_groups": 433
+        }
+      },
+      "published_tests": "published_tests/chroma"
+    }
+  ]
+}

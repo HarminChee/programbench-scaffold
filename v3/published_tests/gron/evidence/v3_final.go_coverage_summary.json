@@ -1,0 +1,382 @@
+{
+  "active_branch_count": 1,
+  "all_branch_binary_comparisons_consistent": true,
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "v3_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/pytest_workspaces/v3_final/cleanroom",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source/coverage/junit/v3_final.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "d59bce9ccde816182538045386633229169013339077f8ef7e18cac22b363ee7",
+            "filtered_tests": 650,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "d59bce9ccde816182538045386633229169013339077f8ef7e18cac22b363ee7",
+            "tests": 650
+          },
+          "label": "cleanroom",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/logs/pytest_v3_final_cleanroom.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v3_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/pytest_workspaces/v3_final/source",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source/coverage/junit/v3_final.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "d59bce9ccde816182538045386633229169013339077f8ef7e18cac22b363ee7",
+            "filtered_tests": 650,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "d59bce9ccde816182538045386633229169013339077f8ef7e18cac22b363ee7",
+            "tests": 650
+          },
+          "label": "source",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/logs/pytest_v3_final_source.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v3_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/pytest_workspaces/v3_final/coverage",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source/coverage/junit/v3_final.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "d59bce9ccde816182538045386633229169013339077f8ef7e18cac22b363ee7",
+            "filtered_tests": 650,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "d59bce9ccde816182538045386633229169013339077f8ef7e18cac22b363ee7",
+            "tests": 650
+          },
+          "label": "coverage",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/logs/pytest_v3_final_coverage.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        }
+      ],
+      "branch": "v3_final",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "README.md",
+        "eval"
+      ],
+      "oracle_material_root": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/final_coverage_material",
+      "tests_json": {
+        "active_count": null,
+        "expected_count": null,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "5e76acd1edafc9f8667bd1ab5af72342773718714df1e92d92710d2c182ea7c2",
+    "image": "programbench/tomnomnom_1776_gron.88a6234:task_cleanroom_v6",
+    "path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "88a6234ea2d0c487090988182ad9a7cdf6def924",
+  "compare_binaries": true,
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 986,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 88.5,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/tomnomnom/gron/identifier.go": {
+        "covered_executable_lines": 25,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 25
+      },
+      "github.com/tomnomnom/gron/main.go": {
+        "covered_executable_lines": 280,
+        "line_coverage_percent": 86.7,
+        "total_executable_lines": 323
+      },
+      "github.com/tomnomnom/gron/statements.go": {
+        "covered_executable_lines": 242,
+        "line_coverage_percent": 85.8,
+        "total_executable_lines": 282
+      },
+      "github.com/tomnomnom/gron/token.go": {
+        "covered_executable_lines": 79,
+        "line_coverage_percent": 92.9,
+        "total_executable_lines": 85
+      },
+      "github.com/tomnomnom/gron/ungron.go": {
+        "covered_executable_lines": 305,
+        "line_coverage_percent": 90.2,
+        "total_executable_lines": 338
+      },
+      "github.com/tomnomnom/gron/url.go": {
+        "covered_executable_lines": 55,
+        "line_coverage_percent": 90.2,
+        "total_executable_lines": 61
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 89.1,
+    "suite_count": 1,
+    "total_executable_lines": 1114
+  },
+  "go_build_package": {
+    "attempts": [
+      {
+        "build_cwd": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source",
+        "build_target": ".",
+        "coverage": {
+          "cmd": [
+            "go",
+            "build",
+            "-cover",
+            "-coverpkg=./...",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/executable_coverage",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source",
+          "duration_seconds": 1.127292,
+          "ended_at": "2026-07-28T12:27:52.966235+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/logs/go_build_cover_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-28T12:27:51.838943+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "go_executable": "go",
+        "source": {
+          "cmd": [
+            "go",
+            "build",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/executable_source",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source",
+          "duration_seconds": 1.111327,
+          "ended_at": "2026-07-28T12:27:51.838569+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/logs/go_build_source_01_..json",
+          "returncode": 0,
+          "started_at": "2026-07-28T12:27:50.727242+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "target": "."
+      }
+    ],
+    "candidates": [
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source",
+        "discovered_by": [
+          "go_list",
+          "source_scan"
+        ],
+        "import_path": "github.com/tomnomnom/gron",
+        "score": 190,
+        "target": "."
+      }
+    ],
+    "command_returncode": 0,
+    "fallback_used": false,
+    "log_path": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/logs/go_list_packages.json",
+    "mode": "auto",
+    "selected": ".",
+    "selected_build_cwd": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source",
+    "selected_build_target": ".",
+    "selected_go_executable": "go"
+  },
+  "go_coverpkg": "./...",
+  "go_toolchain": {
+    "environment": [
+      "auto",
+      "go1.24.0",
+      "/home/programbench/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.0.linux-amd64"
+    ],
+    "environment_returncode": 0,
+    "selected_version": "go version go1.24.0 linux/amd64",
+    "version_returncode": 0
+  },
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source/coverage/v3_final_merged_raw"
+  },
+  "instance_id": "tomnomnom__gron.88a6234",
+  "language": "go",
+  "logs_dir": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/logs",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 790,
+    "go_test_package_coverage_percent": 70.2,
+    "go_test_returncode": 0,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 70.9,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {
+      "github.com/tomnomnom/gron/identifier.go": {
+        "covered_executable_lines": 23,
+        "line_coverage_percent": 92.0,
+        "total_executable_lines": 25
+      },
+      "github.com/tomnomnom/gron/main.go": {
+        "covered_executable_lines": 117,
+        "line_coverage_percent": 36.2,
+        "total_executable_lines": 323
+      },
+      "github.com/tomnomnom/gron/statements.go": {
+        "covered_executable_lines": 241,
+        "line_coverage_percent": 85.5,
+        "total_executable_lines": 282
+      },
+      "github.com/tomnomnom/gron/token.go": {
+        "covered_executable_lines": 67,
+        "line_coverage_percent": 78.8,
+        "total_executable_lines": 85
+      },
+      "github.com/tomnomnom/gron/ungron.go": {
+        "covered_executable_lines": 312,
+        "line_coverage_percent": 92.3,
+        "total_executable_lines": 338
+      },
+      "github.com/tomnomnom/gron/url.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 49.2,
+        "total_executable_lines": 61
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 70.2,
+    "total_executable_lines": 1114
+  },
+  "oracle_material_root": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/final_coverage_material",
+  "pytest_python": "/usr/bin/python3",
+  "repository": "tomnomnom/gron",
+  "selected_branches": [
+    "v3_final"
+  ],
+  "test_suite": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 986,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 88.5,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/tomnomnom/gron/identifier.go": {
+        "covered_executable_lines": 25,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 25
+      },
+      "github.com/tomnomnom/gron/main.go": {
+        "covered_executable_lines": 280,
+        "line_coverage_percent": 86.7,
+        "total_executable_lines": 323
+      },
+      "github.com/tomnomnom/gron/statements.go": {
+        "covered_executable_lines": 242,
+        "line_coverage_percent": 85.8,
+        "total_executable_lines": 282
+      },
+      "github.com/tomnomnom/gron/token.go": {
+        "covered_executable_lines": 79,
+        "line_coverage_percent": 92.9,
+        "total_executable_lines": 85
+      },
+      "github.com/tomnomnom/gron/ungron.go": {
+        "covered_executable_lines": 305,
+        "line_coverage_percent": 90.2,
+        "total_executable_lines": 338
+      },
+      "github.com/tomnomnom/gron/url.go": {
+        "covered_executable_lines": 55,
+        "line_coverage_percent": 90.2,
+        "total_executable_lines": 61
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 89.1,
+    "suite_count": 1,
+    "total_executable_lines": 1114
+  },
+  "work_dir": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/tomnomnom__gron.88a6234/coverage/tomnomnom__gron.88a6234/v3_final"
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "programbench_v3_generalization8_final_audit_v1",
+  "generated_at": "2026-08-05",
+  "coverage_labels": {
+    "c_cpp": "line/branch",
+    "rust": "line/region"
+  },
+  "pb_holdout": "PB official tests were used only for post-generation comparison and were not provided to generation agents.",
+  "promotion_policy": "Use a new suite only when mandatory quality gates pass and neither source coverage metric regresses; otherwise preserve the prior accepted suite.",
+  "rows": [
+    {
+      "repository": "abishekvashok/cmatrix",
+      "language": "C",
+      "prior": {"cases": 127, "coverage": [66.3, 49.8]},
+      "candidate": {"cases": 141, "coverage": [66.3, 52.1], "all_tests_passed": true, "three_binary_consistent": true},
+      "promoted": "candidate",
+      "pb": {"cases": 769, "coverage": [88.2, 84.8]},
+      "coverage_artifact": "round_2_remat/final/abishekvashok__cmatrix.5c082c6/coverage/v3_final.native_coverage_summary.json"
+    },
+    {
+      "repository": "eradman/entr",
+      "language": "C",
+      "prior": {"cases": 269, "coverage": [46.5, 34.0]},
+      "candidate": {"cases": 332, "coverage": [46.3, 33.3], "all_tests_passed": true, "three_binary_consistent": true},
+      "promoted": "prior",
+      "promotion_reason": "candidate_coverage_regression",
+      "pb": {"cases": 682, "coverage": [79.7, 64.9]},
+      "coverage_artifact": "round_2_remat/final/eradman__entr.8e2e8b4/coverage/v3_final.native_coverage_summary.json"
+    },
+    {
+      "repository": "tukaani-project/xz",
+      "language": "C",
+      "prior": {"cases": 695, "coverage": [49.1, 35.8]},
+      "candidate": {"cases": 791, "coverage": [62.9, 46.8], "all_tests_passed": true, "three_binary_consistent": true},
+      "promoted": "candidate",
+      "pb": {"cases": 2025, "coverage": [67.5, 53.0]},
+      "coverage_artifact": "round_2_remat/final/tukaani-project__xz.1007bf0/coverage/v3_final.native_coverage_summary.json"
+    },
+    {
+      "repository": "OSGeo/GDAL",
+      "language": "C++",
+      "prior": {"cases": 0, "coverage": [null, null]},
+      "candidate": {"cases": 4, "coverage": [0.9, 0.2], "all_tests_passed": true, "three_binary_consistent": true},
+      "promoted": "candidate",
+      "pb": {"cases": 1319, "coverage": [null, null]},
+      "coverage_artifact": "round_2_remat/final/osgeo__gdal.0847f12/coverage/v3_final.native_coverage_summary.json"
+    },
+    {
+      "repository": "tstack/lnav",
+      "language": "C++",
+      "prior": {"cases": 210, "coverage": [22.6, 10.7]},
+      "candidate": {"cases": 34, "coverage": [19.5, 8.8], "all_tests_passed": true, "three_binary_consistent": true},
+      "promoted": "prior",
+      "promotion_reason": "candidate_coverage_regression",
+      "pb": {"cases": 1172, "coverage": [42.3, 21.8]},
+      "coverage_artifact": "round_2_remat/final/tstack__lnav.ee34494/coverage/v3_final.native_coverage_summary.json"
+    },
+    {
+      "repository": "OSGeo/PROJ",
+      "language": "C++",
+      "prior": {"cases": 526, "coverage": [7.3, 2.1]},
+      "candidate": {"cases": 647, "coverage": [7.8, 2.1], "all_tests_passed": true, "three_binary_consistent": true},
+      "promoted": "candidate",
+      "pb": {"cases": 7160, "coverage": [21.2, 5.0]},
+      "coverage_artifact": "round_2_remat/final/osgeo__proj.75d455c/coverage/v3_final.native_coverage_summary.json"
+    },
+    {
+      "repository": "svenstaro/miniserve",
+      "language": "Rust",
+      "prior": {"cases": 157, "coverage": [40.48, 41.35]},
+      "candidate": {"cases": 207, "coverage": [41.13763331640426, 41.904761904761905], "all_tests_passed": true, "three_binary_consistent": true},
+      "promoted": "candidate",
+      "pb": {"cases": 430, "coverage": [72.98, 73.17]},
+      "coverage_artifact": "round_2_remat/final/svenstaro__miniserve.8449e8b/coverage/v3_final.native_coverage_summary.json"
+    },
+    {
+      "repository": "ajeetdsouza/zoxide",
+      "language": "Rust",
+      "prior": {"cases": 394, "coverage": [63.86, 57.56]},
+      "candidate": {"cases": 347, "coverage": [86.36363636363636, 80.79132099553287], "all_tests_passed": true, "three_binary_consistent": true},
+      "promoted": "candidate",
+      "pb": {"cases": 577, "coverage": [88.18, 83.54]},
+      "coverage_artifact": "round_2_remat/final/ajeetdsouza__zoxide.67ca1bc/coverage/v3_final.native_coverage_summary.json"
+    }
+  ]
+}

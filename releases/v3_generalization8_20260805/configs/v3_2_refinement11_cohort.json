@@ -1,0 +1,29 @@
+{
+  "schema": "programbench_oracle_gym_v3_2_refinement11_cohort_v1",
+  "generation_policy": {
+    "target_pb_official_tests_forbidden": true,
+    "allowed_context": ["pinned source", "documentation", "native tests", "our own gold captures", "our own source coverage feedback"],
+    "bulk_model": "claude-sonnet-5",
+    "semantic_refinement_model": "claude-opus-4.8"
+  },
+  "coverage_policy": {
+    "go": "go statement and executable-line coverage",
+    "c": "gcov/gcovr executable-line and branch coverage",
+    "cpp": "gcov/gcovr executable-line and branch coverage",
+    "rs": "LLVM line and region coverage",
+    "qemu": "auxiliary dynamic block/edge novelty and wall-clock time"
+  },
+  "instances": [
+    {"instance_id":"abishekvashok__cmatrix.5c082c6","repository":"abishekvashok/cmatrix","commit":"5c082c64a1296859a11bee60c8c086655953a416","language":"c","difficulty":"easy","binary_name":"cmatrix"},
+    {"instance_id":"eradman__entr.8e2e8b4","repository":"eradman/entr","commit":"8e2e8b413a491ae74807220ac1a21ad1f5566d61","language":"c","difficulty":"easy","binary_name":"entr"},
+    {"instance_id":"ggreer__the_silver_searcher.a61f178","repository":"ggreer/the_silver_searcher","commit":"a61f1780b64266587e7bc30f0f5f71c6cca97c0f","language":"c","difficulty":"medium","binary_name":"ag"},
+    {"instance_id":"tukaani-project__xz.1007bf0","repository":"tukaani-project/xz","commit":"1007bf08b5fddf088b3131e692210af4b4b7fd8c","language":"c","difficulty":"medium","binary_name":"xz"},
+    {"instance_id":"osgeo__gdal.0847f12","repository":"OSGeo/gdal","commit":"0847f1219b7d2856582d70e26dff1699c3c4b239","language":"cpp","difficulty":"unlabeled","binary_name":"gdal"},
+    {"instance_id":"tstack__lnav.ee34494","repository":"tstack/lnav","commit":"ee344949bb92487133100949e3f8b44983dce6d8","language":"cpp","difficulty":"unlabeled","binary_name":"lnav"},
+    {"instance_id":"nikoladucak__caps-log.2cf2d1e","repository":"NikolaDucak/caps-log","commit":"2cf2d1e8ef0c80806799cdc9ce830b5ce169ec60","language":"cpp","difficulty":"medium","binary_name":"caps-log"},
+    {"instance_id":"osgeo__proj.75d455c","repository":"OSGeo/PROJ","commit":"75d455c663b41179d9dc02e528d59c107d7ee45e","language":"cpp","difficulty":"unlabeled","binary_name":"proj"},
+    {"instance_id":"svenstaro__miniserve.8449e8b","repository":"svenstaro/miniserve","commit":"8449e8b118ffd61de8df970b56b0796f891e3697","language":"rs","difficulty":"medium","binary_name":"miniserve"},
+    {"instance_id":"incu6us__goimports-reviser.81bd549","repository":"incu6us/goimports-reviser","commit":"81bd549469092e668525e6845bfa1ae9ee3cc4a2","language":"go","difficulty":"medium","binary_name":"goimports-reviser"},
+    {"instance_id":"filosottile__age.706dfc1","repository":"FiloSottile/age","commit":"706dfc1e799a03443ae46023502bd88d4e9e324f","language":"go","difficulty":"unlabeled","binary_name":"age"}
+  ]
+}

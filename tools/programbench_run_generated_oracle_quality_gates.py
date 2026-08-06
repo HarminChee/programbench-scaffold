@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
+import contextlib
 import datetime as dt
 import json
 import os
@@ -23,10 +25,6 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SOURCE_LIKE_NAMES = {"go.mod", "go.sum", "Makefile", "Dockerfile"}
 SOURCE_LIKE_SUFFIXES = {".go", ".c", ".h", ".rs", ".cc", ".cpp", ".hpp"}
 SOURCE_IDENTIFYING_PATTERNS = (
-    "package main",
-    "func Run",
-    "func Parse",
-    "type Config",
     "github.com/sclevine/yj/v5",
     "gopkg.in/yaml.v3",
     "BurntSushi/toml",
@@ -53,7 +51,7 @@ def run_command(
     timeout: int = 300,
     log_path: Path | None = None,
 ) -> dict[str, Any]:
-    started = dt.datetime.now(dt.UTC)
+    started = dt.datetime.now(dt.timezone.utc)
     try:
         proc = subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True, timeout=timeout)
         returncode = proc.returncode
@@ -65,7 +63,7 @@ def run_command(
         stdout = exc.stdout if isinstance(exc.stdout, str) else (exc.stdout or b"").decode("utf-8", errors="replace")
         stderr = exc.stderr if isinstance(exc.stderr, str) else (exc.stderr or b"").decode("utf-8", errors="replace")
         timed_out = True
-    ended = dt.datetime.now(dt.UTC)
+    ended = dt.datetime.now(dt.timezone.utc)
     payload = {
         "cmd": cmd,
         "cwd": str(cwd) if cwd else None,
@@ -175,6 +173,34 @@ def materialize_dummy(kind: str, dest: Path) -> None:
     dest.chmod(0o755)
 
 
+@contextlib.contextmanager
+def fixed_workspace_executable(executable: Path):
+    """Provide the PB `/workspace/executable` alias without cross-run races."""
+
+    if os.name == "nt":
+        yield
+        return
+    import fcntl
+
+    lock = Path("/tmp/programbench-fixed-workspace.lock").open("a+")
+    fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+    alias = Path("/workspace/executable")
+    try:
+        alias.parent.mkdir(parents=True, exist_ok=True)
+        if alias.is_dir() and not alias.is_symlink():
+            raise IsADirectoryError(alias)
+        if alias.exists() or alias.is_symlink():
+            alias.unlink()
+        shutil.copy2(executable, alias)
+        alias.chmod(alias.stat().st_mode | 0o555)
+        yield
+    finally:
+        if (alias.exists() or alias.is_symlink()) and not alias.is_dir():
+            alias.unlink()
+        fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+        lock.close()
+
+
 def run_pytest_bundle(
     *,
     python: Path,
@@ -185,6 +211,8 @@ def run_pytest_bundle(
     logs_dir: Path,
     timeout: int,
     gocoverdir: Path | None = None,
+    case_timeout_cap: float | None = None,
+    pytest_workers: int = 1,
 ) -> dict[str, Any]:
     if workspace.exists():
         shutil.rmtree(workspace)
@@ -195,17 +223,23 @@ def run_pytest_bundle(
     junit = workspace / junit_name
     env = os.environ.copy()
     env["TZ"] = "UTC"
+    if case_timeout_cap is not None:
+        env["PROGRAMBENCH_CASE_TIMEOUT_CAP"] = str(max(0.1, float(case_timeout_cap)))
     if gocoverdir is not None:
         gocoverdir.mkdir(parents=True, exist_ok=True)
         env["GOCOVERDIR"] = str(gocoverdir)
     log_label = re.sub(r"[^A-Za-z0-9_.-]+", "_", f"{workspace.parent.name}_{junit_name}").strip("_.-")
-    result = run_command(
-        [str(python), "-m", "pytest", "-q", "eval/tests", f"--junitxml={junit}"],
-        cwd=workspace,
-        env=env,
-        timeout=timeout,
-        log_path=logs_dir / f"{log_label}.pytest.json",
-    )
+    cmd = [str(python), "-m", "pytest", "-q", "eval/tests", f"--junitxml={junit}"]
+    if pytest_workers > 1:
+        cmd.extend(["-n", str(pytest_workers)])
+    with fixed_workspace_executable(workspace / "executable"):
+        result = run_command(
+            cmd,
+            cwd=workspace,
+            env=env,
+            timeout=timeout,
+            log_path=logs_dir / f"{log_label}.pytest.json",
+        )
     return {
         "workspace": str(workspace),
         "junit": str(junit),
@@ -225,8 +259,7 @@ def run_dummy_gates(
     timeout: int,
     dummy_kinds: list[str],
 ) -> list[dict[str, Any]]:
-    results: list[dict[str, Any]] = []
-    for kind in dummy_kinds:
+    def run_one(kind: str) -> dict[str, Any]:
         dummy_dir = work_root / f"dummy_{kind}"
         dummy_dir.mkdir(parents=True, exist_ok=True)
         dummy_executable = dummy_dir / "dummy_executable"
@@ -239,6 +272,8 @@ def run_dummy_gates(
             junit_name=f"{kind}.results.xml",
             logs_dir=logs_dir,
             timeout=timeout,
+            case_timeout_cap=1.0,
+            pytest_workers=4,
         )
         summary = run["junit_summary"]
         passing_tests = summary.get("passed_test_names") or []
@@ -247,17 +282,18 @@ def run_dummy_gates(
             and not passing_tests
             and summary.get("skipped", 0) == 0
         )
-        results.append(
-            {
-                "kind": kind,
-                **run,
-                "rejected": run["pytest_returncode"] != 0 or summary.get("failures", 0) > 0 or summary.get("errors", 0) > 0,
-                "all_tests_rejected": all_tests_rejected,
-                "passing_test_count": len(passing_tests),
-                "passing_test_names": passing_tests,
-            }
-        )
-    return results
+        return {
+            "kind": kind,
+            **run,
+            "rejected": run["pytest_returncode"] != 0 or summary.get("failures", 0) > 0 or summary.get("errors", 0) > 0,
+            "all_tests_rejected": all_tests_rejected,
+            "passing_test_count": len(passing_tests),
+            "passing_test_names": passing_tests,
+        }
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=min(4, max(1, len(dummy_kinds)))) as executor:
+        futures = {kind: executor.submit(run_one, kind) for kind in dummy_kinds}
+        return [futures[kind].result() for kind in dummy_kinds]
 
 
 def source_leak_scan(oracle_root: Path) -> dict[str, Any]:

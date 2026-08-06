@@ -1,0 +1,23 @@
+{
+  "cohort": "go10_v2",
+  "language": "go",
+  "instances": [
+    "sclevine__yj.8016400",
+    "tomnomnom__gron.88a6234",
+    "multiprocessio__dsq.c3ae0ba",
+    "psampaz__go-mod-outdated.bb79367",
+    "rs__jplot.2a54bcc",
+    "mibk__dupl.1bf052b",
+    "astaxie__bat.17d1080",
+    "cheat__cheat.b8098dc",
+    "boyter__scc.515f91c",
+    "alecthomas__chroma.8d04def"
+  ],
+  "generation_policy": {
+    "target_pb_oracles_forbidden": true,
+    "external_network_forbidden": true,
+    "matrix_before_generation_required": true,
+    "semantic_novelty_required": true,
+    "coverage_is_stopping_criterion": false
+  }
+}

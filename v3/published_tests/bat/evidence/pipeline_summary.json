@@ -1,0 +1,128 @@
+{
+  "binary_consistent": true,
+  "cases_json": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_runroot_20260729/astaxie__bat.17d1080/merged/v3_binary_repair_1.json",
+  "coverage": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_runroot_20260729/coverage/astaxie__bat.17d1080/v3_final.go_coverage_summary.json",
+  "coverage_timing": {
+    "coverage_postprocess_seconds": 0.782498,
+    "coverage_pytest_seconds": 243.512576,
+    "definition": "statement_coverage_signal_seconds is the instrumented coverage-binary pytest runtime plus go covdata/textfmt/cover post-processing; it excludes clone, build, native tests, and cleanroom/source consistency runs.",
+    "native_coverage_signal_seconds": 106.493033,
+    "statement_coverage_signal_seconds": 244.295074,
+    "total_harness_runtime_seconds": 811.319755,
+    "unit": "seconds"
+  },
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 639,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 56.4,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/astaxie/bat/bat.go": {
+        "covered_executable_lines": 148,
+        "line_coverage_percent": 58.5,
+        "total_executable_lines": 253
+      },
+      "github.com/astaxie/bat/bench.go": {
+        "covered_executable_lines": 136,
+        "line_coverage_percent": 90.1,
+        "total_executable_lines": 151
+      },
+      "github.com/astaxie/bat/color.go": {
+        "covered_executable_lines": 92,
+        "line_coverage_percent": 79.3,
+        "total_executable_lines": 116
+      },
+      "github.com/astaxie/bat/filter.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 84.6,
+        "total_executable_lines": 26
+      },
+      "github.com/astaxie/bat/http.go": {
+        "covered_executable_lines": 57,
+        "line_coverage_percent": 65.5,
+        "total_executable_lines": 87
+      },
+      "github.com/astaxie/bat/httplib/httplib.go": {
+        "covered_executable_lines": 178,
+        "line_coverage_percent": 54.3,
+        "total_executable_lines": 328
+      },
+      "github.com/astaxie/bat/pb.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 115
+      },
+      "github.com/astaxie/bat/utils.go": {
+        "covered_executable_lines": 6,
+        "line_coverage_percent": 10.7,
+        "total_executable_lines": 56
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/bat/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 59.5,
+    "suite_count": 1,
+    "total_executable_lines": 1132
+  },
+  "instance_id": "astaxie__bat.17d1080",
+  "manifest": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_runroot_20260729/generated/astaxie__bat.17d1080/v3_final/oracle_tests/eval/generated_cli_manifest.json",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 170,
+    "go_test_package_coverage_percent": 51.0,
+    "go_test_returncode": 1,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 51.8,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/bat/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v3_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/bat/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v3_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {
+      "github.com/astaxie/bat/httplib/httplib.go": {
+        "covered_executable_lines": 170,
+        "line_coverage_percent": 51.8,
+        "total_executable_lines": 328
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_work_20260729/bat/astaxie__bat.17d1080/coverage/astaxie__bat.17d1080/v3_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 51.0,
+    "timing": {
+      "cover_func_seconds": 0.354608,
+      "go_test_seconds": 106.138425,
+      "native_coverage_signal_seconds": 106.493033,
+      "unit": "seconds"
+    },
+    "total_executable_lines": 328
+  },
+  "quality": "/home/programbench/research/oracle-workspace/v3/go4_v3_fast_runroot_20260729/generated/astaxie__bat.17d1080/v3_final/evaluation_quality_report.json",
+  "quality_returncode": 0,
+  "schema": "programbench_oracle_gym_v3_repo_summary",
+  "stop_gate": {
+    "checks": {
+      "all_dummies_rejected": true,
+      "assertion_lint": true,
+      "generated_tests_passed": true,
+      "minimum_primary": false,
+      "minimum_secondary": false,
+      "source_leak": true,
+      "stretch_primary": false,
+      "stretch_secondary": false,
+      "three_binary_consistent": true
+    },
+    "note": "saturation rounds and reachable-coverage audit are required before a final production stop",
+    "pb_baseline_used": false,
+    "primary_percent": 59.5,
+    "schema": "programbench_oracle_gym_v3_stop_gate",
+    "secondary_percent": 56.4,
+    "status": "refine"
+  },
+  "suite_label": "v3_final"
+}

@@ -1,0 +1,77 @@
+{
+  "binary_consistent": true,
+  "cases_json": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/multiprocessio__dsq.c3ae0ba/merged/v3_low_value_filtered.json",
+  "coverage": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/coverage/multiprocessio__dsq.c3ae0ba/v3_final.go_coverage_summary.json",
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 523,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 88.5,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/multiprocessio/dsq/main.go": {
+        "covered_executable_lines": 440,
+        "line_coverage_percent": 92.2,
+        "total_executable_lines": 477
+      },
+      "github.com/multiprocessio/dsq/sqlite.go": {
+        "covered_executable_lines": 83,
+        "line_coverage_percent": 72.8,
+        "total_executable_lines": 114
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 91.1,
+    "suite_count": 1,
+    "total_executable_lines": 591
+  },
+  "instance_id": "multiprocessio__dsq.c3ae0ba",
+  "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/generated/multiprocessio__dsq.c3ae0ba/v3_final/oracle_tests/eval/generated_cli_manifest.json",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 0,
+    "go_test_package_coverage_percent": null,
+    "go_test_returncode": 0,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": null,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {},
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/multiprocessio__dsq.c3ae0ba/coverage/multiprocessio__dsq.c3ae0ba/v3_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 0.0,
+    "total_executable_lines": 0
+  },
+  "quality": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/generated/multiprocessio__dsq.c3ae0ba/v3_final/evaluation_quality_report.json",
+  "quality_returncode": 0,
+  "schema": "programbench_oracle_gym_v3_repo_summary",
+  "stop_gate": {
+    "checks": {
+      "all_dummies_rejected": true,
+      "assertion_lint": true,
+      "generated_tests_passed": true,
+      "minimum_primary": true,
+      "minimum_secondary": true,
+      "source_leak": true,
+      "stretch_primary": false,
+      "stretch_secondary": false,
+      "three_binary_consistent": true
+    },
+    "note": "saturation rounds and reachable-coverage audit are required before a final production stop",
+    "pb_baseline_used": false,
+    "primary_percent": 91.1,
+    "schema": "programbench_oracle_gym_v3_stop_gate",
+    "secondary_percent": 88.5,
+    "status": "accepted_minimum"
+  },
+  "suite_label": "v3_final"
+}

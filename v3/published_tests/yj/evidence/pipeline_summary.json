@@ -1,0 +1,228 @@
+{
+  "binary_consistent": true,
+  "cases_json": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/sclevine__yj.8016400/merged/v3_low_value_filtered.json",
+  "coverage": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/coverage/sclevine__yj.8016400/v3_final.go_coverage_summary.json",
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 743,
+    "kind": "generated",
+    "label": "v3_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 86.6,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/sclevine/yj/v5/convert/encoding.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 88.9,
+        "total_executable_lines": 27
+      },
+      "github.com/sclevine/yj/v5/convert/hcl.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 75.0,
+        "total_executable_lines": 24
+      },
+      "github.com/sclevine/yj/v5/convert/json.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 85.7,
+        "total_executable_lines": 28
+      },
+      "github.com/sclevine/yj/v5/convert/toml.go": {
+        "covered_executable_lines": 28,
+        "line_coverage_percent": 93.3,
+        "total_executable_lines": 30
+      },
+      "github.com/sclevine/yj/v5/convert/yaml.go": {
+        "covered_executable_lines": 35,
+        "line_coverage_percent": 94.6,
+        "total_executable_lines": 37
+      },
+      "github.com/sclevine/yj/v5/flags.go": {
+        "covered_executable_lines": 114,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 114
+      },
+      "github.com/sclevine/yj/v5/hcl/decoder.go": {
+        "covered_executable_lines": 78,
+        "line_coverage_percent": 90.7,
+        "total_executable_lines": 86
+      },
+      "github.com/sclevine/yj/v5/main.go": {
+        "covered_executable_lines": 26,
+        "line_coverage_percent": 83.9,
+        "total_executable_lines": 31
+      },
+      "github.com/sclevine/yj/v5/order/map.go": {
+        "covered_executable_lines": 66,
+        "line_coverage_percent": 78.6,
+        "total_executable_lines": 84
+      },
+      "github.com/sclevine/yj/v5/toml/decoder.go": {
+        "covered_executable_lines": 80,
+        "line_coverage_percent": 85.1,
+        "total_executable_lines": 94
+      },
+      "github.com/sclevine/yj/v5/toml/encoder.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 88.2,
+        "total_executable_lines": 34
+      },
+      "github.com/sclevine/yj/v5/toml/util.go": {
+        "covered_executable_lines": 2,
+        "line_coverage_percent": 33.3,
+        "total_executable_lines": 6
+      },
+      "github.com/sclevine/yj/v5/yaml/decoder.go": {
+        "covered_executable_lines": 128,
+        "line_coverage_percent": 82.1,
+        "total_executable_lines": 156
+      },
+      "github.com/sclevine/yj/v5/yaml/encoder.go": {
+        "covered_executable_lines": 64,
+        "line_coverage_percent": 92.8,
+        "total_executable_lines": 69
+      },
+      "github.com/sclevine/yj/v5/yaml/json.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 68.8,
+        "total_executable_lines": 32
+      },
+      "github.com/sclevine/yj/v5/yaml/util.go": {
+        "covered_executable_lines": 4,
+        "line_coverage_percent": 66.7,
+        "total_executable_lines": 6
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/sclevine__yj.8016400/coverage/sclevine__yj.8016400/v3_final/source/coverage/v3_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 87.4,
+    "suite_count": 1,
+    "total_executable_lines": 858
+  },
+  "instance_id": "sclevine__yj.8016400",
+  "manifest": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/generated/sclevine__yj.8016400/v3_final/oracle_tests/eval/generated_cli_manifest.json",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 651,
+    "go_test_package_coverage_percent": 76.2,
+    "go_test_returncode": 0,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 75.9,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/sclevine__yj.8016400/coverage/sclevine__yj.8016400/v3_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/sclevine__yj.8016400/coverage/sclevine__yj.8016400/v3_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {
+      "github.com/sclevine/yj/v5/convert/encoding.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 88.9,
+        "total_executable_lines": 27
+      },
+      "github.com/sclevine/yj/v5/convert/hcl.go": {
+        "covered_executable_lines": 13,
+        "line_coverage_percent": 54.2,
+        "total_executable_lines": 24
+      },
+      "github.com/sclevine/yj/v5/convert/json.go": {
+        "covered_executable_lines": 17,
+        "line_coverage_percent": 60.7,
+        "total_executable_lines": 28
+      },
+      "github.com/sclevine/yj/v5/convert/toml.go": {
+        "covered_executable_lines": 23,
+        "line_coverage_percent": 76.7,
+        "total_executable_lines": 30
+      },
+      "github.com/sclevine/yj/v5/convert/yaml.go": {
+        "covered_executable_lines": 35,
+        "line_coverage_percent": 94.6,
+        "total_executable_lines": 37
+      },
+      "github.com/sclevine/yj/v5/flags.go": {
+        "covered_executable_lines": 114,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 114
+      },
+      "github.com/sclevine/yj/v5/hcl/decoder.go": {
+        "covered_executable_lines": 70,
+        "line_coverage_percent": 81.4,
+        "total_executable_lines": 86
+      },
+      "github.com/sclevine/yj/v5/main.go": {
+        "covered_executable_lines": 20,
+        "line_coverage_percent": 64.5,
+        "total_executable_lines": 31
+      },
+      "github.com/sclevine/yj/v5/order/map.go": {
+        "covered_executable_lines": 58,
+        "line_coverage_percent": 69.0,
+        "total_executable_lines": 84
+      },
+      "github.com/sclevine/yj/v5/toml/decoder.go": {
+        "covered_executable_lines": 79,
+        "line_coverage_percent": 84.0,
+        "total_executable_lines": 94
+      },
+      "github.com/sclevine/yj/v5/toml/encoder.go": {
+        "covered_executable_lines": 32,
+        "line_coverage_percent": 94.1,
+        "total_executable_lines": 34
+      },
+      "github.com/sclevine/yj/v5/toml/util.go": {
+        "covered_executable_lines": 2,
+        "line_coverage_percent": 33.3,
+        "total_executable_lines": 6
+      },
+      "github.com/sclevine/yj/v5/yaml/decoder.go": {
+        "covered_executable_lines": 76,
+        "line_coverage_percent": 48.7,
+        "total_executable_lines": 156
+      },
+      "github.com/sclevine/yj/v5/yaml/encoder.go": {
+        "covered_executable_lines": 64,
+        "line_coverage_percent": 92.8,
+        "total_executable_lines": 69
+      },
+      "github.com/sclevine/yj/v5/yaml/json.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 68.8,
+        "total_executable_lines": 32
+      },
+      "github.com/sclevine/yj/v5/yaml/util.go": {
+        "covered_executable_lines": 2,
+        "line_coverage_percent": 33.3,
+        "total_executable_lines": 6
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v3/go10_quality_r2/sclevine__yj.8016400/coverage/sclevine__yj.8016400/v3_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 76.2,
+    "total_executable_lines": 858
+  },
+  "quality": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v3/runs/go10_v3_quality_r2/generated/sclevine__yj.8016400/v3_final/evaluation_quality_report.json",
+  "quality_returncode": 0,
+  "schema": "programbench_oracle_gym_v3_repo_summary",
+  "stop_gate": {
+    "checks": {
+      "all_dummies_rejected": true,
+      "assertion_lint": true,
+      "generated_tests_passed": true,
+      "minimum_primary": false,
+      "minimum_secondary": false,
+      "source_leak": true,
+      "stretch_primary": false,
+      "stretch_secondary": false,
+      "three_binary_consistent": true
+    },
+    "note": "saturation rounds and reachable-coverage audit are required before a final production stop",
+    "pb_baseline_used": false,
+    "primary_percent": 87.4,
+    "schema": "programbench_oracle_gym_v3_stop_gate",
+    "secondary_percent": 86.6,
+    "status": "refine"
+  },
+  "suite_label": "v3_final"
+}

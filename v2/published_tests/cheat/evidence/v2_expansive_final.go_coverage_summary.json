@@ -1,0 +1,1047 @@
+{
+  "active_branch_count": 1,
+  "all_branch_binary_comparisons_consistent": true,
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "v2_expansive_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/pytest_workspaces/v2_expansive_final/cleanroom",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source/coverage/junit/v2_expansive_final.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "9fec0554e1580ab99256b9bea35c5345323c4260ac792a1865e602dc24f2f9d2",
+            "filtered_tests": 1023,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "9fec0554e1580ab99256b9bea35c5345323c4260ac792a1865e602dc24f2f9d2",
+            "tests": 1023
+          },
+          "label": "cleanroom",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/logs/pytest_v2_expansive_final_cleanroom.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v2_expansive_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/pytest_workspaces/v2_expansive_final/source",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source/coverage/junit/v2_expansive_final.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "9fec0554e1580ab99256b9bea35c5345323c4260ac792a1865e602dc24f2f9d2",
+            "filtered_tests": 1023,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "9fec0554e1580ab99256b9bea35c5345323c4260ac792a1865e602dc24f2f9d2",
+            "tests": 1023
+          },
+          "label": "source",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/logs/pytest_v2_expansive_final_source.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v2_expansive_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/pytest_workspaces/v2_expansive_final/coverage",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source/coverage/junit/v2_expansive_final.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "9fec0554e1580ab99256b9bea35c5345323c4260ac792a1865e602dc24f2f9d2",
+            "filtered_tests": 1023,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "9fec0554e1580ab99256b9bea35c5345323c4260ac792a1865e602dc24f2f9d2",
+            "tests": 1023
+          },
+          "label": "coverage",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/logs/pytest_v2_expansive_final_coverage.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        }
+      ],
+      "branch": "v2_expansive_final",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "README.md",
+        "eval"
+      ],
+      "oracle_material_root": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/cheat__cheat.b8098dc/v2_expansive_final/oracle_tests",
+      "tests_json": {
+        "active_count": null,
+        "expected_count": null,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "7c217ef40195e9ac882fff12b947b673c02a6ca78aedad84964cfac7d1ab758f",
+    "image": "programbench/cheat_1776_cheat.b8098dc:task_cleanroom_v6",
+    "path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "b8098dc1b9de846d76e68102e03aeb0f918bb0da",
+  "compare_binaries": true,
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 1038,
+    "kind": "generated",
+    "label": "v2_expansive_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 68.1,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/cheat/cheat/cmd/cheat/cmd_conf.go": {
+        "covered_executable_lines": 3,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 3
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_directories.go": {
+        "covered_executable_lines": 12,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 12
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_edit.go": {
+        "covered_executable_lines": 60,
+        "line_coverage_percent": 82.2,
+        "total_executable_lines": 73
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_init.go": {
+        "covered_executable_lines": 13,
+        "line_coverage_percent": 81.2,
+        "total_executable_lines": 16
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_list.go": {
+        "covered_executable_lines": 59,
+        "line_coverage_percent": 95.2,
+        "total_executable_lines": 62
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_remove.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 64.9,
+        "total_executable_lines": 37
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_search.go": {
+        "covered_executable_lines": 59,
+        "line_coverage_percent": 93.7,
+        "total_executable_lines": 63
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_tags.go": {
+        "covered_executable_lines": 10,
+        "line_coverage_percent": 76.9,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_update.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 20
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_view.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 45.3,
+        "total_executable_lines": 53
+      },
+      "github.com/cheat/cheat/cmd/cheat/config.go": {
+        "covered_executable_lines": 71,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 71
+      },
+      "github.com/cheat/cheat/cmd/cheat/main.go": {
+        "covered_executable_lines": 127,
+        "line_coverage_percent": 88.2,
+        "total_executable_lines": 144
+      },
+      "github.com/cheat/cheat/internal/cheatpath/filter.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 8
+      },
+      "github.com/cheat/cheat/internal/cheatpath/validate.go": {
+        "covered_executable_lines": 4,
+        "line_coverage_percent": 50.0,
+        "total_executable_lines": 8
+      },
+      "github.com/cheat/cheat/internal/cheatpath/writeable.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/completions/cheatsheets.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 22
+      },
+      "github.com/cheat/cheat/internal/completions/config.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 20
+      },
+      "github.com/cheat/cheat/internal/completions/generate.go": {
+        "covered_executable_lines": 12,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 12
+      },
+      "github.com/cheat/cheat/internal/completions/paths.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/completions/tags.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/config/color.go": {
+        "covered_executable_lines": 13,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/internal/config/editor.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 88.0,
+        "total_executable_lines": 25
+      },
+      "github.com/cheat/cheat/internal/config/env.go": {
+        "covered_executable_lines": 7,
+        "line_coverage_percent": 77.8,
+        "total_executable_lines": 9
+      },
+      "github.com/cheat/cheat/internal/config/init.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 10
+      },
+      "github.com/cheat/cheat/internal/config/new.go": {
+        "covered_executable_lines": 56,
+        "line_coverage_percent": 61.5,
+        "total_executable_lines": 91
+      },
+      "github.com/cheat/cheat/internal/config/pager.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 64.3,
+        "total_executable_lines": 14
+      },
+      "github.com/cheat/cheat/internal/config/path.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 8
+      },
+      "github.com/cheat/cheat/internal/config/paths.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 72.7,
+        "total_executable_lines": 33
+      },
+      "github.com/cheat/cheat/internal/config/validate.go": {
+        "covered_executable_lines": 26,
+        "line_coverage_percent": 59.1,
+        "total_executable_lines": 44
+      },
+      "github.com/cheat/cheat/internal/display/faint.go": {
+        "covered_executable_lines": 6,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 6
+      },
+      "github.com/cheat/cheat/internal/display/indent.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/display/write.go": {
+        "covered_executable_lines": 19,
+        "line_coverage_percent": 86.4,
+        "total_executable_lines": 22
+      },
+      "github.com/cheat/cheat/internal/installer/prompt.go": {
+        "covered_executable_lines": 32,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 32
+      },
+      "github.com/cheat/cheat/internal/installer/run.go": {
+        "covered_executable_lines": 16,
+        "line_coverage_percent": 50.0,
+        "total_executable_lines": 32
+      },
+      "github.com/cheat/cheat/internal/installer/template.go": {
+        "covered_executable_lines": 37,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 37
+      },
+      "github.com/cheat/cheat/internal/repo/clone.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/internal/repo/gitdir.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 98
+      },
+      "github.com/cheat/cheat/internal/repo/pull.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 66
+      },
+      "github.com/cheat/cheat/internal/sheet/colorize.go": {
+        "covered_executable_lines": 19,
+        "line_coverage_percent": 90.5,
+        "total_executable_lines": 21
+      },
+      "github.com/cheat/cheat/internal/sheet/copy.go": {
+        "covered_executable_lines": 25,
+        "line_coverage_percent": 65.8,
+        "total_executable_lines": 38
+      },
+      "github.com/cheat/cheat/internal/sheet/parse.go": {
+        "covered_executable_lines": 20,
+        "line_coverage_percent": 76.9,
+        "total_executable_lines": 26
+      },
+      "github.com/cheat/cheat/internal/sheet/search.go": {
+        "covered_executable_lines": 13,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/internal/sheet/sheet.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 84.6,
+        "total_executable_lines": 26
+      },
+      "github.com/cheat/cheat/internal/sheet/tagged.go": {
+        "covered_executable_lines": 3,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 3
+      },
+      "github.com/cheat/cheat/internal/sheet/validate.go": {
+        "covered_executable_lines": 19,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 19
+      },
+      "github.com/cheat/cheat/internal/sheets/consolidate.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 9
+      },
+      "github.com/cheat/cheat/internal/sheets/filter.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 30
+      },
+      "github.com/cheat/cheat/internal/sheets/load.go": {
+        "covered_executable_lines": 57,
+        "line_coverage_percent": 83.8,
+        "total_executable_lines": 68
+      },
+      "github.com/cheat/cheat/internal/sheets/sort.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 18
+      },
+      "github.com/cheat/cheat/internal/sheets/tags.go": {
+        "covered_executable_lines": 20,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 20
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source/coverage/v2_expansive_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 69.8,
+    "suite_count": 1,
+    "total_executable_lines": 1525
+  },
+  "go_build_package": {
+    "attempts": [
+      {
+        "build_cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source",
+        "build_target": "./cmd/cheat",
+        "coverage": {
+          "cmd": [
+            "go",
+            "build",
+            "-cover",
+            "-coverpkg=./...",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/executable_coverage",
+            "./cmd/cheat"
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source",
+          "duration_seconds": 1.149966,
+          "ended_at": "2026-07-27T19:46:55.214189+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/logs/go_build_cover_01_._cmd_cheat.json",
+          "returncode": 0,
+          "started_at": "2026-07-27T19:46:54.064223+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "go_executable": "go",
+        "source": {
+          "cmd": [
+            "go",
+            "build",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/executable_source",
+            "./cmd/cheat"
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source",
+          "duration_seconds": 4.550477,
+          "ended_at": "2026-07-27T19:46:54.063878+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/logs/go_build_source_01_._cmd_cheat.json",
+          "returncode": 0,
+          "started_at": "2026-07-27T19:46:49.513401+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "target": "./cmd/cheat"
+      }
+    ],
+    "candidates": [
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source/cmd/cheat",
+        "discovered_by": [
+          "go_list",
+          "source_scan"
+        ],
+        "import_path": "github.com/cheat/cheat/cmd/cheat",
+        "score": 158,
+        "target": "./cmd/cheat"
+      }
+    ],
+    "command_returncode": 0,
+    "fallback_used": false,
+    "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/logs/go_list_packages.json",
+    "mode": "auto",
+    "selected": "./cmd/cheat",
+    "selected_build_cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source",
+    "selected_build_target": "./cmd/cheat",
+    "selected_go_executable": "go"
+  },
+  "go_coverpkg": "./...",
+  "go_toolchain": {
+    "environment": [
+      "auto",
+      "go1.26.0",
+      "/home/programbench/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.0.linux-amd64"
+    ],
+    "environment_returncode": 0,
+    "selected_version": "go version go1.26.0 linux/amd64",
+    "version_returncode": 0
+  },
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source/coverage/v2_expansive_final_merged_raw"
+  },
+  "instance_id": "cheat__cheat.b8098dc",
+  "language": "go",
+  "logs_dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/logs",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 803,
+    "go_test_package_coverage_percent": 0.0,
+    "go_test_returncode": 1,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 52.3,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {
+      "github.com/cheat/cheat/cmd/cheat/cmd_conf.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 3
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_directories.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 12
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_edit.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 73
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_init.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 16
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_list.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 62
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_remove.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 37
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_search.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 63
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_tags.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_update.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 20
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_view.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 53
+      },
+      "github.com/cheat/cheat/cmd/cheat/config.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 71
+      },
+      "github.com/cheat/cheat/cmd/cheat/main.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 144
+      },
+      "github.com/cheat/cheat/internal/cheatpath/filter.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 8
+      },
+      "github.com/cheat/cheat/internal/cheatpath/validate.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 8
+      },
+      "github.com/cheat/cheat/internal/cheatpath/writeable.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/completions/cheatsheets.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 22
+      },
+      "github.com/cheat/cheat/internal/completions/config.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 20
+      },
+      "github.com/cheat/cheat/internal/completions/generate.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 12
+      },
+      "github.com/cheat/cheat/internal/completions/paths.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/completions/tags.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/config/color.go": {
+        "covered_executable_lines": 13,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/internal/config/editor.go": {
+        "covered_executable_lines": 23,
+        "line_coverage_percent": 92.0,
+        "total_executable_lines": 25
+      },
+      "github.com/cheat/cheat/internal/config/env.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 9
+      },
+      "github.com/cheat/cheat/internal/config/init.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 80.0,
+        "total_executable_lines": 10
+      },
+      "github.com/cheat/cheat/internal/config/new.go": {
+        "covered_executable_lines": 72,
+        "line_coverage_percent": 79.1,
+        "total_executable_lines": 91
+      },
+      "github.com/cheat/cheat/internal/config/pager.go": {
+        "covered_executable_lines": 12,
+        "line_coverage_percent": 85.7,
+        "total_executable_lines": 14
+      },
+      "github.com/cheat/cheat/internal/config/path.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 8
+      },
+      "github.com/cheat/cheat/internal/config/paths.go": {
+        "covered_executable_lines": 31,
+        "line_coverage_percent": 93.9,
+        "total_executable_lines": 33
+      },
+      "github.com/cheat/cheat/internal/config/validate.go": {
+        "covered_executable_lines": 44,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 44
+      },
+      "github.com/cheat/cheat/internal/display/faint.go": {
+        "covered_executable_lines": 6,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 6
+      },
+      "github.com/cheat/cheat/internal/display/indent.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/display/write.go": {
+        "covered_executable_lines": 15,
+        "line_coverage_percent": 68.2,
+        "total_executable_lines": 22
+      },
+      "github.com/cheat/cheat/internal/installer/prompt.go": {
+        "covered_executable_lines": 31,
+        "line_coverage_percent": 96.9,
+        "total_executable_lines": 32
+      },
+      "github.com/cheat/cheat/internal/installer/run.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 93.8,
+        "total_executable_lines": 32
+      },
+      "github.com/cheat/cheat/internal/installer/template.go": {
+        "covered_executable_lines": 37,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 37
+      },
+      "github.com/cheat/cheat/internal/repo/clone.go": {
+        "covered_executable_lines": 12,
+        "line_coverage_percent": 92.3,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/internal/repo/gitdir.go": {
+        "covered_executable_lines": 96,
+        "line_coverage_percent": 98.0,
+        "total_executable_lines": 98
+      },
+      "github.com/cheat/cheat/internal/repo/pull.go": {
+        "covered_executable_lines": 50,
+        "line_coverage_percent": 75.8,
+        "total_executable_lines": 66
+      },
+      "github.com/cheat/cheat/internal/sheet/colorize.go": {
+        "covered_executable_lines": 19,
+        "line_coverage_percent": 90.5,
+        "total_executable_lines": 21
+      },
+      "github.com/cheat/cheat/internal/sheet/copy.go": {
+        "covered_executable_lines": 29,
+        "line_coverage_percent": 76.3,
+        "total_executable_lines": 38
+      },
+      "github.com/cheat/cheat/internal/sheet/parse.go": {
+        "covered_executable_lines": 26,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 26
+      },
+      "github.com/cheat/cheat/internal/sheet/search.go": {
+        "covered_executable_lines": 13,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/internal/sheet/sheet.go": {
+        "covered_executable_lines": 26,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 26
+      },
+      "github.com/cheat/cheat/internal/sheet/tagged.go": {
+        "covered_executable_lines": 3,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 3
+      },
+      "github.com/cheat/cheat/internal/sheet/validate.go": {
+        "covered_executable_lines": 19,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 19
+      },
+      "github.com/cheat/cheat/internal/sheets/consolidate.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 9
+      },
+      "github.com/cheat/cheat/internal/sheets/filter.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 30
+      },
+      "github.com/cheat/cheat/internal/sheets/load.go": {
+        "covered_executable_lines": 57,
+        "line_coverage_percent": 83.8,
+        "total_executable_lines": 68
+      },
+      "github.com/cheat/cheat/internal/sheets/sort.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 18
+      },
+      "github.com/cheat/cheat/internal/sheets/tags.go": {
+        "covered_executable_lines": 20,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 20
+      },
+      "github.com/cheat/cheat/mocks/path.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 88.9,
+        "total_executable_lines": 9
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source/coverage/native_profile.txt",
+    "statement_coverage_percent": 48.5,
+    "total_executable_lines": 1534
+  },
+  "oracle_material_root": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/cheat__cheat.b8098dc/v2_expansive_final/oracle_tests",
+  "pytest_python": "/usr/bin/python3",
+  "repository": "cheat/cheat",
+  "selected_branches": [
+    "v2_expansive_final"
+  ],
+  "test_suite": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 0,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "go_tool_cover_func",
+    "covered_executable_lines": 1038,
+    "kind": "generated",
+    "label": "v2_expansive_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 68.1,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/cheat/cheat/cmd/cheat/cmd_conf.go": {
+        "covered_executable_lines": 3,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 3
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_directories.go": {
+        "covered_executable_lines": 12,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 12
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_edit.go": {
+        "covered_executable_lines": 60,
+        "line_coverage_percent": 82.2,
+        "total_executable_lines": 73
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_init.go": {
+        "covered_executable_lines": 13,
+        "line_coverage_percent": 81.2,
+        "total_executable_lines": 16
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_list.go": {
+        "covered_executable_lines": 59,
+        "line_coverage_percent": 95.2,
+        "total_executable_lines": 62
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_remove.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 64.9,
+        "total_executable_lines": 37
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_search.go": {
+        "covered_executable_lines": 59,
+        "line_coverage_percent": 93.7,
+        "total_executable_lines": 63
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_tags.go": {
+        "covered_executable_lines": 10,
+        "line_coverage_percent": 76.9,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_update.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 20
+      },
+      "github.com/cheat/cheat/cmd/cheat/cmd_view.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 45.3,
+        "total_executable_lines": 53
+      },
+      "github.com/cheat/cheat/cmd/cheat/config.go": {
+        "covered_executable_lines": 71,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 71
+      },
+      "github.com/cheat/cheat/cmd/cheat/main.go": {
+        "covered_executable_lines": 127,
+        "line_coverage_percent": 88.2,
+        "total_executable_lines": 144
+      },
+      "github.com/cheat/cheat/internal/cheatpath/filter.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 8
+      },
+      "github.com/cheat/cheat/internal/cheatpath/validate.go": {
+        "covered_executable_lines": 4,
+        "line_coverage_percent": 50.0,
+        "total_executable_lines": 8
+      },
+      "github.com/cheat/cheat/internal/cheatpath/writeable.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/completions/cheatsheets.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 22
+      },
+      "github.com/cheat/cheat/internal/completions/config.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 20
+      },
+      "github.com/cheat/cheat/internal/completions/generate.go": {
+        "covered_executable_lines": 12,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 12
+      },
+      "github.com/cheat/cheat/internal/completions/paths.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/completions/tags.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/config/color.go": {
+        "covered_executable_lines": 13,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/internal/config/editor.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 88.0,
+        "total_executable_lines": 25
+      },
+      "github.com/cheat/cheat/internal/config/env.go": {
+        "covered_executable_lines": 7,
+        "line_coverage_percent": 77.8,
+        "total_executable_lines": 9
+      },
+      "github.com/cheat/cheat/internal/config/init.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 10
+      },
+      "github.com/cheat/cheat/internal/config/new.go": {
+        "covered_executable_lines": 56,
+        "line_coverage_percent": 61.5,
+        "total_executable_lines": 91
+      },
+      "github.com/cheat/cheat/internal/config/pager.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 64.3,
+        "total_executable_lines": 14
+      },
+      "github.com/cheat/cheat/internal/config/path.go": {
+        "covered_executable_lines": 8,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 8
+      },
+      "github.com/cheat/cheat/internal/config/paths.go": {
+        "covered_executable_lines": 24,
+        "line_coverage_percent": 72.7,
+        "total_executable_lines": 33
+      },
+      "github.com/cheat/cheat/internal/config/validate.go": {
+        "covered_executable_lines": 26,
+        "line_coverage_percent": 59.1,
+        "total_executable_lines": 44
+      },
+      "github.com/cheat/cheat/internal/display/faint.go": {
+        "covered_executable_lines": 6,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 6
+      },
+      "github.com/cheat/cheat/internal/display/indent.go": {
+        "covered_executable_lines": 11,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 11
+      },
+      "github.com/cheat/cheat/internal/display/write.go": {
+        "covered_executable_lines": 19,
+        "line_coverage_percent": 86.4,
+        "total_executable_lines": 22
+      },
+      "github.com/cheat/cheat/internal/installer/prompt.go": {
+        "covered_executable_lines": 32,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 32
+      },
+      "github.com/cheat/cheat/internal/installer/run.go": {
+        "covered_executable_lines": 16,
+        "line_coverage_percent": 50.0,
+        "total_executable_lines": 32
+      },
+      "github.com/cheat/cheat/internal/installer/template.go": {
+        "covered_executable_lines": 37,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 37
+      },
+      "github.com/cheat/cheat/internal/repo/clone.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/internal/repo/gitdir.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 98
+      },
+      "github.com/cheat/cheat/internal/repo/pull.go": {
+        "covered_executable_lines": 0,
+        "line_coverage_percent": 0.0,
+        "total_executable_lines": 66
+      },
+      "github.com/cheat/cheat/internal/sheet/colorize.go": {
+        "covered_executable_lines": 19,
+        "line_coverage_percent": 90.5,
+        "total_executable_lines": 21
+      },
+      "github.com/cheat/cheat/internal/sheet/copy.go": {
+        "covered_executable_lines": 25,
+        "line_coverage_percent": 65.8,
+        "total_executable_lines": 38
+      },
+      "github.com/cheat/cheat/internal/sheet/parse.go": {
+        "covered_executable_lines": 20,
+        "line_coverage_percent": 76.9,
+        "total_executable_lines": 26
+      },
+      "github.com/cheat/cheat/internal/sheet/search.go": {
+        "covered_executable_lines": 13,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 13
+      },
+      "github.com/cheat/cheat/internal/sheet/sheet.go": {
+        "covered_executable_lines": 22,
+        "line_coverage_percent": 84.6,
+        "total_executable_lines": 26
+      },
+      "github.com/cheat/cheat/internal/sheet/tagged.go": {
+        "covered_executable_lines": 3,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 3
+      },
+      "github.com/cheat/cheat/internal/sheet/validate.go": {
+        "covered_executable_lines": 19,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 19
+      },
+      "github.com/cheat/cheat/internal/sheets/consolidate.go": {
+        "covered_executable_lines": 9,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 9
+      },
+      "github.com/cheat/cheat/internal/sheets/filter.go": {
+        "covered_executable_lines": 30,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 30
+      },
+      "github.com/cheat/cheat/internal/sheets/load.go": {
+        "covered_executable_lines": 57,
+        "line_coverage_percent": 83.8,
+        "total_executable_lines": 68
+      },
+      "github.com/cheat/cheat/internal/sheets/sort.go": {
+        "covered_executable_lines": 18,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 18
+      },
+      "github.com/cheat/cheat/internal/sheets/tags.go": {
+        "covered_executable_lines": 20,
+        "line_coverage_percent": 100.0,
+        "total_executable_lines": 20
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final/source/coverage/v2_expansive_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 69.8,
+    "suite_count": 1,
+    "total_executable_lines": 1525
+  },
+  "work_dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/final_repairs/cheat__cheat.b8098dc/coverage/cheat__cheat.b8098dc/v2_expansive_final"
+}

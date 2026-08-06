@@ -1,0 +1,336 @@
+{
+  "active_branch_count": 1,
+  "all_branch_binary_comparisons_consistent": true,
+  "branch_results": [
+    {
+      "binary_results": [
+        {
+          "branch": "v2_expansive_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/pytest_workspaces/v2_expansive_final/cleanroom",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/coverage/junit/v2_expansive_final.cleanroom.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "bb578eaff6133d41ecb6049c9a931e9a10114c744ab2d32602a51132eed6c57f",
+            "filtered_tests": 674,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "bb578eaff6133d41ecb6049c9a931e9a10114c744ab2d32602a51132eed6c57f",
+            "tests": 674
+          },
+          "label": "cleanroom",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/logs/pytest_v2_expansive_final_cleanroom.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v2_expansive_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/pytest_workspaces/v2_expansive_final/source",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/coverage/junit/v2_expansive_final.source.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "bb578eaff6133d41ecb6049c9a931e9a10114c744ab2d32602a51132eed6c57f",
+            "filtered_tests": 674,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "bb578eaff6133d41ecb6049c9a931e9a10114c744ab2d32602a51132eed6c57f",
+            "tests": 674
+          },
+          "label": "source",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/logs/pytest_v2_expansive_final_source.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        },
+        {
+          "branch": "v2_expansive_final",
+          "deselected_tests": [],
+          "detached_tty": false,
+          "execution_workspace": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/pytest_workspaces/v2_expansive_final/coverage",
+          "extra_env_keys": [],
+          "fixed_workspace": null,
+          "junit": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/coverage/junit/v2_expansive_final.coverage.results.xml",
+          "junit_summary": {
+            "errors": 0,
+            "exists": true,
+            "failure_details": [],
+            "failures": 0,
+            "filtered_error_test_names": [],
+            "filtered_errors": 0,
+            "filtered_failed_test_names": [],
+            "filtered_failures": 0,
+            "filtered_skipped": 0,
+            "filtered_skipped_test_names": [],
+            "filtered_test_names_hash": "bb578eaff6133d41ecb6049c9a931e9a10114c744ab2d32602a51132eed6c57f",
+            "filtered_tests": 674,
+            "ignored_observed": 0,
+            "skipped": 0,
+            "test_names_hash": "bb578eaff6133d41ecb6049c9a931e9a10114c744ab2d32602a51132eed6c57f",
+            "tests": 674
+          },
+          "label": "coverage",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/logs/pytest_v2_expansive_final_coverage.json",
+          "pytest_timeout_override": null,
+          "returncode": 0,
+          "timed_out": false,
+          "uses_eval_run_sh": false,
+          "workspace_alias": null
+        }
+      ],
+      "branch": "v2_expansive_final",
+      "comparison": {
+        "all_filtered_passed": true,
+        "all_junit_parseable": true,
+        "all_returncode_zero": true,
+        "behavior_consistent": true,
+        "same_filtered_failure_error_skip_counts": true,
+        "same_filtered_test_count": true,
+        "same_filtered_test_names_hash": true
+      },
+      "copied_oracle_material": [
+        "README.md",
+        "eval"
+      ],
+      "oracle_material_root": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/alecthomas__chroma.8d04def/v2_expansive_final/oracle_tests",
+      "tests_json": {
+        "active_count": null,
+        "expected_count": null,
+        "ignored_count": 0
+      }
+    }
+  ],
+  "cleanroom_binary": {
+    "container_id": "d04ab0ab0db9c09dafc2e5a522ad3fe9b2ff213f625fe72871089e2222f36d4a",
+    "image": "programbench/alecthomas_1776_chroma.8d04def:task_cleanroom_v6",
+    "path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/executable_cleanroom",
+    "returncode": 0
+  },
+  "commit": "8d04def94bbccd114a84a02ff2df5efa06bd49f3",
+  "compare_binaries": true,
+  "generated_tests": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 1,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "cover_profile_statement_blocks",
+    "covered_executable_lines": 175,
+    "kind": "generated",
+    "label": "v2_expansive_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 58.3,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/alecthomas/chroma/v2/cmd/chroma/main.go": {
+        "covered_executable_lines": 175,
+        "line_coverage_percent": 58.3,
+        "total_executable_lines": 300
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/coverage/v2_expansive_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 54.9,
+    "suite_count": 1,
+    "total_executable_lines": 300
+  },
+  "go_build_package": {
+    "attempts": [
+      {
+        "build_cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/cmd/chroma",
+        "build_target": ".",
+        "coverage": {
+          "cmd": [
+            "go",
+            "build",
+            "-cover",
+            "-coverpkg=./...",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/executable_coverage",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/cmd/chroma",
+          "duration_seconds": 0.809671,
+          "ended_at": "2026-07-27T11:44:19.309056+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/logs/go_build_cover_01_._cmd_chroma.json",
+          "returncode": 0,
+          "started_at": "2026-07-27T11:44:18.499385+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "go_executable": "go",
+        "source": {
+          "cmd": [
+            "go",
+            "build",
+            "-o",
+            "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/executable_source",
+            "."
+          ],
+          "cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/cmd/chroma",
+          "duration_seconds": 7.747485,
+          "ended_at": "2026-07-27T11:44:18.499013+00:00",
+          "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/logs/go_build_source_01_._cmd_chroma.json",
+          "returncode": 0,
+          "started_at": "2026-07-27T11:44:10.751528+00:00",
+          "stderr_tail": "",
+          "stdout_tail": "",
+          "timed_out": false
+        },
+        "target": "./cmd/chroma"
+      }
+    ],
+    "candidates": [
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/cmd/chroma",
+        "discovered_by": [
+          "source_scan"
+        ],
+        "import_path": null,
+        "score": 158,
+        "target": "./cmd/chroma"
+      },
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/cmd/chromad",
+        "discovered_by": [
+          "source_scan"
+        ],
+        "import_path": null,
+        "score": 88,
+        "target": "./cmd/chromad"
+      },
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/cmd/libchromawasm",
+        "discovered_by": [
+          "source_scan"
+        ],
+        "import_path": null,
+        "score": 88,
+        "target": "./cmd/libchromawasm"
+      },
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/_tools/css2style",
+        "discovered_by": [
+          "source_scan"
+        ],
+        "import_path": null,
+        "score": -2,
+        "target": "./_tools/css2style"
+      },
+      {
+        "dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/_tools/exercise",
+        "discovered_by": [
+          "source_scan"
+        ],
+        "import_path": null,
+        "score": -2,
+        "target": "./_tools/exercise"
+      }
+    ],
+    "command_returncode": 0,
+    "fallback_used": true,
+    "log_path": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/logs/go_list_packages.json",
+    "mode": "auto",
+    "selected": "./cmd/chroma",
+    "selected_build_cwd": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/cmd/chroma",
+    "selected_build_target": ".",
+    "selected_go_executable": "go"
+  },
+  "go_coverpkg": "./...",
+  "go_toolchain": {
+    "environment": [
+      "auto",
+      "go1.26.1",
+      "/home/programbench/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.1.linux-amd64"
+    ],
+    "environment_returncode": 0,
+    "selected_version": "go version go1.26.1 linux/amd64",
+    "version_returncode": 0
+  },
+  "gocoverdir_alias": {
+    "alias": "/tmp/gocoverdir",
+    "status": "linked",
+    "target": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/coverage/v2_expansive_final_merged_raw"
+  },
+  "instance_id": "alecthomas__chroma.8d04def",
+  "language": "go",
+  "logs_dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/logs",
+  "native_tests": {
+    "cover_func_returncode": 0,
+    "covered_executable_lines": 0,
+    "go_test_package_coverage_percent": null,
+    "go_test_returncode": 1,
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": null,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "logs": {
+      "go_cover_func": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/logs/go_native_cover_func.json",
+      "go_test": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/logs/go_native_tests.json"
+    },
+    "per_file_line_coverage": {},
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/cmd/chroma/coverage/native_profile.txt",
+    "statement_coverage_percent": 0.0,
+    "total_executable_lines": 0
+  },
+  "oracle_material_root": "/mnt/c/Users/v-haominqi/Documents/Codex/pb-scaffold/v2/runs/go10_v2_expansive_r2/generated/alecthomas__chroma.8d04def/v2_expansive_final/oracle_tests",
+  "pytest_python": "/usr/bin/python3",
+  "repository": "alecthomas/chroma",
+  "selected_branches": [
+    "v2_expansive_final"
+  ],
+  "test_suite": {
+    "covdata_percent_returncode": 0,
+    "covdata_textfmt_returncode": 0,
+    "cover_func_returncode": 1,
+    "coverage_metric": "go_statement_coverage",
+    "coverage_percent_source": "cover_profile_statement_blocks",
+    "covered_executable_lines": 175,
+    "kind": "generated",
+    "label": "v2_expansive_final",
+    "line_coverage_note": "Approximation of PB line coverage from Go statement-block ranges.",
+    "line_coverage_percent": 58.3,
+    "line_coverage_source": "go_cover_profile_block_line_union",
+    "per_file_line_coverage": {
+      "github.com/alecthomas/chroma/v2/cmd/chroma/main.go": {
+        "covered_executable_lines": 175,
+        "line_coverage_percent": 58.3,
+        "total_executable_lines": 300
+      }
+    },
+    "profile": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final/source/coverage/v2_expansive_final_merged_profile.txt",
+    "pytest_all_coverage_runs_passed": true,
+    "statement_coverage_percent": 54.9,
+    "suite_count": 1,
+    "total_executable_lines": 300
+  },
+  "work_dir": "/home/programbench/research/oracle-workspace/v2/expansive_r2/cohort_final/alecthomas__chroma.8d04def/coverage/alecthomas__chroma.8d04def/v2_expansive_final"
+}
