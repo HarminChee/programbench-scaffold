@@ -1,0 +1,3 @@
+# The runnable suites are published as the tar.gz archives in this directory.
+# Ignore any temporary long-path extraction directories created during staging.
+*/

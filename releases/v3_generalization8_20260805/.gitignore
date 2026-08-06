@@ -1,0 +1,4 @@
+# The uncompressed 20-repository historical JSON is retained locally for
+# audit, but is too large for GitHub's 100 MB single-file limit. The compact
+# previous_v3_12_repo_results.md is the published historical table.
+results/previous_crosslang20_20_repo_results.json
