@@ -77,6 +77,8 @@ def main() -> int:
         row = by_id[instance]
         source = Path(row["source_dir"]).resolve(strict=True)
         package, binary = cargo_bin_scope(source, str(candidate["binary"]), cargo)
+        features = [str(value) for value in candidate.get("rust_features") or []]
+        feature_args = f" --features {','.join(features)}" if features else ""
         complexity = 1.0 if candidate.get("difficulty") == "easy" else 1.25
         scale = scaled(instance, source, complexity)
         repositories.append({
@@ -84,7 +86,8 @@ def main() -> int:
             "repository": candidate["repository"],
             "language": "rust",
             "binary_name": binary,
-            "rust_build_args": f"--release --locked -p {package} --bin {binary}",
+            "rust_build_args": f"--release --locked -p {package} --bin {binary}{feature_args}",
+            "rust_build_features": features,
             "rust_binary_relpath": f"release/{binary}",
             "behavior_themes": candidate["themes"],
             **scale,

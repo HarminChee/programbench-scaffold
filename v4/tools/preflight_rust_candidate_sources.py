@@ -40,6 +40,7 @@ def run_one(candidate: dict[str, Any], snapshot: dict[str, Any], cache_root: Pat
     instance = str(candidate["instance_id"])
     source = Path(snapshot["source_dir"]).resolve(strict=True)
     package, binary = cargo_bin_scope(source, str(candidate["binary"]), cargo)
+    features = [str(value) for value in candidate.get("rust_features") or []]
     repo_root = cache_root / "repositories" / instance
     cargo_home = cache_root / "cargo-home"
     target = repo_root / "target"
@@ -62,9 +63,13 @@ def run_one(candidate: dict[str, Any], snapshot: dict[str, Any], cache_root: Pat
         return {"instance_id": instance, "repository": candidate["repository"],
                 "state": "failed", "stage": "cargo_fetch_locked", "returncode": fetch.returncode,
                 "error": fetch.stderr[-2000:]}
+    build_command = [str(cargo), "build", "--offline", "--release", "--locked", "-p", package,
+                     "--bin", binary]
+    if features:
+        build_command.extend(["--features", ",".join(features)])
+    build_command.extend(["--target-dir", str(target), "--manifest-path", str(source / "Cargo.toml")])
     build = subprocess.run(
-        [str(cargo), "build", "--offline", "--release", "--locked", "-p", package,
-         "--bin", binary, "--target-dir", str(target), "--manifest-path", str(source / "Cargo.toml")],
+        build_command,
         text=True, capture_output=True, env=env, timeout=timeout,
     )
     (logs / "build.stdout.log").write_text(build.stdout, encoding="utf-8")
@@ -80,6 +85,7 @@ def run_one(candidate: dict[str, Any], snapshot: dict[str, Any], cache_root: Pat
         "state": "completed",
         "package": package,
         "binary": binary,
+        "rust_features": features,
         "binary_path": str(executable),
         "binary_sha256": sha256_file(executable),
         "fetch_returncode": fetch.returncode,
