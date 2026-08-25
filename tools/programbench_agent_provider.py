@@ -245,13 +245,25 @@ def run_claude_code(
     env = os.environ.copy()
     if extra_env:
         env.update(extra_env)
-    if not bridge:
+    if bridge:
+        # WSL exports its Linux PSModulePath into Windows processes.  That
+        # shadows Windows PowerShell's own module locations and can make even
+        # Microsoft.PowerShell.Security (needed for DPAPI key recovery) fail
+        # to autoload.  Omitting it lets powershell.exe reconstruct the native
+        # Windows default without exposing or changing any credential.
+        env.pop("PSModulePath", None)
+    else:
         env = configure_agent_maestro_claude_env(env)
     started = time.time()
+    # WSL interop can reject Windows processes before PowerShell starts when
+    # they inherit a deep Linux cwd translated to a long UNC path.  The real
+    # agent workspace is already passed explicitly via -WorkingDirectory, so
+    # launch the bridge from its short NTFS setup directory instead.
+    process_cwd = bridge_script.parent if bridge else cwd
     try:
         proc = subprocess.run(
             cmd,
-            cwd=cwd,
+            cwd=process_cwd,
             input=prompt,
             capture_output=True,
             text=True,
@@ -295,6 +307,7 @@ def run_claude_code(
         "provider": "windows-claude-code-agent-maestro" if bridge else "claude-code",
         "model": model,
         "cwd": str(cwd),
+        "process_cwd": str(process_cwd),
         "command": cmd,
         "prompt_sha256": __import__("hashlib").sha256(prompt.encode("utf-8")).hexdigest(),
         "returncode": returncode,
@@ -360,6 +373,8 @@ def run_agent_maestro_review(
         try:
             if bridge:
                 bridge_script = Path(__file__).resolve().parents[1] / "setup" / "invoke_agent_maestro_anthropic.ps1"
+                bridge_env = os.environ.copy()
+                bridge_env.pop("PSModulePath", None)
                 proc = subprocess.run(
                     [
                         resolve_windows_powershell(),
@@ -373,6 +388,7 @@ def run_agent_maestro_review(
                     capture_output=True,
                     text=True,
                     timeout=timeout,
+                    env=bridge_env,
                 )
                 if proc.returncode != 0:
                     raise ConnectionError(proc.stderr[-4000:] or f"Windows review bridge exited {proc.returncode}")
@@ -399,7 +415,6 @@ def run_agent_maestro_review(
     if response is None:
         raise RuntimeError(f"Agent review failed: {last_error}")
     text = _anthropic_text(response)
-    parsed = find_json_object(text)
     manifest = {
         "provider": "agent-maestro-anthropic",
         "model": model,
@@ -408,8 +423,13 @@ def run_agent_maestro_review(
         "credential_source": "windows-dpapi" if bridge else ("environment" if key else "none"),
         "system_sha256": __import__("hashlib").sha256(system.encode("utf-8")).hexdigest(),
         "prompt_sha256": __import__("hashlib").sha256(prompt.encode("utf-8")).hexdigest(),
+        "stop_reason": response.get("stop_reason"),
     }
     (output_root / "response_text.txt").write_text(text, encoding="utf-8")
-    write_json(output_root / "review.json", parsed)
+    write_json(output_root / "response_envelope.json", response)
     write_json(output_root / "run_manifest.json", manifest)
+    if response.get("stop_reason") == "max_tokens":
+        raise ValueError("Agent review response truncated at max_tokens")
+    parsed = find_json_object(text)
+    write_json(output_root / "review.json", parsed)
     return parsed

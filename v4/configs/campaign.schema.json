@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "programbench_v4_campaign_v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "campaign_id",
+    "mode",
+    "output_root",
+    "repo_workers",
+    "stage_timeout_seconds",
+    "marginal_policy",
+    "tranche_policy",
+    "repositories"
+  ],
+  "properties": {
+    "schema": {"const": "programbench_v4_campaign_v1"},
+    "campaign_id": {"type": "string", "minLength": 1},
+    "mode": {"enum": ["production", "smoke", "pilot"]},
+    "output_root": {"type": "string", "minLength": 1},
+    "repo_workers": {"type": "integer", "minimum": 1, "maximum": 10},
+    "generation_workers": {"type": "integer", "minimum": 1, "maximum": 8, "default": 2},
+    "resource_admission": {
+      "type": "object",
+      "properties": {
+        "cpu_capacity": {"type": "integer", "minimum": 1, "maximum": 12},
+        "memory_capacity_mib": {"type": "integer", "minimum": 512, "maximum": 32768}
+      },
+      "additionalProperties": false
+    },
+    "heartbeat_seconds": {"type": "number", "exclusiveMinimum": 0},
+    "stage_timeout_seconds": {"type": "number", "exclusiveMinimum": 0},
+    "fast_settlement": {
+      "type": "object",
+      "required": ["repositories"],
+      "properties": {
+        "repositories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": ["instance_id", "native_primary_coverage"],
+            "properties": {
+              "instance_id": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+$"},
+              "native_primary_coverage": {
+                "type": ["number", "null"], "minimum": 0, "maximum": 100
+              },
+              "minimum_margin_pp": {"type": "number", "minimum": 0},
+              "allow_below_native_manual": {"type": "boolean"},
+              "saturation_revalidation": {"type": "boolean"},
+              "checkpoint_closeout_revalidation": {"type": "boolean"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "marginal_policy": {
+      "type": "object",
+      "properties": {
+        "saturation_windows": {"type": "integer", "minimum": 1},
+        "minimum_primary_gain_pp": {"type": "number", "minimum": 0},
+        "minimum_novelty": {"type": "integer", "minimum": 0},
+        "minimum_strong_novelty": {"type": ["integer", "null"], "minimum": 0},
+        "minimum_promoted_observations": {"type": "integer", "minimum": 2},
+        "repo_wall_budget_seconds": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "raw_candidate_fuse": {"type": ["integer", "null"], "minimum": 1},
+        "adaptive_raw_fuse": {"type": "boolean"},
+        "raw_candidate_hard_fuse": {"type": ["integer", "null"], "minimum": 1},
+        "raw_fuse_headroom_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "raw_fuse_minimum_growth": {"type": "integer", "minimum": 1},
+        "raw_fuse_minimum_witness_density": {"type": "number", "minimum": 0},
+        "raw_fuse_minimum_promoted_observations": {"type": "integer", "minimum": 1},
+        "retained_suite_fuse": {"type": ["integer", "null"], "minimum": 1},
+        "adaptive_retained_fuse": {"type": "boolean"},
+        "retained_suite_hard_fuse": {"type": ["integer", "null"], "minimum": 1},
+        "retained_fuse_headroom_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "retained_fuse_minimum_growth": {"type": "integer", "minimum": 1},
+        "pilot_iteration_fuse": {"type": ["integer", "null"], "minimum": 1}
+        ,"require_auxiliary_path_saturation": {"type": "boolean"}
+        ,"auxiliary_path_saturation_windows": {"type": "integer", "minimum": 1}
+        ,"auxiliary_path_minimum_relative_gain": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": false
+    },
+    "tranche_policy": {
+      "type": "object",
+      "properties": {
+        "initial_size": {"type": "integer", "minimum": 1},
+        "minimum_size": {"type": "integer", "minimum": 1},
+        "maximum_size": {"type": "integer", "minimum": 1},
+        "high_yield_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "low_yield_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "growth_factor": {"type": "number", "exclusiveMinimum": 1},
+        "shrink_factor": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "breadth_bootstrap_iterations": {"type": "integer", "minimum": 0},
+        "breadth_bootstrap_views": {
+          "type": "array", "minItems": 1, "maxItems": 8,
+          "uniqueItems": true, "items": {"type": "string", "minLength": 1}
+        },
+        "reservoir_rerank_period": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "repositories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "instance_id",
+          "language",
+          "commit",
+          "source_dir",
+          "source_tree_sha256",
+          "runtime_image_id",
+          "stage_adapter"
+          ,"scope_files"
+        ],
+        "properties": {
+          "instance_id": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+$"},
+          "language": {"enum": ["go", "rust", "c", "cpp"]},
+          "commit": {"type": "string", "pattern": "^[0-9a-fA-F]{40}$"},
+          "source_dir": {"type": "string", "minLength": 1},
+          "source_tree_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "runtime_image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "stage_adapter": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+          ,"dependency_prefetch_timeout_seconds": {"type": "integer", "minimum": 1}
+          ,"quality_timeout_seconds": {"type": "integer", "minimum": 60, "maximum": 7200}
+          ,"quality_container_cpus": {"type": "integer", "minimum": 1, "maximum": 16}
+          ,"afl_qemu_enabled": {"type": "boolean"}
+          ,"afl_qemu_root": {"type": "string", "minLength": 1}
+          ,"afl_measurement_period": {"type": "integer", "minimum": 1}
+          ,"afl_path_auxiliary_stop": {"type": "boolean"}
+          ,"go_afl_max_calls": {"type": "integer", "minimum": 1, "maximum": 5000}
+          ,"go_afl_timeout_seconds": {"type": "integer", "minimum": 900, "maximum": 14400}
+          ,"go_prefetch_install_specs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          }
+          ,"scope_files": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "not": {
+    "anyOf": [
+      {"required": ["maximum_rounds"]},
+      {"required": ["coverage_target"]}
+    ]
+  },
+  "additionalProperties": true
+}

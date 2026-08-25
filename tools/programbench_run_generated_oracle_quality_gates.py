@@ -19,6 +19,10 @@ from pathlib import Path
 from typing import Any
 
 from programbench_assertion_linter import lint_oracle_root
+from programbench_go_coverage_harness import (
+    run_whole_harness_in_isolated_container,
+    sha256_file,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -201,6 +205,33 @@ def fixed_workspace_executable(executable: Path):
         lock.close()
 
 
+def rewrite_fixed_workspace_alias(root: Path, executable: Path) -> int:
+    """Give one dummy gate a private executable path.
+
+    Generated PB tests and fixture scripts may hard-code
+    ``/workspace/executable``.  Dummy gates run against disposable copies, so
+    replacing that exact byte sequence with the gate-local executable keeps
+    semantics while removing the global alias lock that previously serialized
+    the four independent dummy policies.
+    """
+
+    source = b"/workspace/executable"
+    replacement = str(executable).encode("utf-8")
+    rewritten = 0
+    for path in root.rglob("*"):
+        if not path.is_file() or path.is_symlink():
+            continue
+        try:
+            data = path.read_bytes()
+        except OSError:
+            continue
+        if source not in data:
+            continue
+        path.write_bytes(data.replace(source, replacement))
+        rewritten += 1
+    return rewritten
+
+
 def run_pytest_bundle(
     *,
     python: Path,
@@ -213,13 +244,22 @@ def run_pytest_bundle(
     gocoverdir: Path | None = None,
     case_timeout_cap: float | None = None,
     pytest_workers: int = 1,
+    policy_scope: str,
+    private_executable_alias: bool = False,
 ) -> dict[str, Any]:
+    if os.environ.get("PROGRAMBENCH_WHOLE_HARNESS_ISOLATED") != "1":
+        raise RuntimeError("quality-gate target execution outside isolated whole-harness container is forbidden")
     if workspace.exists():
         shutil.rmtree(workspace)
     workspace.mkdir(parents=True)
     shutil.copytree(oracle_root / "eval", workspace / "eval")
     shutil.copy2(executable, workspace / "executable")
     (workspace / "executable").chmod(0o755)
+    rewritten_alias_files = 0
+    if private_executable_alias:
+        rewritten_alias_files = rewrite_fixed_workspace_alias(
+            workspace / "eval", workspace / "executable"
+        )
     junit = workspace / junit_name
     env = os.environ.copy()
     env["TZ"] = "UTC"
@@ -232,7 +272,12 @@ def run_pytest_bundle(
     cmd = [str(python), "-m", "pytest", "-q", "eval/tests", f"--junitxml={junit}"]
     if pytest_workers > 1:
         cmd.extend(["-n", str(pytest_workers)])
-    with fixed_workspace_executable(workspace / "executable"):
+    alias_context = (
+        contextlib.nullcontext()
+        if private_executable_alias
+        else fixed_workspace_executable(workspace / "executable")
+    )
+    with alias_context:
         result = run_command(
             cmd,
             cwd=workspace,
@@ -247,6 +292,22 @@ def run_pytest_bundle(
         "timed_out": result["timed_out"],
         "junit_summary": parse_junit(junit),
         "log_path": result.get("log_path"),
+        "private_executable_alias": private_executable_alias,
+        "rewritten_alias_files": rewritten_alias_files,
+        "execution_isolation": {
+            "mode": "whole_harness_docker_per_repository",
+            "runtime_image": os.environ.get("PROGRAMBENCH_COVERAGE_RUNTIME_IMAGE"),
+            "runtime_image_digest": os.environ.get("PROGRAMBENCH_COVERAGE_RUNTIME_DIGEST"),
+            "network": "none",
+            "read_only_rootfs": True,
+            "cap_drop": ["ALL"],
+            "no_new_privileges": True,
+            "user": "1000:1000",
+            "docker_socket_mounted": False,
+            "binary_sha256": sha256_file(executable),
+            "harness_sha256": sha256_file(Path(__file__).resolve()),
+            "policy_scope": policy_scope,
+        },
     }
 
 
@@ -274,6 +335,8 @@ def run_dummy_gates(
             timeout=timeout,
             case_timeout_cap=1.0,
             pytest_workers=4,
+            policy_scope=f"dummy_rejection:{kind}",
+            private_executable_alias=True,
         )
         summary = run["junit_summary"]
         passing_tests = summary.get("passed_test_names") or []
@@ -325,6 +388,19 @@ def source_leak_scan(oracle_root: Path) -> dict[str, Any]:
     }
 
 
+def prepare_work_root(work_root: Path, *, overwrite: bool) -> None:
+    """Prepare a possibly bind-mounted work root without unlinking the mount."""
+    if not work_root.exists():
+        return
+    if not overwrite:
+        raise FileExistsError(f"Work root exists: {work_root}")
+    for child in work_root.iterdir():
+        if child.is_dir() and not child.is_symlink():
+            shutil.rmtree(child)
+        else:
+            child.unlink()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--oracle-material-root", type=Path, required=True)
@@ -338,18 +414,47 @@ def main() -> int:
     parser.add_argument("--dummy-kind", action="append", default=["true", "cat-stdin", "false", "empty-stderr"])
     parser.add_argument("--repeat-executable", type=Path)
     parser.add_argument("--repeat-gocoverdir", type=Path)
+    parser.add_argument("--docker", default="docker")
+    parser.add_argument(
+        "--execution-runtime-image",
+        default=os.environ.get("PROGRAMBENCH_COVERAGE_RUNTIME_IMAGE"),
+    )
+    parser.add_argument("--container-python", default="/usr/bin/python3")
+    parser.add_argument("--container-cpus", type=int, default=2)
+    parser.add_argument("--inner-container", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--timeout", type=int, default=300)
     parser.add_argument("--skip-assertion-lint", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
+    if not args.execution_runtime_image:
+        parser.error("--execution-runtime-image is required; host quality-gate target execution is forbidden")
+    if not args.inner_container:
+        work_host = args.work_root.expanduser().resolve()
+        output_host = args.output_json.expanduser().resolve()
+        readonly = [args.oracle_material_root.expanduser().resolve()]
+        if args.repeat_executable:
+            readonly.append(args.repeat_executable.expanduser().resolve())
+        writable = [work_host, output_host.parent]
+        if args.repeat_gocoverdir:
+            writable.append(args.repeat_gocoverdir.expanduser().resolve())
+        return run_whole_harness_in_isolated_container(
+            docker=args.docker,
+            runtime_image=args.execution_runtime_image,
+            script_name=Path(__file__).name,
+            argv=list(sys.argv[1:]),
+            writable_paths=writable,
+            readonly_paths=readonly,
+            target_env={},
+            log_path=work_host / "_isolation_bootstrap" / "whole_harness.json",
+            container_python=args.container_python,
+            container_cpus=args.container_cpus,
+        )
+    args.python = Path(args.container_python)
 
     oracle_root = resolve_oracle_root(args.oracle_material_root)
     output_json = args.output_json if args.output_json.is_absolute() else (REPO_ROOT / args.output_json).resolve()
     work_root = args.work_root.expanduser().resolve()
-    if work_root.exists():
-        if not args.overwrite:
-            raise FileExistsError(f"Work root exists: {work_root}")
-        shutil.rmtree(work_root)
+    prepare_work_root(work_root, overwrite=args.overwrite)
     logs_dir = work_root / "logs"
     logs_dir.mkdir(parents=True, exist_ok=True)
     if args.python is None:
@@ -382,6 +487,8 @@ def main() -> int:
             logs_dir=logs_dir,
             timeout=args.timeout,
             gocoverdir=args.repeat_gocoverdir,
+            policy_scope="repeat_determinism",
+            pytest_workers=4,
         )
 
     dummy_passing_tests = sorted(
@@ -392,6 +499,18 @@ def main() -> int:
         }
     )
     all_tests_reject_all_dummies = all(item["all_tests_rejected"] for item in dummy_results)
+    target_results = [*dummy_results, *([repeat] if repeat else [])]
+    all_target_executions_isolated = all(
+        (item.get("execution_isolation") or {}).get("mode") == "whole_harness_docker_per_repository"
+        and (item.get("execution_isolation") or {}).get("network") == "none"
+        and (item.get("execution_isolation") or {}).get("read_only_rootfs") is True
+        and (item.get("execution_isolation") or {}).get("docker_socket_mounted") is False
+        and str((item.get("execution_isolation") or {}).get("runtime_image_digest") or "").startswith("sha256:")
+        and bool((item.get("execution_isolation") or {}).get("binary_sha256"))
+        and bool((item.get("execution_isolation") or {}).get("harness_sha256"))
+        and bool((item.get("execution_isolation") or {}).get("policy_scope"))
+        for item in target_results
+    )
     payload = {
         "oracle_material_root": str(oracle_root),
         "python": str(python),
@@ -403,6 +522,24 @@ def main() -> int:
         "source_leak_scan": leak,
         "assertion_lint": assertion_lint,
         "repeat_check": repeat,
+        "all_target_executions_isolated": all_target_executions_isolated,
+        "execution_isolation": {
+            "mode": "whole_harness_docker_per_repository",
+            "runtime_image": os.environ.get("PROGRAMBENCH_COVERAGE_RUNTIME_IMAGE"),
+            "runtime_image_digest": os.environ.get("PROGRAMBENCH_COVERAGE_RUNTIME_DIGEST"),
+            "harness_sha256": sha256_file(Path(__file__).resolve()),
+            "policy_scopes": sorted(
+                (item.get("execution_isolation") or {}).get("policy_scope")
+                for item in target_results
+                if (item.get("execution_isolation") or {}).get("policy_scope")
+            ),
+            "network": "none",
+            "read_only_rootfs": True,
+            "cap_drop": ["ALL"],
+            "no_new_privileges": True,
+            "user": "1000:1000",
+            "docker_socket_mounted": False,
+        },
     }
     write_json(output_json, payload)
     print(json.dumps(payload, indent=2, sort_keys=True))
@@ -413,7 +550,13 @@ def main() -> int:
         and repeat["junit_summary"].get("errors") == 0
     )
     lint_ok = assertion_lint is None or assertion_lint.get("passed", False)
-    return 0 if payload["all_tests_reject_all_dummies"] and leak["passed"] and lint_ok and repeat_ok else 1
+    return 0 if (
+        payload["all_tests_reject_all_dummies"]
+        and leak["passed"]
+        and lint_ok
+        and repeat_ok
+        and all_target_executions_isolated
+    ) else 1
 
 
 if __name__ == "__main__":

@@ -5,6 +5,14 @@ $ErrorActionPreference = 'Stop'
 $utf8 = New-Object Text.UTF8Encoding($false)
 [Console]::OutputEncoding = $utf8
 $OutputEncoding = $utf8
+$securityManifest = Join-Path $PSHOME 'Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1'
+if (-not (Test-Path -LiteralPath $securityManifest)) {
+    throw 'Microsoft.PowerShell.Security module manifest is unavailable'
+}
+# Import the module from this PowerShell host's own PSHOME.  Inherited
+# PSModulePath entries may contain a PowerShell 7 module that Windows
+# PowerShell 5.1 can discover but cannot load.
+Import-Module -Name $securityManifest -Force -ErrorAction Stop
 $secretPath = Join-Path $env:APPDATA 'AgentMaestro\api-key.dpapi'
 $encrypted = (Get-Content -Raw -LiteralPath $secretPath).Trim()
 $secure = ConvertTo-SecureString -String $encrypted

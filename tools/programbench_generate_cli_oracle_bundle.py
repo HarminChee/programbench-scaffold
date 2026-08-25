@@ -29,6 +29,8 @@ import time
 from pathlib import Path
 from typing import Any, Iterator
 
+from programbench_lifecycle_runtime import run_lifecycle_case, run_sequence_case
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_NAME = "generated_cli_manifest.json"
@@ -59,6 +61,79 @@ def short_text(value: str, limit: int = 5000) -> str:
 def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def atomic_replace_copy(source: Path, destination: Path) -> None:
+    """Replace a staged immutable file without touching sibling checkpoints."""
+
+    temporary = destination.with_name(f".{destination.name}.tmp-{os.getpid()}")
+    temporary.unlink(missing_ok=True)
+    shutil.copy2(source, temporary)
+    os.replace(temporary, destination)
+
+
+def atomic_replace_text(destination: Path, value: str) -> None:
+    temporary = destination.with_name(f".{destination.name}.tmp-{os.getpid()}")
+    temporary.unlink(missing_ok=True)
+    temporary.write_text(value, encoding="utf-8")
+    os.replace(temporary, destination)
+
+
+def _checkpoint_encode(value: Any) -> Any:
+    if isinstance(value, bytes):
+        return {"__programbench_bytes_b64__": base64.b64encode(value).decode("ascii")}
+    if isinstance(value, dict):
+        return {str(key): _checkpoint_encode(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_checkpoint_encode(item) for item in value]
+    return value
+
+
+def _checkpoint_decode(value: Any) -> Any:
+    if isinstance(value, dict) and set(value) == {"__programbench_bytes_b64__"}:
+        return base64.b64decode(value["__programbench_bytes_b64__"])
+    if isinstance(value, dict):
+        return {key: _checkpoint_decode(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_checkpoint_decode(item) for item in value]
+    return value
+
+
+def _case_checkpoint_key(case: dict[str, Any]) -> str:
+    material = json.dumps(case, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(material.encode("utf-8")).hexdigest()
+
+
+def _valid_case_checkpoint(checkpoint: Any, case_key: str, capture_scope_key: str) -> bool:
+    """Accept only a completed checkpoint for this exact candidate definition."""
+
+    return bool(
+        isinstance(checkpoint, dict)
+        and checkpoint.get("status") == "captured"
+        # Legacy checkpoints predate the embedded key, but are still stored
+        # under the exact case hash chosen by the caller. New checkpoints also
+        # carry the key so copied or renamed files cannot be reused by mistake.
+        and checkpoint.get("case_key", case_key) == case_key
+        and checkpoint.get("capture_scope_key") == capture_scope_key
+        and "observed" in checkpoint
+    )
+
+
+def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
+    """Durably replace a checkpoint without exposing a partial JSON file."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    handle, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        with os.fdopen(handle, "w", encoding="utf-8") as stream:
+            json.dump(payload, stream, indent=2, sort_keys=True)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
 
 
 def run_command(
@@ -127,6 +202,103 @@ def materialize_cleanroom_file(
         return {"returncode": 0, "container_id": container_id, "path": str(dest)}
     finally:
         run_command([docker, "rm", "-f", container_id], timeout=120, log_path=logs_dir / f"docker_rm_{dest.name}.json")
+
+
+LDD_PATH_RE = re.compile(r"^\s*(?P<name>[^\s]+)\s+=>\s+(?P<path>/[^\s]+)\s+\(")
+LDD_MISSING_RE = re.compile(r"^\s*(?P<name>[^\s]+)\s+=>\s+not found\s*$")
+DYNAMIC_LOADER_FAILURE_RE = re.compile(
+    rb"error while loading shared libraries:|cannot open shared object file",
+    re.IGNORECASE,
+)
+
+
+def parse_ldd_library_paths(output: str) -> dict[str, str]:
+    """Return SONAME-to-absolute-path mappings from portable ``ldd`` output."""
+    result: dict[str, str] = {}
+    for line in output.splitlines():
+        match = LDD_PATH_RE.match(line)
+        if match:
+            result[match.group("name")] = match.group("path")
+    return result
+
+
+def parse_ldd_missing(output: str) -> list[str]:
+    """Return unresolved SONAMEs without treating static binaries as errors."""
+    return sorted(
+        match.group("name")
+        for line in output.splitlines()
+        if (match := LDD_MISSING_RE.match(line))
+    )
+
+
+def materialize_cleanroom_runtime_libraries(
+    *,
+    image: str,
+    docker: str,
+    reference_binary: Path,
+    runtime_dir: Path,
+    logs_dir: Path,
+) -> dict[str, Any]:
+    """Restore shared libraries present in cleanroom but absent on the host."""
+    cleanroom_log = logs_dir / "cleanroom_ldd.json"
+    host_log = logs_dir / "host_ldd.json"
+    cleanroom = run_command(
+        [docker, "run", "--rm", "--entrypoint", "/usr/bin/ldd", image, "/workspace/executable"],
+        timeout=300,
+        log_path=cleanroom_log,
+    )
+    host = run_command(
+        ["ldd", str(reference_binary)],
+        timeout=120,
+        log_path=host_log,
+    )
+    if cleanroom["returncode"] != 0 or host["returncode"] != 0:
+        return {
+            "enabled": False,
+            "reason": "ldd_unavailable_or_non_dynamic",
+            "libraries": [],
+            "env": {},
+        }
+    cleanroom_output = json.loads(cleanroom_log.read_text(encoding="utf-8")).get("stdout", "")
+    host_output = json.loads(host_log.read_text(encoding="utf-8")).get("stdout", "")
+    cleanroom_paths = parse_ldd_library_paths(cleanroom_output)
+    missing = parse_ldd_missing(host_output)
+    unresolved = [name for name in missing if name not in cleanroom_paths]
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+    copied: list[dict[str, str]] = []
+    for index, name in enumerate(missing):
+        if name in unresolved:
+            continue
+        source_path = cleanroom_paths[name]
+        resolved = run_command(
+            [docker, "run", "--rm", "--entrypoint", "/usr/bin/readlink", image, "-f", source_path],
+            timeout=120,
+            log_path=logs_dir / f"cleanroom_readlink_{index:03d}.json",
+        )
+        resolved_paths = resolved.get("stdout_tail", "").strip().splitlines()
+        if resolved["returncode"] != 0 or not resolved_paths or not resolved_paths[-1].startswith("/"):
+            unresolved.append(name)
+            continue
+        destination = runtime_dir / name
+        result = materialize_cleanroom_file(
+            image=image,
+            docker=docker,
+            source_path=resolved_paths[-1],
+            dest=destination,
+            logs_dir=logs_dir / "runtime_libraries",
+        )
+        if result["returncode"] != 0:
+            unresolved.append(name)
+            continue
+        destination.chmod(destination.stat().st_mode | stat.S_IRUSR)
+        copied.append({"soname": name, "source_path": resolved_paths[-1], "path": str(destination)})
+    return {
+        "enabled": bool(copied) and not unresolved,
+        "reason": None if not unresolved else "runtime_library_materialization_incomplete",
+        "libraries": copied,
+        "unresolved": sorted(set(unresolved)),
+        "env": {"LD_LIBRARY_PATH": str(runtime_dir)} if copied and not unresolved else {},
+    }
 
 
 def generic_cli_smoke_cases() -> list[dict[str, Any]]:
@@ -745,14 +917,40 @@ def fixed_workspace_reference_alias(reference_binary: Path) -> Iterator[None]:
         lock.close()
 
 
-def run_reference_case(reference_binary: Path, case: dict[str, Any], timeout: int) -> dict[str, Any]:
-    with fixed_workspace_reference_alias(reference_binary):
-        return _run_reference_case_unlocked(reference_binary, case, timeout)
+def case_requires_fixed_workspace_alias(case: dict[str, Any]) -> bool:
+    """Return whether fixture-controlled data may launch the fixed PB path.
+
+    Direct target launches use ``executable=reference_binary`` and only use
+    ``argv0`` as the process-visible name, so the ubiquitous default argv0 is
+    deliberately excluded.  The global alias lock is needed only when data
+    controlled by the case itself can refer to the fixed cleanroom path.
+    """
+
+    probe = {key: value for key, value in case.items() if key != "argv0"}
+    return "/workspace/executable" in json.dumps(probe, sort_keys=True)
 
 
-def _run_reference_case_unlocked(reference_binary: Path, case: dict[str, Any], timeout: int) -> dict[str, Any]:
+def run_reference_case(
+    reference_binary: Path,
+    case: dict[str, Any],
+    timeout: int,
+    reference_env: dict[str, str] | None = None,
+) -> dict[str, Any]:
+    if case_requires_fixed_workspace_alias(case):
+        with fixed_workspace_reference_alias(reference_binary):
+            return _run_reference_case_unlocked(reference_binary, case, timeout, reference_env)
+    return _run_reference_case_unlocked(reference_binary, case, timeout, reference_env)
+
+
+def _run_reference_case_unlocked(
+    reference_binary: Path,
+    case: dict[str, Any],
+    timeout: int,
+    reference_env: dict[str, str] | None = None,
+) -> dict[str, Any]:
     env = os.environ.copy()
     env["TZ"] = "UTC"
+    env.update(reference_env or {})
     with case_runtime(case) as (cwd, http_url):
         if case.get("isolate_home_tmp") is True:
             isolated_home = cwd / ".case-home"
@@ -766,6 +964,45 @@ def _run_reference_case_unlocked(reference_binary: Path, case: dict[str, Any], t
         argv0 = str(case.get("argv0", "/workspace/executable")).replace("{http_url}", http_url)
         case_args = [str(item).replace("{http_url}", http_url) for item in case.get("args", [])]
         stdin = str(case.get("stdin", "")).replace("{http_url}", http_url).encode("utf-8")
+        if case.get("sequence"):
+            sequence = json.loads(
+                json.dumps(case["sequence"])
+                .replace("{http_url}", http_url)
+                .replace("{http_host}", http_url.split("://", 1)[-1] if http_url else "")
+            )
+            return normalize_http_runtime_observation(
+                attach_observed_files(
+                    run_sequence_case(
+                        executable=reference_binary,
+                        argv0=argv0,
+                        sequence=sequence,
+                        cwd=cwd,
+                        env=env,
+                        timeout=timeout,
+                    ),
+                    cwd,
+                    case,
+                ),
+                http_url,
+            )
+        if case.get("lifecycle"):
+            return normalize_http_runtime_observation(
+                attach_observed_files(
+                    run_lifecycle_case(
+                        executable=reference_binary,
+                        argv0=argv0,
+                        args=case_args,
+                        stdin=stdin,
+                        cwd=cwd,
+                        env=env,
+                        timeout=timeout,
+                        lifecycle=dict(case["lifecycle"]),
+                    ),
+                    cwd,
+                    case,
+                ),
+                http_url,
+            )
         if case.get("terminal"):
             return normalize_http_runtime_observation(
                 attach_observed_files(
@@ -1016,7 +1253,7 @@ def run_terminal_case(
 
 def observed_signature(
     observed: dict[str, Any], stdout_mode: str = "exact"
-) -> tuple[int, bool, bytes, bytes, str]:
+) -> tuple[int, bool, bytes, bytes, str, str]:
     stdout = observed["stdout"]
     if stdout_mode == "lines_unordered":
         stdout = b"\n".join(sorted(stdout.splitlines()))
@@ -1026,6 +1263,7 @@ def observed_signature(
         stdout,
         observed["stderr"],
         json.dumps(observed.get("observed_files") or {}, sort_keys=True, separators=(",", ":")),
+        json.dumps(observed.get("interactions") or [], sort_keys=True, separators=(",", ":")),
     )
 
 
@@ -1038,7 +1276,8 @@ BENCH_DURATION_RE = re.compile(
 BENCH_RATE_RE = re.compile(rb"(?m)^(\s*Requests/sec:\s*)[0-9.]+$")
 BENCH_HISTOGRAM_RE = re.compile(rb"(?m)^(\s*)[0-9.]+(\s+\[\d+\]\s*\|.*)$")
 BENCH_LATENCY_RE = re.compile(rb"(?m)^(\s*\d+% in\s*)[0-9.]+(\s+secs\.)$")
-SEVENZIP_BENCH_NUMBER_RE = re.compile(rb"(?<![A-Za-z])[+-]?\d+(?:\.\d+)?(?:[A-Za-z/%]+)?")
+BENCH_TABLE_NUMBER_RE = re.compile(rb"(?<![A-Za-z])[+-]?\d+(?:\.\d+)?(?:[A-Za-z/%]+)?")
+BENCH_TABLE_HEADER_RE = re.compile(rb"[A-Za-z][A-Za-z ]+\|[A-Za-z |]+")
 
 
 EPOCH_NUMBER_RE = re.compile(rb"(?<!\d)[1-3]\d{9}(?!\d)")
@@ -1206,10 +1445,13 @@ def normalize_benchmark_output(value: bytes) -> bytes:
     value = BENCH_RATE_RE.sub(rb"\g<1>0.0000", value)
     value = BENCH_HISTOGRAM_RE.sub(rb"\g<1>0.000\g<2>", value)
     value = BENCH_LATENCY_RE.sub(rb"\g<1>0.0000\g<2>", value)
-    if b"Compressing  |" not in value:
-        return value
     lines = value.splitlines(keepends=True)
-    table_index = next(i for i, line in enumerate(lines) if b"Compressing  |" in line)
+    table_index = next(
+        (i for i, line in enumerate(lines) if BENCH_TABLE_HEADER_RE.search(line)),
+        None,
+    )
+    if table_index is None:
+        return value
     system_index = next(
         (
             i
@@ -1218,17 +1460,17 @@ def normalize_benchmark_output(value: bytes) -> bytes:
         ),
         table_index,
     )
-    # 7-Zip emits a variable number of host-calibration lines before the
-    # benchmark table.  Replacing each line independently is insufficient:
+    # Benchmark tools may emit a variable number of host-calibration lines
+    # before their table. Replacing each line independently is insufficient:
     # the line count itself can change under transient scheduler load.
     lines = lines[:system_index] + [b"<SYSTEM>\n", b"\n"] + lines[table_index:]
     normalized: list[bytes] = []
     in_table = False
     for line in lines:
-        if b"Compressing  |" in line:
+        if BENCH_TABLE_HEADER_RE.search(line):
             in_table = True
         if in_table and any(48 <= byte <= 57 for byte in line):
-            line = SEVENZIP_BENCH_NUMBER_RE.sub(b"<N>", line)
+            line = BENCH_TABLE_NUMBER_RE.sub(b"<N>", line)
             line = b" ".join(line.split()) + b"\n"
         normalized.append(line)
     return b"".join(normalized)
@@ -1262,6 +1504,28 @@ def normalize_observed(case: dict[str, Any], observed: dict[str, Any]) -> dict[s
     return normalized
 
 
+def enable_safe_output_normalizers(case: dict[str, Any], observed: dict[str, Any]) -> list[str]:
+    """Enable deterministic, semantics-preserving normalizers detected at capture time.
+
+    Go's standard logger prefixes each line with the current wall-clock time by
+    default.  Treating that prefix as a reason to discard the whole behavioral
+    case removes otherwise deterministic stderr and, for file transformers,
+    the useful post-run file oracle as well.  The generated pytest runner
+    already applies the same prefix normalizer when the case flag is present,
+    so it is safe to infer the flag from an observed standard Go log prefix.
+
+    Deliberately keep this narrow: arbitrary timestamps elsewhere are still
+    handled by the volatile-output gate unless a case declares a more specific
+    normalizer.
+    """
+    enabled: list[str] = []
+    stderr = bytes(observed.get("stderr") or b"")
+    if case.get("normalize_go_log_prefix") is not True and GO_LOG_PREFIX_RE.search(stderr):
+        case["normalize_go_log_prefix"] = True
+        enabled.append("normalize_go_log_prefix")
+    return enabled
+
+
 def has_volatile_output(observed: dict[str, Any]) -> bool:
     return bool(VOLATILE_OUTPUT_RE.search(observed["stdout"]) or VOLATILE_OUTPUT_RE.search(observed["stderr"]))
 
@@ -1269,6 +1533,8 @@ def has_volatile_output(observed: dict[str, Any]) -> bool:
 def write_generated_pytest(bundle_root: Path, profile: str, cases: list[dict[str, Any]]) -> None:
     test_path = bundle_root / "eval" / "tests" / "test_generated_cli_oracle.py"
     test_path.parent.mkdir(parents=True, exist_ok=True)
+    lifecycle_module = Path(__file__).with_name("programbench_lifecycle_runtime.py")
+    shutil.copy2(lifecycle_module, test_path.parent / "_programbench_lifecycle_runtime.py")
     header = '''"""Generated black-box CLI oracle tests."""
 
 from __future__ import annotations
@@ -1281,9 +1547,13 @@ import os
 import re
 import signal
 import subprocess
+import sys
 import threading
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _programbench_lifecycle_runtime import run_lifecycle_case, run_sequence_case
 
 WORKSPACE = Path(__file__).resolve().parents[2]
 EVAL_DIR = Path(__file__).resolve().parents[1]
@@ -1416,7 +1686,7 @@ def _case_timeout(case: dict) -> float:
     return timeout
 
 
-def _execute_case(index: int, tmp_path: Path) -> tuple[dict, Path, int, bytes, bytes, bytes, bytes]:
+def _execute_case(index: int, tmp_path: Path) -> tuple[dict, Path, int, bytes, bytes, bytes, bytes, list, list]:
     case = CASES[index]
     executable = WORKSPACE / "executable"
     if not executable.exists():
@@ -1438,7 +1708,28 @@ def _execute_case(index: int, tmp_path: Path) -> tuple[dict, Path, int, bytes, b
         argv0 = case.get("argv0", "/workspace/executable").replace("{http_url}", http_url)
         args = [item.replace("{http_url}", http_url) for item in case["args"]]
         stdin = stdin_template.replace(b"{http_url}", http_url.encode("utf-8"))
-        if case.get("terminal"):
+        interactions = []
+        if case.get("sequence"):
+            sequence = json.loads(
+                json.dumps(case["sequence"])
+                .replace("{http_url}", http_url)
+                .replace("{http_host}", http_url.split("://", 1)[-1] if http_url else "")
+            )
+            observed = run_sequence_case(
+                executable=executable, argv0=argv0, sequence=sequence,
+                cwd=tmp_path, env=env, timeout=_case_timeout(case),
+            )
+            returncode, stdout, stderr = observed["returncode"], observed["stdout"], observed["stderr"]
+            interactions = observed.get("interactions") or []
+        elif case.get("lifecycle"):
+            observed = run_lifecycle_case(
+                executable=executable, argv0=argv0, args=args, stdin=stdin,
+                cwd=tmp_path, env=env, timeout=_case_timeout(case),
+                lifecycle=case["lifecycle"],
+            )
+            returncode, stdout, stderr = observed["returncode"], observed["stdout"], observed["stderr"]
+            interactions = observed.get("interactions") or []
+        elif case.get("terminal"):
             returncode, stdout, stderr = _run_terminal(
                 executable=executable,
                 argv0=argv0,
@@ -1492,7 +1783,8 @@ def _execute_case(index: int, tmp_path: Path) -> tuple[dict, Path, int, bytes, b
         stdout = stdout.replace(encoded_workdir, b"{workdir}")
         stderr = stderr.replace(encoded_workdir, b"{workdir}")
 
-    return case, executable, returncode, stdout, stderr, expected_stdout, expected_stderr
+    expected_interactions = case.get("interactions") or []
+    return case, executable, returncode, stdout, stderr, expected_stdout, expected_stderr, interactions, expected_interactions
 
 
 def _run_terminal(*, executable: Path, argv0: str, args: list[str], stdin: bytes, cwd: Path,
@@ -1618,7 +1910,8 @@ BENCH_DURATION_RE = re.compile(
 BENCH_RATE_RE = re.compile(rb"(?m)^(\\s*Requests/sec:\\s*)[0-9.]+$")
 BENCH_HISTOGRAM_RE = re.compile(rb"(?m)^(\\s*)[0-9.]+(\\s+\\[\\d+\\]\\s*\\|.*)$")
 BENCH_LATENCY_RE = re.compile(rb"(?m)^(\\s*\\d+% in\\s*)[0-9.]+(\\s+secs\\.)$")
-SEVENZIP_BENCH_NUMBER_RE = re.compile(rb"(?<![A-Za-z])[+-]?\\d+(?:\\.\\d+)?(?:[A-Za-z/%]+)?")
+BENCH_TABLE_NUMBER_RE = re.compile(rb"(?<![A-Za-z])[+-]?\\d+(?:\\.\\d+)?(?:[A-Za-z/%]+)?")
+BENCH_TABLE_HEADER_RE = re.compile(rb"[A-Za-z][A-Za-z ]+\\|[A-Za-z |]+")
 
 
 EPOCH_NUMBER_RE = re.compile(rb"(?<!\\d)[1-3]\\d{9}(?!\\d)")
@@ -1660,10 +1953,13 @@ def _normalize_benchmark_output(value: bytes) -> bytes:
     value = BENCH_RATE_RE.sub(rb"\\g<1>0.0000", value)
     value = BENCH_HISTOGRAM_RE.sub(rb"\\g<1>0.000\\g<2>", value)
     value = BENCH_LATENCY_RE.sub(rb"\\g<1>0.0000\\g<2>", value)
-    if b"Compressing  |" not in value:
-        return value
     lines = value.splitlines(keepends=True)
-    table_index = next(i for i, line in enumerate(lines) if b"Compressing  |" in line)
+    table_index = next(
+        (i for i, line in enumerate(lines) if BENCH_TABLE_HEADER_RE.search(line)),
+        None,
+    )
+    if table_index is None:
+        return value
     system_index = next(
         (
             i
@@ -1676,10 +1972,10 @@ def _normalize_benchmark_output(value: bytes) -> bytes:
     normalized = []
     in_table = False
     for line in lines:
-        if b"Compressing  |" in line:
+        if BENCH_TABLE_HEADER_RE.search(line):
             in_table = True
         if in_table and any(48 <= byte <= 57 for byte in line):
-            line = SEVENZIP_BENCH_NUMBER_RE.sub(b"<N>", line)
+            line = BENCH_TABLE_NUMBER_RE.sub(b"<N>", line)
             line = b" ".join(line.split()) + b"\\n"
         normalized.append(line)
     return b"".join(normalized)
@@ -1730,7 +2026,7 @@ def _assert_observed_files(case: dict, tmp_path: Path) -> None:
 
 def test_{index:04d}_{name}(tmp_path: Path) -> None:
     """CATCHES: implementations whose exact exit status, stdout, or stderr differs from the reference behavior."""
-    case, executable, returncode, stdout, stderr, expected_stdout, expected_stderr = _execute_case({index}, tmp_path)
+    case, executable, returncode, stdout, stderr, expected_stdout, expected_stderr, interactions, expected_interactions = _execute_case({index}, tmp_path)
     assert executable.exists(), f"missing executable at {{executable}}"
     assert returncode == case["returncode"]
     if case.get("normalize_benchmark_output") is True:
@@ -1758,6 +2054,7 @@ def test_{index:04d}_{name}(tmp_path: Path) -> None:
     if case.get("normalize_go_log_prefix") is True:
         stderr = GO_LOG_PREFIX_RE.sub(b"", stderr)
     assert stderr == expected_stderr
+    assert interactions == expected_interactions
     _assert_observed_files(case, tmp_path)
 '''
         )
@@ -1800,36 +2097,90 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
     bundle_root = out_dir / "oracle_tests"
 
     if work_dir.exists():
-        if not args.overwrite:
+        if args.resume_capture:
+            pass
+        elif not args.overwrite:
             raise FileExistsError(f"Work dir exists: {work_dir}")
-        shutil.rmtree(work_dir)
+        else:
+            shutil.rmtree(work_dir)
     if bundle_root.exists():
         if not args.overwrite:
             raise FileExistsError(f"Bundle exists: {bundle_root}")
         shutil.rmtree(bundle_root)
     logs_dir.mkdir(parents=True, exist_ok=True)
 
-    binary_result = materialize_cleanroom_file(
-        image=image,
-        docker=args.docker,
-        source_path="/workspace/executable",
-        dest=reference_binary,
-        logs_dir=logs_dir,
-    )
-    if binary_result["returncode"] != 0:
-        raise RuntimeError(f"cleanroom executable materialization failed: {binary_result}")
+    if args.reference_binary:
+        supplied = args.reference_binary.expanduser().resolve()
+        if not supplied.is_file():
+            raise FileNotFoundError(f"supplied reference binary is missing: {supplied}")
+        # Resume may revisit an earlier cases scope whose staged executable was
+        # deliberately made owner read/execute-only.  copy2 opens the existing
+        # destination for writing and fails with EACCES.  Replace only this
+        # re-creatable staging file atomically; keep all per-case capture
+        # checkpoints in the surrounding work directory intact.
+        atomic_replace_copy(supplied, reference_binary)
+        binary_result = {
+            "returncode": 0,
+            "path": str(reference_binary),
+            "source": "supplied_binary",
+            "image": image,
+        }
+    else:
+        binary_result = materialize_cleanroom_file(
+            image=image,
+            docker=args.docker,
+            source_path="/workspace/executable",
+            dest=reference_binary,
+            logs_dir=logs_dir,
+        )
+        if binary_result["returncode"] != 0:
+            raise RuntimeError(f"cleanroom executable materialization failed: {binary_result}")
     # Docker preserves the PB cleanroom executable's execute-only mode. The
     # fixed-workspace alias must be copied, so grant the owning experiment
     # process read permission without broadening group/other access.
     reference_binary.chmod(reference_binary.stat().st_mode | stat.S_IRUSR | stat.S_IXUSR)
-
-    readme_result = materialize_cleanroom_file(
-        image=image,
-        docker=args.docker,
-        source_path="/workspace/README.md",
-        dest=readme_copy,
-        logs_dir=logs_dir,
+    runtime_support = (
+        {"enabled": False, "env": {}, "libraries": [], "source": "container_runtime"}
+        if args.reference_binary
+        else materialize_cleanroom_runtime_libraries(
+            image=image,
+            docker=args.docker,
+            reference_binary=reference_binary,
+            runtime_dir=work_dir / "cleanroom_runtime_libs",
+            logs_dir=logs_dir,
+        )
     )
+    reference_env = dict(runtime_support.get("env") or {})
+
+    if args.reference_readme and args.reference_readme.is_file():
+        atomic_replace_copy(args.reference_readme, readme_copy)
+        readme_result = {"returncode": 0, "path": str(readme_copy), "source": "supplied_readme"}
+    elif args.reference_binary:
+        atomic_replace_text(
+            readme_copy, f"Isolated reference executable for {args.instance_id}.\n"
+        )
+        readme_result = {"returncode": 0, "path": str(readme_copy), "source": "generated"}
+    else:
+        readme_result = materialize_cleanroom_file(
+            image=image,
+            docker=args.docker,
+            source_path="/workspace/README.md",
+            dest=readme_copy,
+            logs_dir=logs_dir,
+        )
+
+    executable_sha256 = hashlib.sha256(reference_binary.read_bytes()).hexdigest()
+    harness_sha256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    capture_scope = {
+        "executable_sha256": executable_sha256,
+        "reference_image_digest": args.reference_image_digest or image,
+        "runtime_image_digest": args.runtime_image_digest or "host-runtime",
+        "harness_sha256": harness_sha256,
+        "normalization_policy": "programbench-capture-normalizers-v3.4-20260815",
+    }
+    capture_scope_key = hashlib.sha256(
+        json.dumps(capture_scope, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
 
     case_spec_metadata: dict[str, Any] = {}
     case_spec_path: Path | None = None
@@ -1844,18 +2195,80 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
     fixture_subdir = slug(profile).replace("_", "-")
     fixture_dir = bundle_root / "eval" / "fixtures" / fixture_subdir
     fixture_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint_dir = work_dir / "case_checkpoints"
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
     manifest_cases: list[dict[str, Any]] = []
     skipped_cases: list[dict[str, Any]] = []
     for index, case in enumerate(cases):
         name = slug(case["name"])
         case_timeout = max(1, min(60, int(case.get("timeout_seconds", args.case_timeout))))
-        observed = normalize_observed(case, run_reference_case(reference_binary, case, case_timeout))
+        case_checkpoint_key = _case_checkpoint_key(case)
+        checkpoint_path = checkpoint_dir / f"{case_checkpoint_key}.json"
+        checkpoint = None
+        if args.resume_capture and checkpoint_path.is_file():
+            try:
+                checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                checkpoint = None
+        try:
+            if _valid_case_checkpoint(checkpoint, case_checkpoint_key, capture_scope_key):
+                observed = _checkpoint_decode(checkpoint["observed"])
+                for key, value in (checkpoint.get("case_updates") or {}).items():
+                    case[key] = value
+            else:
+                raw_observed = run_reference_case(
+                    reference_binary, case, case_timeout, reference_env
+                )
+                enable_safe_output_normalizers(case, raw_observed)
+                observed = normalize_observed(case, raw_observed)
+        except (OSError, ValueError) as exc:
+            skipped_cases.append(
+                {
+                    "name": name,
+                    "area": case.get("area", "unknown"),
+                    "args": list(case.get("args", [])),
+                    "reason": "invalid_or_unmaterializable_fixture",
+                    "error": str(exc),
+                }
+            )
+            continue
+        except RuntimeError as exc:
+            # A terminal program can continuously repaint the screen or emit
+            # unbounded output.  That is a bad individual oracle candidate,
+            # but it must not abort capture of every other independent case.
+            # Keep unrelated RuntimeErrors fatal so infrastructure failures
+            # are never silently downgraded into skipped tests.
+            if str(exc) != "terminal case exceeded max_output_bytes":
+                raise
+            skipped_cases.append(
+                {
+                    "name": name,
+                    "area": case.get("area", "unknown"),
+                    "args": list(case.get("args", [])),
+                    "reason": "terminal_output_limit",
+                    "error": str(exc),
+                }
+            )
+            continue
         if observed.get("launch_error"):
             skipped_cases.append(
                 {
                     "name": case["name"],
                     "reason": "reference_launch_error",
                     "error": observed["launch_error"],
+                }
+            )
+            continue
+        if DYNAMIC_LOADER_FAILURE_RE.search(bytes(observed.get("stderr") or b"")):
+            skipped_cases.append(
+                {
+                    "name": name,
+                    "area": case.get("area", "unknown"),
+                    "args": list(case.get("args", [])),
+                    "reason": "reference_runtime_unavailable",
+                    "error": bytes(observed.get("stderr") or b"").decode(
+                        "utf-8", errors="replace"
+                    ),
                 }
             )
             continue
@@ -1887,15 +2300,51 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
             continue
         deterministic = True
         mismatch_index = None
-        for rerun_index in range(args.determinism_reruns):
+        rerun_capture_error: Exception | None = None
+        checkpoint_reused = _valid_case_checkpoint(checkpoint, case_checkpoint_key, capture_scope_key)
+        for rerun_index in range(0 if checkpoint_reused else args.determinism_reruns):
             if args.determinism_rerun_delay > 0:
                 time.sleep(args.determinism_rerun_delay)
-            rerun = normalize_observed(case, run_reference_case(reference_binary, case, case_timeout))
+            try:
+                rerun = normalize_observed(
+                    case,
+                    run_reference_case(
+                        reference_binary, case, case_timeout, reference_env
+                    ),
+                )
+            except (OSError, ValueError) as exc:
+                # A rerun can create a larger/different observed fixture than
+                # the first capture (for example a rebuilt executable).  Such
+                # a case is not a deterministic oracle candidate, but it must
+                # not abort capture of every unrelated case in the suite.
+                deterministic = False
+                mismatch_index = rerun_index
+                rerun_capture_error = exc
+                break
+            except RuntimeError as exc:
+                if str(exc) != "terminal case exceeded max_output_bytes":
+                    raise
+                deterministic = False
+                mismatch_index = rerun_index
+                rerun_capture_error = exc
+                break
             stdout_mode = str(case.get("stdout_mode") or "exact")
             if observed_signature(rerun, stdout_mode) != observed_signature(observed, stdout_mode):
                 deterministic = False
                 mismatch_index = rerun_index
                 break
+        if rerun_capture_error is not None:
+            skipped_cases.append(
+                {
+                    "name": name,
+                    "area": case.get("area", "unknown"),
+                    "args": list(case.get("args", [])),
+                    "reason": "determinism_rerun_unmaterializable",
+                    "rerun_index": mismatch_index,
+                    "error": str(rerun_capture_error),
+                }
+            )
+            continue
         if not deterministic and args.skip_nondeterministic_cases:
             skipped_cases.append(
                 {
@@ -1910,6 +2359,21 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
                 }
             )
             continue
+        if not checkpoint_reused:
+            _write_json_atomic(checkpoint_path, {
+                "status": "captured",
+                "case_key": case_checkpoint_key,
+                "capture_scope_key": capture_scope_key,
+                "capture_scope": capture_scope,
+                "name": name,
+                "observed": _checkpoint_encode(observed),
+                "case_updates": {
+                    key: case[key] for key in (
+                        "normalize_go_log_prefix", "normalize_benchmark_output",
+                        "normalize_epoch_numbers", "normalize_tui_metrics",
+                    ) if key in case
+                },
+            })
         stdin_bytes = str(case.get("stdin", "")).encode("utf-8")
         stdout = observed["stdout"]
         stderr = observed["stderr"]
@@ -1936,6 +2400,9 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
                 "git": case.get("git", {}),
                 "http": case.get("http", {}),
                 "terminal": case.get("terminal", {}),
+                "sequence": case.get("sequence", []),
+                "lifecycle": case.get("lifecycle", {}),
+                "interactions": observed.get("interactions", []),
                 "isolate_home_tmp": case.get("isolate_home_tmp") is True,
                 "stdin_regular_file": case.get("stdin_regular_file") is True,
                 "normalize_go_log_prefix": case.get("normalize_go_log_prefix") is True,
@@ -1967,6 +2434,14 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
         "method": "cleanroom_reference_binary_black_box_capture",
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "image": image,
+        "capture_scope": capture_scope,
+        "capture_scope_key": capture_scope_key,
+        "execution_isolation": {
+            "inner_container": bool(args.inner_container),
+            "network": "none" if args.inner_container else "host",
+            "runtime_image_digest": args.runtime_image_digest,
+        },
+        "reference_runtime_support": runtime_support,
         "case_source": case_source,
         "case_spec_path": str(case_spec_path) if case_spec_path else None,
         "case_spec_metadata": case_spec_metadata,
@@ -1988,6 +2463,112 @@ def generate_bundle(args: argparse.Namespace) -> dict[str, Any]:
     return {"bundle_root": str(bundle_root), "quality_report": str(out_dir / "quality_report.json"), **manifest}
 
 
+def run_in_isolated_container(args: argparse.Namespace) -> int:
+    """Run the complete capture engine with the target in a networkless namespace."""
+
+    runtime_image = str(args.isolation_runtime_image)
+    reference_image = args.image or image_name_from_instance_id(args.instance_id)
+    for image, label in ((runtime_image, "runtime"), (reference_image, "reference")):
+        inspected = run_command(
+            [args.docker, "image", "inspect", "--format", "{{.Id}}", image], timeout=60
+        )
+        if inspected["returncode"] != 0:
+            raise RuntimeError(f"required {label} image is not available offline: {image}")
+
+    runtime_inspect = run_command(
+        [args.docker, "image", "inspect", "--format", "{{.Id}}", runtime_image], timeout=60
+    )
+    reference_inspect = run_command(
+        [args.docker, "image", "inspect", "--format", "{{.Id}}", reference_image], timeout=60
+    )
+    runtime_digest = runtime_inspect["stdout_tail"].strip()
+    reference_digest = reference_inspect["stdout_tail"].strip()
+
+    safe_instance = args.instance_id.replace("/", "_")
+    staging = (args.work_root / "_isolated_reference" / safe_instance).resolve()
+    staging.mkdir(parents=True, exist_ok=True)
+    executable = staging / "executable"
+    readme = staging / "README.md"
+    logs = staging / "logs"
+    materialized = materialize_cleanroom_file(
+        image=reference_image,
+        docker=args.docker,
+        source_path="/workspace/executable",
+        dest=executable,
+        logs_dir=logs,
+    )
+    if materialized["returncode"] != 0:
+        raise RuntimeError(f"unable to stage isolated reference executable: {materialized}")
+    executable.chmod(executable.stat().st_mode | stat.S_IRUSR | stat.S_IXUSR)
+    readme_result = materialize_cleanroom_file(
+        image=reference_image,
+        docker=args.docker,
+        source_path="/workspace/README.md",
+        dest=readme,
+        logs_dir=logs,
+    )
+    if readme_result["returncode"] != 0:
+        readme.write_text(f"Isolated reference executable for {args.instance_id}.\n", encoding="utf-8")
+
+    args.work_root.mkdir(parents=True, exist_ok=True)
+    args.output_root.mkdir(parents=True, exist_ok=True)
+    mount_roots: list[tuple[Path, bool]] = [
+        (REPO_ROOT.resolve(), True),
+        (args.work_root.resolve(), False),
+        (args.output_root.resolve(), False),
+    ]
+    if args.cases_json:
+        mount_roots.append((args.cases_json.expanduser().resolve().parent, True))
+    command = [
+        args.docker, "run", "--rm", "--network", "none", "--read-only",
+        "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+        "--pids-limit", "256", "--memory", "2g", "--cpus", "2",
+        "--user", "1000:1000", "--tmpfs", "/tmp:rw,nosuid,nodev,exec,size=512m",
+        "--workdir", str(REPO_ROOT.resolve()),
+        "--env", "HOME=/tmp/home", "--env", "TMPDIR=/tmp",
+        "--env", "PYTHONDONTWRITEBYTECODE=1",
+    ]
+    seen_mounts: set[tuple[str, bool]] = set()
+    for path, readonly in mount_roots:
+        key = (str(path), readonly)
+        if key in seen_mounts:
+            continue
+        seen_mounts.add(key)
+        spec = f"type=bind,src={path},dst={path}"
+        if readonly:
+            spec += ",readonly"
+        command.extend(["--mount", spec])
+    command.extend([
+        "--mount", f"type=bind,src={staging},dst=/reference,readonly",
+        "--entrypoint", "/usr/bin/python3", runtime_image,
+        str(Path(__file__).resolve()), *os.sys.argv[1:],
+        "--inner-container", "--reference-binary", "/reference/executable",
+        "--reference-readme", "/reference/README.md",
+        "--reference-image-digest", reference_digest,
+        "--runtime-image-digest", runtime_digest,
+    ])
+    invocation = {
+        "schema": "programbench_isolated_capture_invocation_v1",
+        "instance_id": args.instance_id,
+        "reference_image": reference_image,
+        "reference_image_digest": reference_digest,
+        "runtime_image": runtime_image,
+        "runtime_image_digest": runtime_digest,
+        "network": "none",
+        "read_only_rootfs": True,
+        "capabilities": [],
+        "user": "1000:1000",
+        "mounts": [{"path": str(path), "read_only": ro} for path, ro in mount_roots],
+    }
+    write_json(args.work_root / safe_instance / "isolation_invocation.json", invocation)
+    completed = subprocess.run(command, text=True, capture_output=True)
+    if completed.stdout:
+        print(completed.stdout, end="")
+    if completed.stderr:
+        print(completed.stderr, end="", file=os.sys.stderr)
+    return completed.returncode
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("instance_id")
@@ -1996,6 +2577,16 @@ def main() -> int:
     parser.add_argument("--suite-label")
     parser.add_argument("--image")
     parser.add_argument("--docker", default="docker")
+    parser.add_argument(
+        "--isolation-runtime-image",
+        default=os.environ.get("PROGRAMBENCH_CAPTURE_RUNTIME_IMAGE"),
+        help="Run the entire capture engine in this local image with --network none.",
+    )
+    parser.add_argument("--inner-container", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--reference-binary", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--reference-readme", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--reference-image-digest", help=argparse.SUPPRESS)
+    parser.add_argument("--runtime-image-digest", help=argparse.SUPPRESS)
     parser.add_argument("--work-root", type=Path, default=Path("/tmp/programbench_generated_cli_oracles"))
     parser.add_argument("--output-root", type=Path, default=Path("reports/programbench_generated_oracles"))
     parser.add_argument("--case-timeout", type=int, default=5)
@@ -2005,9 +2596,16 @@ def main() -> int:
     parser.add_argument("--skip-nondeterministic-cases", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--skip-volatile-output-cases", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument(
+        "--resume-capture", action="store_true",
+        help="Reuse per-case deterministic capture checkpoints and continue only missing cases.",
+    )
     args = parser.parse_args()
 
+    args.work_root = args.work_root if args.work_root.is_absolute() else (REPO_ROOT / args.work_root).resolve()
     args.output_root = args.output_root if args.output_root.is_absolute() else (REPO_ROOT / args.output_root).resolve()
+    if args.isolation_runtime_image and not args.inner_container:
+        return run_in_isolated_container(args)
     result = generate_bundle(args)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0

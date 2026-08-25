@@ -1,0 +1,41 @@
+{
+  "schema": "programbench_v4_source_manifest_v1",
+  "repositories": [
+    {
+      "instance_id": "wfxr__csview.8ac4de0",
+      "repository": "wfxr/csview",
+      "commit": "8ac4de0ae4540461fd9e33c13e4b47ba21967995",
+      "source_repo": "/home/programbench/research/rust6-v4-campaign-20260820/source-placeholders/wfxr__csview.8ac4de0"
+    },
+    {
+      "instance_id": "sirwart__ripsecrets.34c9e03",
+      "repository": "sirwart/ripsecrets",
+      "commit": "34c9e03cfa9a0b2c4576dcce6bd624e743c1c355",
+      "source_repo": "/home/programbench/research/rust6-v4-campaign-20260820/source-placeholders/sirwart__ripsecrets.34c9e03"
+    },
+    {
+      "instance_id": "wintermute-cell__ngrrram.8ea13c3",
+      "repository": "wintermute-cell/ngrrram",
+      "commit": "8ea13c31a2758eba37ea5a58d45915d9ca43834e",
+      "source_repo": "/home/programbench/research/rust6-v4-campaign-20260820/source-placeholders/wintermute-cell__ngrrram.8ea13c3"
+    },
+    {
+      "instance_id": "chmln__sd.87d1ba5",
+      "repository": "chmln/sd",
+      "commit": "87d1ba5b3401329a07c1874e49a822026e1cbf3f",
+      "source_repo": "/home/programbench/research/rust6-v4-campaign-20260820/source-placeholders/chmln__sd.87d1ba5"
+    },
+    {
+      "instance_id": "sharkdp__hexyl.2e26437",
+      "repository": "sharkdp/hexyl",
+      "commit": "2e2643782d6ced9b5ac75596169a79127d8e535a",
+      "source_repo": "/home/programbench/research/rust6-v4-campaign-20260820/source-placeholders/sharkdp__hexyl.2e26437"
+    },
+    {
+      "instance_id": "pemistahl__grex.fa3e8ed",
+      "repository": "pemistahl/grex",
+      "commit": "fa3e8ed71c43ea92f9f0e43ab31e1c82d006d5dd",
+      "source_repo": "/home/programbench/research/rust6-v4-campaign-20260820/source-placeholders/pemistahl__grex.fa3e8ed"
+    }
+  ]
+}

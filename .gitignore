@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+*.profraw
+*.log
+.pytest_cache/
+tmp/
+outputs/
+v4/runs/
