@@ -94,8 +94,9 @@ repos = sorted((root / "output" / "repositories").glob("*"))
 ok = len(repos) == 16
 for repo in repos:
     status = repo / "status.json"
-    settlement = repo / "frozen" / "settlement_summary.json"
-    if not status.exists() or not settlement.exists():
+    frozen = repo / "frozen"
+    frozen_summary = (frozen / "settlement_summary.json").exists() or (frozen / "pipeline_summary.json").exists()
+    if not status.exists() or not frozen_summary:
         ok = False
         continue
     try:
