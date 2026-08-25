@@ -83,6 +83,51 @@ wait_for_capacity() {
   done
 }
 
+archive_old16_if_complete() {
+  local protected_root=/home/programbench/research/protected_frozen_results
+  local archive_root="$protected_root/old16-v4-polished-complete-20260825"
+  local complete
+  complete=$("$python" - "$old_root" <<'PY'
+import json, pathlib, sys
+root = pathlib.Path(sys.argv[1])
+repos = sorted((root / "output" / "repositories").glob("*"))
+ok = len(repos) == 16
+for repo in repos:
+    status = repo / "status.json"
+    settlement = repo / "frozen" / "settlement_summary.json"
+    if not status.exists() or not settlement.exists():
+        ok = False
+        continue
+    try:
+        ok = ok and json.loads(status.read_text(encoding="utf-8")).get("state") == "completed"
+    except Exception:
+        ok = False
+print("yes" if ok else "no")
+PY
+  )
+  if [[ "$complete" != yes ]]; then
+    note "old16 complete archive deferred: not all 16 repositories have completed frozen settlements"
+    return 0
+  fi
+  if [[ -d "$archive_root" && -L "$old_root" ]]; then
+    note "old16 complete archive already present path=$archive_root"
+    return 0
+  fi
+  if [[ -e "$archive_root" ]]; then
+    note "old16 archive destination already exists without compatibility symlink; refusing overwrite path=$archive_root"
+    return 1
+  fi
+  note "building old16 complete archive manifest"
+  "$python" "$worktree/v4/tools/build_complete_campaign_archive_manifest.py" \
+    "$old_root" --expected 16 --output "$old_root/COMPLETE_ARCHIVE_MANIFEST.json"
+  git -C "$worktree" archive --format=tar.gz \
+    --output="$old_root/v4-workflow-$(git -C "$worktree" rev-parse --short=12 HEAD).tar.gz" HEAD
+  mkdir -p "$protected_root"
+  mv "$old_root" "$archive_root"
+  ln -s "$archive_root" "$old_root"
+  note "old16 complete archive committed path=$archive_root"
+}
+
 if [[ ! -s "$old_pid_file" ]]; then
   note "missing old controller pid file: $old_pid_file"
   exit 1
@@ -108,6 +153,7 @@ printf '%s\n' "$retry_pid" >"$retry_pid_file"
 note "old16 retry started pid=$retry_pid"
 wait_for_pid_exit "$retry_pid" old16-retry "$old_status"
 wait_for_clean_boundary "$old_root" "$old_status" old16-retry
+archive_old16_if_complete
 wait_for_capacity
 
 if pgrep -af "controller --config $rust_config" >/dev/null; then
@@ -127,4 +173,3 @@ note "starting Rust30 config=$rust_config"
 rust_pid=$!
 printf '%s\n' "$rust_pid" >"$rust_pid_file"
 note "Rust30 started pid=$rust_pid"
-
