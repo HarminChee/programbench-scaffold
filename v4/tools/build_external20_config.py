@@ -201,17 +201,27 @@ def main() -> int:
     parser.add_argument("--quality-timeout-seconds", type=int)
     parser.add_argument("--afl-root", default="/home/programbench/research/tools/afl-src/aflplusplus-4.00c")
     parser.add_argument("--model", default="gpt-5.6-sol")
+    parser.add_argument("--instance", action="append", dest="instances",
+                        help="build a pinned subset; repeat for each instance_id")
+    parser.add_argument("--campaign-id", default="v4-external20-20260816")
     args = parser.parse_args()
     summary = json.loads(args.source_summary.read_text(encoding="utf-8"))
     rows = summary.get("repositories") or []
-    if len(rows) != 20 or any(row.get("state") != "completed" for row in rows):
-        raise RuntimeError("external20 config requires exactly 20 completed source snapshots")
-    if set(CATALOG) != {str(row["instance_id"]) for row in rows}:
-        raise RuntimeError("source summary and external20 catalog differ")
+    selected = set(args.instances or CATALOG)
+    if not selected or not selected.issubset(CATALOG):
+        raise RuntimeError(f"unknown/empty selected instances: {sorted(selected - set(CATALOG))}")
+    if len(rows) != len(selected) or any(row.get("state") != "completed" for row in rows):
+        raise RuntimeError("config requires one completed source snapshot per selected instance")
+    if selected != {str(row["instance_id"]) for row in rows}:
+        raise RuntimeError("source summary and selected catalog subset differ")
     adapter = ROOT / "v4/adapters/gofumpt_pilot_adapter.py"
     scope_files = [
         adapter,
         ROOT / "v4/programbench_v4/witnesses.py",
+        ROOT / "v4/programbench_v4/controller.py",
+        ROOT / "v4/programbench_v4/policy.py",
+        ROOT / "v4/programbench_v4/scheduler.py",
+        ROOT / "v4/programbench_v4/candidates.py",
         ROOT / "v4/programbench_v4/go_afl_qemu.py",
         ROOT / "v4/programbench_v4/native_afl_qemu.py",
         ROOT / "v4/programbench_v4/rust_afl_qemu.py",
@@ -228,6 +238,8 @@ def main() -> int:
     repositories: list[dict[str, Any]] = []
     by_id = {str(row["instance_id"]): row for row in rows}
     for instance, metadata in CATALOG.items():
+        if instance not in selected:
+            continue
         row = by_id[instance]
         source = Path(row["source_dir"]).resolve(strict=True)
         scale = scale_target_range(instance, str(metadata["language"]), first_party_source_metrics(source, str(metadata["language"])))
@@ -295,7 +307,7 @@ def main() -> int:
         raise SystemExit("--generation-workers must be in 1..min(8,--workers)")
     config = {
         "schema": "programbench_v4_campaign_v1",
-        "campaign_id": "v4-external20-20260816",
+        "campaign_id": args.campaign_id,
         "mode": "production",
         "output_root": str(args.output_root.resolve()),
         "repo_workers": args.workers,

@@ -1,0 +1,21 @@
+{
+  "schema": "programbench_v4_source_inputs_v1",
+  "repositories": [
+    {"instance_id":"air-verse__air.9f19e52","repository":"air-verse/air","commit":"9f19e52511f7bb697036e6ee2c12a212e742199d"},
+    {"instance_id":"casey__just.4f41f60","repository":"casey/just","commit":"4f41f609278edb6f1024e3dd7a9912946e1e7bc3","omit_unsafe_symlink_paths":["www/man/en","www/man/zh"]},
+    {"instance_id":"charmbracelet__freeze.f427610","repository":"charmbracelet/freeze","commit":"f4276107b7b7a1ad33882cb26baf2102f90887b0"},
+    {"instance_id":"charmbracelet__glow.e5cb757","repository":"charmbracelet/glow","commit":"e5cb757278216f84400466a47c987f56ea2de5c4"},
+    {"instance_id":"charmbracelet__gum.716d8b5","repository":"charmbracelet/gum","commit":"716d8b5d0221558f944b5a078dbbcca8572534fb"},
+    {"instance_id":"crate-ci__typos.5e38bf2","repository":"crate-ci/typos","commit":"5e38bf262baaf477ca9f241b3a7cd3d277fd7df8"},
+    {"instance_id":"go-task__task.d2b02e3","repository":"go-task/task","commit":"d2b02e3c6994b17e6fe009fe9414e088b16a3c73"},
+    {"instance_id":"itchyny__gojq.2e210b5","repository":"itchyny/gojq","commit":"2e210b5c28122b106d4cd1fade3ac9dad0482026"},
+    {"instance_id":"mvdan__gofumpt.5dca7d8","repository":"mvdan/gofumpt","commit":"5dca7d819315c5c6338d290ad2e7847f07438693"},
+    {"instance_id":"mvdan__sh.c9ed92e","repository":"mvdan/sh","commit":"c9ed92e79d8a35e424ae871d7dfad085f2954aa4"},
+    {"instance_id":"orhun__git-cliff.5963160","repository":"orhun/git-cliff","commit":"5963160d7303111a217ee8453189d23a1c87925a"},
+    {"instance_id":"peltoche__lsd.5a36723","repository":"Peltoche/lsd","commit":"5a36723c6c1e23470d82d29d3630d55050acd723"},
+    {"instance_id":"restic__restic.a80be14","repository":"restic/restic","commit":"a80be1478a4c537f8396e0db2b05120aa78f11e0"},
+    {"instance_id":"sharkdp__vivid.a5d05c0","repository":"sharkdp/vivid","commit":"a5d05c0eda9f92d914d34d518d90dc99dfee4f15"},
+    {"instance_id":"starship__starship.6bf659e","repository":"starship/starship","commit":"6bf659ee51c8fac6cc264939b3621e52711a2aa5"},
+    {"instance_id":"watchexec__watchexec.db427ba","repository":"watchexec/watchexec","commit":"db427ba30ae33b7febda027c79b2d60b5525d5db"}
+  ]
+}

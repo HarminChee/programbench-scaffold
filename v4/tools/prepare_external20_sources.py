@@ -179,11 +179,26 @@ def snapshot_content_sha256(root: Path) -> str:
     return digest.hexdigest()
 
 
+def declared_source_path(item: dict[str, Any]) -> Path | None:
+    """Resolve an explicitly declared local source; empty never means cwd."""
+
+    value = str(item.get("source_repo") or "").strip()
+    return Path(value).expanduser() if value else None
+
+
 def prepare(item: dict[str, Any], output_root: Path) -> dict[str, Any]:
-    declared_source = Path(str(item.get("source_repo") or "")).expanduser()
-    source_repo = declared_source.resolve(strict=True) if declared_source.exists() else declared_source
+    declared_source = declared_source_path(item)
+    source_repo = (
+        declared_source.resolve(strict=True)
+        if declared_source is not None and declared_source.exists()
+        else declared_source
+    )
     commit = str(item["commit"])
-    if not source_repo.exists() or _git(source_repo, "rev-parse", "--git-dir").returncode != 0:
+    if (
+        source_repo is None
+        or not source_repo.exists()
+        or _git(source_repo, "rev-parse", "--git-dir").returncode != 0
+    ):
         repository = str(item.get("repository") or "")
         if not repository:
             raise RuntimeError(f"source is not a Git repository and no remote is declared: {source_repo}")

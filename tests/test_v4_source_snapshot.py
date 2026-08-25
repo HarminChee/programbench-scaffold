@@ -6,7 +6,11 @@ from pathlib import Path
 
 import pytest
 
-from v4.tools.prepare_external20_sources import extract_snapshot, snapshot_content_sha256
+from v4.tools.prepare_external20_sources import (
+    declared_source_path,
+    extract_snapshot,
+    snapshot_content_sha256,
+)
 
 
 def archive(path: Path, entries: list[tuple[str, str, bytes | str]]) -> None:
@@ -52,3 +56,9 @@ def test_snapshot_content_hash_ignores_only_its_scope_manifest(tmp_path: Path) -
     assert snapshot_content_sha256(tmp_path) == first
     (tmp_path / "source.txt").write_text("changed")
     assert snapshot_content_sha256(tmp_path) != first
+
+
+def test_empty_source_repo_never_resolves_to_current_git_checkout() -> None:
+    assert declared_source_path({}) is None
+    assert declared_source_path({"source_repo": "  "}) is None
+    assert declared_source_path({"source_repo": "/tmp/source"}) == Path("/tmp/source")
